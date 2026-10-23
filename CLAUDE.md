@@ -13,7 +13,9 @@ Cahier des charges complet : [Prompt_archipelago_dbz.md](Prompt_archipelago_dbz.
 - Quand il doit faire quelque chose (jouer, état de sauvegarde, lire une valeur) : instructions numérotées, puis on attend son retour.
 
 ## État actuel
-- **Phase 1 — Recherche du contenu : terminée (2026-10-23).** Phase suivante : 2 — Carte mémoire (à lancer avec l'accord de l'utilisateur). Tableau des phases : cahier des charges, §9.
+- **Phase 2 — Carte mémoire : terminée (2026-10-23).** Phase suivante : 3 — World minimal (après vérification Discord par l'utilisateur). Tableau des phases : cahier des charges, §9.
+  - `ram_map.md` : en-tête ROM, inventaire, zénis, drapeaux (dont les 8 coffres de l'île), code de carte, combat, emplacement provisoire du compteur.
+- **Phase 1 — Recherche du contenu : terminée (2026-10-23).**
   - `game_data.md` : 40 zones, ~240 objets par zone (guide DSR), 42 boss, noms FR tirés de la ROM ; prologue vérifié en jeu (✅).
   - `rom_names.md` : noms officiels EN/US/FR extraits de la ROM (objets, capsules, objets clés, techniques, lieux, personnages).
 - **Phase 0 — Installation : terminée (2026-10-23).**
@@ -22,7 +24,9 @@ Cahier des charges complet : [Prompt_archipelago_dbz.md](Prompt_archipelago_dbz.
   - 1 : Kame House, début de partie (réenregistré le 2026-10-23 à 19h41) ;
   - 2 : juste avant d'entrer dans l'Île d'entraînement ;
   - 3 : **manquant** (devait être devant le 1er coffre) → à refaire au début de la phase 2 depuis l'état 2 ;
-  - 4 : après Jackie Choun, prologue terminé, sauvegarde en jeu faite.
+  - 4 : après Jackie Choun, prologue terminé, sauvegarde en jeu faite (copie de secours dans `dbz_research\backup\`) ;
+  - 7, 8, 9 : réservés à Claude (télécommande) ; 5, 6 : photos manuelles.
+  - ⚠️ Charger un état remet aussi la sauvegarde en jeu de ce moment-là : fermer la ROM peut écraser `SaveRAM` avec une version plus ancienne. Copie de la sauvegarde d'après prologue dans `dbz_research\backup\`.
   - Sauvegarde en jeu : `NDS\SaveRAM\Dragon Ball Z Attack of the Saiyans.SaveRAM` (8 Ko).
 - **Rappel avant la phase 3** : vérifier sur le Discord Archipelago que personne ne travaille déjà sur ce jeu.
 
@@ -53,6 +57,9 @@ AP_TEST_WORLDS=dbz_aots .venv/bin/python -m pytest -q -n auto
 # Recherche : extraire les noms officiels (EN/US/FR) de la ROM -> research/rom_names.md
 # (depuis ce dépôt ; environnement research/.venv avec ndspy)
 research/.venv/bin/python research/scripts/extract_rom_names.py "/mnt/c/Users/Aurelien/Desktop/Jeu/SAve jeu/Rom DS/Dragon Ball Z Attack of the Saiyans.nds"
+
+# Télécommande BizHawk (remote.lua doit tourner dans la console Lua de BizHawk)
+python3 research/scripts/remote.py "shot ecran" "read 0CC398 8"   # capture -> dbz_research/remote/ecran.png
 
 # Construire le .apworld (sortie : build/apworlds/dbz_aots.apworld), puis le copier côté Windows
 .venv/bin/python Launcher.py "Build APWorlds" -- "Dragon Ball Z: Attack of the Saiyans"

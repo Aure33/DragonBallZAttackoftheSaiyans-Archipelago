@@ -4,6 +4,8 @@ Règle : **aucune adresse sans preuve**. Chaque entrée indique comment elle a �
 Une adresse non confirmée reste dans la section « Hypothèses ».
 
 ## Méthode
+Depuis le 2026-10-23, les expériences se font aussi avec la **télécommande** (`scripts/remote.lua` dans BizHawk + `scripts/remote.py` côté WSL) : boutons, captures d'écran, photos mémoire et lectures directes, sans manipulation du joueur.
+
 Photos de la mémoire prises par `scripts/dump_ram.lua` à chaque état de sauvegarde, puis analysées avec `scripts/ram_diff.py` et numpy (environnement `research/.venv`). Les photos sont dans `C:\Users\Aurelien\Desktop\archipelago\dbz_research\dumps\` (hors Git).
 Série du 2026-10-23 : photos 01–06 = 2e passage dans l'île depuis l'état 2 (01 avant l'île, 02 en combat contre les serpents, puis 1er Petit haricot avant 03 et Plume de phénix avant 06) ; photo 07 = état 4 chargé (1er passage : île finie, Jackie Choun battu, au même moment que la sauvegarde en jeu).
 
@@ -48,7 +50,7 @@ Taille du domaine `Main RAM` dans BizHawk 2.11.1 (melonDS) : **4 194 304 octets 
 | Accessoires de combat (`Btl_Acc`) | `0x0CC418` | `0x020CC418` | 128 × 1 octet | Idem | 🟡 | Déduit de la suite des tables ; aucun accessoire possédé, donc pas encore observé | 2026-10-23 |
 | Capsules (`Pt_Eqp`) | `0x0CC498` | `0x020CC498` | 48 × 1 octet | Idem | ✅ | Masque à gaz (n° 30) et Carte d'obscurité (n° 37) à 1 après l'île | 2026-10-23 |
 | Objets clés (`Key_Item`) | `0x0CC4C8` | `0x020CC4C8` | 108 × 1 octet | Idem | ✅ | Boule de la Voyante (n° 0) à 1 après l'île | 2026-10-23 |
-| Compteur croissant (zénis ? expérience ?) | `0x0CC370` | `0x020CC370` | 2 ou 4 octets | 0 → 160 → 420 → 580 au fil de l'île ; 1740 après le prologue | ❓ | Photos 01→07 | 2026-10-23 |
+| **Zénis** | `0x0CC370` | `0x020CC370` | 4 octets | Valeur directe (little-endian) | ✅ | 160 lu en mémoire (`A0 00 00 00`) juste après l'écran « Objets acquis » qui affichait 160 zénis ; 0 → 160 → 420 → 580 au fil de l'île | 2026-10-23 |
 
 **Numéro interne ≠ numéro de texte.** Dans la ROM, chaque ligne des tables de données (`Use_Item`, `Btl_Acc`, `Pt_Eqp`, `Key_Item`) indique quel texte utiliser comme nom : `(colonne 0 & 0xFFFF) = 2 × n° de texte + 1`. Le texte n° 29 de `use_item_mes` (Méd. de Karine) n'est utilisé par aucune ligne de `Use_Item` : à partir de la ligne 29, le numéro interne = numéro de texte − 1 (ex. Plume de phénix : texte 30, numéro interne 29). Pour `Pt_Eqp` et `Key_Item`, les deux numéros coïncident sur les objets observés.
 
@@ -56,7 +58,7 @@ La **sauvegarde** (`.SaveRAM`, 8 Ko) n'est pas chiffrée : signature `mDBZ`, 2 c
 
 | Élément | Adresse (Main RAM) | Adresse DS | Taille | Sens | Statut | Comment trouvé | Date |
 |---|---|---|---|---|---|---|---|
-| Fiches des personnages | `0x0CD300` (+ `0x24C` par personnage) | `0x020CD300` | 0x24C par personnage | Commence par PV actuels, PV max, ki actuel, ki max (4 octets chacun) | 🟡 | PV/ki de la sauvegarde (445/148, 290/95, 660/225) retrouvés dans la photo 07 | 2026-10-23 |
+| ~~Fiches des personnages~~ | ~~`0x0CD300`~~ | | | **Faux** : vaut 445 aussi dans une partie où Krillin a 320 PV. Ce sont sans doute des tables de valeurs | ❌ | Lecture par la télécommande | 2026-10-23 |
 
 ## 3. Drapeaux de coffres
 **Bloc des drapeaux permanents** : Main RAM `0x09F7E8`–`0x09FB47` (DS `0x0209F7E8`), 0x360 octets = 6912 drapeaux d'un bit.
@@ -85,10 +87,21 @@ _(phase 2)_
 ## 6. État du jeu (titre / carte / menu / combat)
 | Élément | Adresse (Main RAM) | Adresse DS | Sens | Statut | Comment trouvé | Date |
 |---|---|---|---|---|---|---|
-| Zone de données de combat | `0x0CC600`–`0x0CD200` | `0x020CC600` | Remplie seulement pendant un combat (photo 02), à zéro sinon | ❓ | Photos 01→07 | 2026-10-23 |
+| **Code de la carte en cours** | `0x0D226C` | `0x020D226C` | 8 caractères ASCII, ex. `kam01_00` (Kame House), `tut01_00` (Île d'entraînement), `est01_00` (Ville est). **Tout à zéro quand aucune partie n'est chargée** (logos, écran titre) | ✅ | Photos 01, 07, île (carte/combat/menu), écran titre après « Power » | 2026-10-23 |
+| **En combat** | `0x09B236` | `0x0209B236` | 2 octets : `FF FF` en combat, `00 00` sur la carte et dans le menu. Vaut aussi `FF FF` sans partie chargée → toujours tester d'abord le code de carte | 🟡 | 3 photos en combat, 9 hors combat, écran titre | 2026-10-23 |
+| Menu ouvert | — | — | Aucun indicateur fiable trouvé (1 seule photo du menu) | ❓ | Photo r04_menu | 2026-10-23 |
+| Zone de données de combat | `0x0CC600`–`0x0CD200` | `0x020CC600` | Remplie seulement pendant un combat, à zéro sinon | 🟡 | Photos 02, r01_combat | 2026-10-23 |
+
+**Règle pour le client** : « en jeu » = le code de carte à `0x0D226C` est un code valide (3 lettres, 2 chiffres, `_`, 2 chiffres). « Hors combat » = en jeu et `0x09B236` ≠ `FF FF`.
 
 ## 7. Zone libre qui survit à la sauvegarde (compteur d'objets reçus)
-_(phase 2)_
+Le bloc des drapeaux (§3) est enregistré tel quel dans la sauvegarde. Sur toutes les photos d'une partie en cours et dans la sauvegarde d'après le prologue, seuls ses octets `+0x000`–`+0x21D` ont servi (dernier drapeau vu : 4335). **Les 322 derniers octets (`+0x21E`–`+0x35F`, soit `0x09FA06`–`0x09FB47`) sont toujours à zéro.**
+
+| Élément | Adresse (Main RAM) | Adresse DS | Taille | Statut | Comment trouvé | Date |
+|---|---|---|---|---|---|---|
+| Emplacement **provisoire** du compteur d'objets reçus : les 4 derniers octets du bloc | `0x09FB44` | `0x0209FB44` | 4 octets | ❓ | Toujours à zéro jusqu'ici, mais on n'a vu que le prologue. À confirmer en décodant les scripts (plus grand n° de drapeau utilisé par le jeu) | 2026-10-23 |
+
+En-tête de la sauvegarde : `0x0` = `mDBZ`, `0x4` = compteur de sauvegardes (12 sur la copie 1, 13 sur la copie 2), `0x8` = somme de contrôle (4 octets ?). Le client n'écrit **jamais** dans le fichier : il écrit en mémoire, et c'est le jeu qui recalcule la somme quand le joueur sauvegarde.
 
 ## Hypothèses à vérifier
 | Hypothèse | Pourquoi on y croit | Comment vérifier |

@@ -13,9 +13,17 @@ Cahier des charges complet : [Prompt_archipelago_dbz.md](Prompt_archipelago_dbz.
 - Quand il doit faire quelque chose (jouer, état de sauvegarde, lire une valeur) : instructions numérotées, puis on attend son retour.
 
 ## État actuel
-- **Phase 0 — Installation : terminée (2026-10-23).** Phase suivante : 1 — Recherche du contenu (à lancer avec l'accord de l'utilisateur). Tableau des phases : cahier des charges, §9.
+- **Phase 1 — Recherche du contenu : terminée (2026-10-23).** Phase suivante : 2 — Carte mémoire (à lancer avec l'accord de l'utilisateur). Tableau des phases : cahier des charges, §9.
+  - `game_data.md` : 40 zones, ~240 objets par zone (guide DSR), 42 boss, noms FR tirés de la ROM ; prologue vérifié en jeu (✅).
+  - `rom_names.md` : noms officiels EN/US/FR extraits de la ROM (objets, capsules, objets clés, techniques, lieux, personnages).
+- **Phase 0 — Installation : terminée (2026-10-23).**
 - Vérifié : dépôt GitHub privé, sources d'Archipelago 0.6.8 + venv dans WSL, lien symbolique du world vu par le chargeur, seed générée, `test/general` qui passe (376 tests) ; Archipelago Windows en 0.6.8 ; ROM DBZ lancée dans BizHawk ; client BizHawk connecté au script Lua (« No handler was found » : normal sans world).
-- Disponible : état de sauvegarde BizHawk en début de partie (`BizHawk…\NDS\State\Dragon Ball Z Attack of the Saiyans.MelonDS.QuickSave1.State`).
+- États de sauvegarde BizHawk (`BizHawk-2.11.1-win-x64\NDS\State\Dragon Ball Z Attack of the Saiyans.MelonDS.QuickSave<N>.State`, `Shift+F<N>` = sauver, `F<N>` = charger) :
+  - 1 : Kame House, début de partie (réenregistré le 2026-10-23 à 19h41) ;
+  - 2 : juste avant d'entrer dans l'Île d'entraînement ;
+  - 3 : **manquant** (devait être devant le 1er coffre) → à refaire au début de la phase 2 depuis l'état 2 ;
+  - 4 : après Jackie Choun, prologue terminé, sauvegarde en jeu faite.
+  - Sauvegarde en jeu : `NDS\SaveRAM\Dragon Ball Z Attack of the Saiyans.SaveRAM` (8 Ko).
 - **Rappel avant la phase 3** : vérifier sur le Discord Archipelago que personne ne travaille déjà sur ce jeu.
 
 ## Environnement

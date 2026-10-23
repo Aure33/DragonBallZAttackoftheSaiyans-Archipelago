@@ -64,16 +64,16 @@ Certains coffres sont cachés derrière des rochers/buissons : on maintient B po
 ### Première zone : Prologue (Kame House + Training Island) — complet selon DSR, LP et IT
 | Zone | Description de l'emplacement | Contenu d'origine (FR / EN) | Source | Statut |
 |---|---|---|---|---|
-| Kame House | **Tiroirs**, coin ouest de la pièce du haut | Fruit chance / Luck Fruit | DSR Prologue (Kame House) ; LP Update 01 ; IT Prologue | 📖 |
-| Kame House | **Don de Roshi** au début (pas un coffre) | Petit haricot, Récup. poison, Récup. mouvements / Small Beans (quantité non précisée), Poison Recovery ×5, Bind Recovery ×5 | LP Update 01 (DSR et IT n'en parlent pas) | 📖 |
-| Training Island, écran 1 | **Coffre** sur la colline : après le combat des Giant Snakes, faire la boucle et monter (IT : vers le sud par l'escalier de pierre) | Capsule 50 PV / HP Capsule 50 | DSR Prologue ; LP Update 02 ; IT Prologue | 📖 |
-| Training Island, écran 1 | **Coffre** : revenir au lieu du combat des Giant Snakes, continuer à droite puis monter | Petit haricot / Small Bean | DSR Prologue ; IT Prologue | 📖 |
-| Training Island, écran 1 | **Coffre** derrière un rocher lumineux (à casser au coup de Ki) | Plume de phénix / Phoenix Feather | DSR Prologue ; IT Prologue ; LP Update 02 (coffre derrière un rocher, « revival item », nom non écrit) | 📖 |
-| Training Island, écran 1 | **Coffre** derrière un rocher, en tournant dans le sens antihoraire après le combat d'apprentissage de la garde | Petit haricot / Small Bean | DSR Prologue ; IT Prologue | 📖 |
-| Training Island, écran 2 | **Coffre** derrière un rocher, chemin nord depuis l'entrée | Haricot moyen / Medium Bean | DSR Prologue ; IT Prologue ; LP Update 02 | 📖 |
-| Training Island, écran 2 | **Coffre** : premier chemin à droite après la 2e boucle en descente | Petit haricot / Small Bean | DSR Prologue ; IT Prologue | 📖 |
-| Training Island, après l'appel de Bulma | **Coffre** (un des deux sur le chemin principal, près de la brume violette) | Masque à gaz / Gas Mask (capsule) | DSR Prologue (absent de l'en-tête « Items » du guide) ; IT Prologue ; LP Update 02 | 📖 |
-| Training Island, après l'appel de Bulma | **Coffre** (l'autre des deux ; l'ordre des deux coffres n'est pas précisé) | Carte d'obscurité / Darkness Card (capsule) | DSR Prologue (absent de l'en-tête « Items ») ; IT Prologue ; LP Update 02 | 📖 |
+| Kame House | **Tiroirs**, coin ouest de la pièce du haut | Fruit chance / Luck Fruit | DSR Prologue (Kame House) ; LP Update 01 ; IT Prologue ; OBS 2026-10-23 | ✅ |
+| Kame House | **Don de Roshi** au début (pas un coffre) | Petit haricot, Récup. poison, Récup. mouvements / Small Beans (quantité non précisée), Poison Recovery ×5, Bind Recovery ×5 | LP Update 01 (DSR et IT n'en parlent pas) ; OBS 2026-10-23 | ✅ |
+| Training Island, écran 1 | **Coffre** sur la colline : après le combat des Giant Snakes, faire la boucle et monter (IT : vers le sud par l'escalier de pierre) | Capsule 50 PV / HP Capsule 50 | DSR Prologue ; LP Update 02 ; IT Prologue ; OBS 2026-10-23 | ✅ |
+| Training Island, écran 1 | **Coffre** : revenir au lieu du combat des Giant Snakes, continuer à droite puis monter | Petit haricot / Small Bean | DSR Prologue ; IT Prologue ; OBS 2026-10-23 | ✅ |
+| Training Island, écran 1 | **Coffre** derrière un rocher lumineux (à casser au coup de Ki) | Plume de phénix / Phoenix Feather | DSR Prologue ; IT Prologue ; LP Update 02 (coffre derrière un rocher, « revival item », nom non écrit) ; OBS 2026-10-23 | ✅ |
+| Training Island, écran 1 | **Coffre** derrière un rocher, en tournant dans le sens antihoraire après le combat d'apprentissage de la garde | Petit haricot / Small Bean | DSR Prologue ; IT Prologue ; OBS 2026-10-23 | ✅ |
+| Training Island, écran 2 | **Coffre** derrière un rocher, chemin nord depuis l'entrée | Haricot moyen / Medium Bean | DSR Prologue ; IT Prologue ; LP Update 02 ; OBS 2026-10-23 | ✅ |
+| Training Island, écran 2 | **Coffre** : premier chemin à droite après la 2e boucle en descente | Petit haricot / Small Bean | DSR Prologue ; IT Prologue ; OBS 2026-10-23 | ✅ |
+| Training Island, après l'appel de Bulma | **Coffre** (un des deux sur le chemin principal, près de la brume violette) | Masque à gaz / Gas Mask (capsule) | DSR Prologue (absent de l'en-tête « Items » du guide) ; IT Prologue ; LP Update 02 ; OBS 2026-10-23 | ✅ |
+| Training Island, après l'appel de Bulma | **Coffre** (l'autre des deux ; l'ordre des deux coffres n'est pas précisé) | Carte d'obscurité / Darkness Card (capsule) | DSR Prologue (absent de l'en-tête « Items ») ; IT Prologue ; LP Update 02 ; OBS 2026-10-23 | ✅ |
 | Training Island, fin | **Objet d'histoire** : casser le rocher au-dessus du CC Point et examiner la boule de cristal → déclenche le boss | Boule de la Voyante / crystal ball (boule de cristal) | DSR Prologue ; IT Prologue ; LP Update 02 | 📖 |
 
 Total prologue : 1 tiroir + 1 don + 8 coffres + 1 objet d'histoire (+ récompense du boss, table Boss). En-tête DSR : écran 1 « HP Capsule 50, Small Bean (x2), Phoenix Feather », écran 2 « Medium Bean, Small Bean ».
@@ -96,12 +96,12 @@ Liste générée par [scripts/extract_dsr_items.py](scripts/extract_dsr_items.py
 
 | N° | Chapitre | Zone | Emplacement (DSR) | Objet (EN) | Qté | Nom FR | Source | Statut |
 |---|---|---|---|---|---|---|---|---|
-| 1 | Prologue | Kame House |  | Luck Fruit | 1 | Fruit chance | DSR Prologue (en-tête Items) | 📖 |
-| 2 | Prologue | Training Island | First Screen | HP Capsule 50 | 1 | Capsule 50 PV | DSR Prologue (en-tête Items) | 📖 |
-| 3 | Prologue | Training Island | First Screen | Small Bean | 2 | Petit haricot | DSR Prologue (en-tête Items) | 📖 |
-| 4 | Prologue | Training Island | First Screen | Phoenix Feather | 1 | Plume de phénix | DSR Prologue (en-tête Items) | 📖 |
-| 5 | Prologue | Training Island | Second Screen | Medium Bean | 1 | Haricot moyen | DSR Prologue (en-tête Items) | 📖 |
-| 6 | Prologue | Training Island | Second Screen | Small Bean | 1 | Petit haricot | DSR Prologue (en-tête Items) | 📖 |
+| 1 | Prologue | Kame House |  | Luck Fruit | 1 | Fruit chance | DSR Prologue (en-tête Items) ; OBS 2026-10-23 | ✅ |
+| 2 | Prologue | Training Island | First Screen | HP Capsule 50 | 1 | Capsule 50 PV | DSR Prologue (en-tête Items) ; OBS 2026-10-23 | ✅ |
+| 3 | Prologue | Training Island | First Screen | Small Bean | 2 | Petit haricot | DSR Prologue (en-tête Items) ; OBS 2026-10-23 | ✅ |
+| 4 | Prologue | Training Island | First Screen | Phoenix Feather | 1 | Plume de phénix | DSR Prologue (en-tête Items) ; OBS 2026-10-23 | ✅ |
+| 5 | Prologue | Training Island | Second Screen | Medium Bean | 1 | Haricot moyen | DSR Prologue (en-tête Items) ; OBS 2026-10-23 | ✅ |
+| 6 | Prologue | Training Island | Second Screen | Small Bean | 1 | Petit haricot | DSR Prologue (en-tête Items) ; OBS 2026-10-23 | ✅ |
 | 7 | Ch. 1 | East City |  | Skill Fruit | 1 | Fruit technique | DSR Ch. 1 (en-tête Items) | 📖 |
 | 8 | Ch. 1 | East City |  | Speed Fruit | 1 | Fruit vitesse | DSR Ch. 1 (en-tête Items) | 📖 |
 | 9 | Ch. 1 | Bamboo Forest |  | Medium Bean | 1 | Haricot moyen | DSR Ch. 1 (en-tête Items) | 📖 |
@@ -351,7 +351,7 @@ Récompenses telles qu'écrites par DSR (EXP, AP, Z = zeni, objets). « Histoire
 
 | Nom FR | Nom EN | Zone | Récompense | Obligatoire ? | Source | Statut |
 |---|---|---|---|---|---|---|
-| Jackie Choun | Jackie Chun | Training Island (Prologue) | 1500 EXP, 450 AP, 300 Z, Perception Charm. Niv. conseillé 5, 1200 PV | Oui (fin du prologue) | DSR Prologue ; LP Update 02 — **conflit de nom** : LP appelle l'objet « Charm » | 📖 |
+| Jackie Choun | Jackie Chun | Training Island (Prologue) | 1500 EXP, 450 AP, 300 Z, Perception Charm. Niv. conseillé 5, 1200 PV | Oui (fin du prologue) | DSR Prologue ; LP Update 02 — **conflit de nom** : LP appelle l'objet « Charm » ; OBS 2026-10-23 | ✅ |
 | Paopao | Paopao | Bamboo Forest (ch. 1) | 1200 EXP, 150 AP, 400 Z | Oui (fin du ch. 1) | DSR Ch. 1 | 📖 |
 | Toto le lapin | Monster Carrot | Mt. Paozu (ch. 2) | 1500 EXP, 150 AP, 300 Z, Carrot Glove | Oui (fin du ch. 2) ; DSR Ch. 3 parle pourtant de « previous sidequest » | DSR Ch. 2, Ch. 3 | 📖 |
 | Chaozu | Chiaotzu (Evil Flame) | Divine Crossing (ch. 3) | 1200 EXP, 150 AP, 350 Z, Rice Cooker | Oui (fin du ch. 3) | DSR Ch. 3 | 📖 |
@@ -408,19 +408,19 @@ Pas d'identifiant interne : RND ne donne aucun couple nom/ID (ses fichiers ne d�
 
 | Nom FR | Nom EN | Type (clé / équipement / consommable…) | Effet | Source | Statut | Notes |
 |---|---|---|---|---|---|---|
-| Fruit chance | Luck Fruit | Consommable (bonus permanent) | Augmente définitivement la Chance (LK) d'un personnage | LP Update 01 ; DSR Prologue | 📖 | Kame House |
-| Petit haricot | Small Bean | Consommable | Rend 150 PV | LP Update 01 | 📖 |  |
-| Haricot moyen | Medium Bean | Consommable | Rend 300 PV | LP Update 02 | 📖 |  |
-| Capsule 50 PV | HP Capsule 50 | Consommable | Rend 50 % des PV d'un personnage | LP Update 02 | 📖 |  |
-| Plume de phénix | Phoenix Feather | Consommable | Réanimation d'un personnage K.O. | DSR Prologue (nom) ; LP Update 02 (effet, nom non écrit) | 📖 | Rapprochement nom/effet par l'emplacement (coffre derrière le rocher) |
-| Récup. poison | Poison Recovery | Consommable | Soigne le poison | LP Update 01 | 📖 |  |
-| Récup. mouvements | Bind Recovery | Consommable | Soigne la paralysie | LP Update 01 | 📖 |  |
+| Fruit chance | Luck Fruit | Consommable (bonus permanent) | Augmente définitivement la Chance (LK) d'un personnage | LP Update 01 ; DSR Prologue ; OBS 2026-10-23 | ✅ | Kame House |
+| Petit haricot | Small Bean | Consommable | Rend 150 PV | LP Update 01 ; OBS 2026-10-23 | ✅ |  |
+| Haricot moyen | Medium Bean | Consommable | Rend 300 PV | LP Update 02 ; OBS 2026-10-23 | ✅ |  |
+| Capsule 50 PV | HP Capsule 50 | Consommable | Rend 50 % des PV d'un personnage | LP Update 02 ; OBS 2026-10-23 | ✅ |  |
+| Plume de phénix | Phoenix Feather | Consommable | Réanimation d'un personnage K.O. | DSR Prologue (nom) ; LP Update 02 (effet, nom non écrit) ; OBS 2026-10-23 | ✅ | Rapprochement nom/effet par l'emplacement (coffre derrière le rocher) |
+| Récup. poison | Poison Recovery | Consommable | Soigne le poison | LP Update 01 ; OBS 2026-10-23 | ✅ |  |
+| Récup. mouvements | Bind Recovery | Consommable | Soigne la paralysie | LP Update 01 ; OBS 2026-10-23 | ✅ |  |
 | Récup. ténèbres | Darkness Recovery | Consommable | Non décrit | DSR Bestiaire n° 68 | 📖 | Drop |
 | Boisson 30 PV | HP Drink 30 | Consommable | Non décrit | DSR Bestiaire n° 12, 17, 53 | 📖 | Drop |
 | Boisson 30 ki | Ki Drink 30 | Consommable | Non décrit | DSR Bestiaire n° 53, 71 | 📖 | Drop |
-| Masque à gaz | Gas Mask | Capsule | Immunise contre la brume empoisonnée (sol à dégâts) | LP Update 02 ; DSR Ch. 6 | 📖 | **Progression** : requise pour traverser Spinach Wastes (ch. 6) |
-| Carte d'obscurité | Darkness Card | Capsule | Tente d'aveugler les ennemis au début du combat (emplacement actif) | LP Update 02 | 📖 |  |
-| Charme perception | Perception Charm | Objet de combat | Augmente l'esquive pour la prochaine attaque ; se vend 2500 z | DSR Prologue (nom) ; LP Update 02 (effet ; l'appelle « Charm ») | 📖 | **Conflit de nom** DSR / LP |
+| Masque à gaz | Gas Mask | Capsule | Immunise contre la brume empoisonnée (sol à dégâts) | LP Update 02 ; DSR Ch. 6 ; OBS 2026-10-23 | ✅ | **Progression** : requise pour traverser Spinach Wastes (ch. 6) |
+| Carte d'obscurité | Darkness Card | Capsule | Tente d'aveugler les ennemis au début du combat (emplacement actif) | LP Update 02 ; OBS 2026-10-23 | ✅ |  |
+| Charme perception | Perception Charm | Objet de combat | Augmente l'esquive pour la prochaine attaque ; se vend 2500 z | DSR Prologue (nom) ; LP Update 02 (effet ; l'appelle « Charm ») ; OBS 2026-10-23 | ✅ | **Conflit de nom** DSR / LP |
 | Boule de la Voyante | crystal ball | Objet clé (histoire) | Consultable depuis le menu pour voir le prochain objectif | LP Update 02 ; DSR Prologue | 📖 |  |
 | Gant carotte | Carrot Glove | Capsule | Les ennemis vaincus donnent des carottes, échangeables à West City | DSR Ch. 2 (drop de Monster Carrot), Ch. 3 ; LP Update 48 | 📖 |  |
 | Éventail magique | Bansho Fan | Objet clé | Écarte les flammes du fourneau de Mt. Five Element | DSR Ch. 5 ; PTBR glossario.md (nom) | 📖 | **Progression** |

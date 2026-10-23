@@ -13,9 +13,9 @@ Cahier des charges complet : [Prompt_archipelago_dbz.md](Prompt_archipelago_dbz.
 - Quand il doit faire quelque chose (jouer, état de sauvegarde, lire une valeur) : instructions numérotées, puis on attend son retour.
 
 ## État actuel
-- **Phase en cours : 0 — Installation** (voir le tableau des phases dans le cahier des charges, §9).
-- Fait : dépôt Git, sources d'Archipelago 0.6.8 + venv dans WSL, lien symbolique du world, génération de seed vérifiée, fichiers de recherche créés.
-- Reste (à faire par l'utilisateur) : mettre Archipelago Windows en 0.6.8 ; lancer la ROM dans BizHawk + tester la connexion du client.
+- **Phase 0 — Installation : terminée (2026-10-23).** Phase suivante : 1 — Recherche du contenu (à lancer avec l'accord de l'utilisateur). Tableau des phases : cahier des charges, §9.
+- Vérifié : dépôt GitHub privé, sources d'Archipelago 0.6.8 + venv dans WSL, lien symbolique du world vu par le chargeur, seed générée, `test/general` qui passe (376 tests) ; Archipelago Windows en 0.6.8 ; ROM DBZ lancée dans BizHawk ; client BizHawk connecté au script Lua (« No handler was found » : normal sans world).
+- Disponible : état de sauvegarde BizHawk en début de partie (`BizHawk…\NDS\State\Dragon Ball Z Attack of the Saiyans.MelonDS.QuickSave1.State`).
 - **Rappel avant la phase 3** : vérifier sur le Discord Archipelago que personne ne travaille déjà sur ce jeu.
 
 ## Environnement

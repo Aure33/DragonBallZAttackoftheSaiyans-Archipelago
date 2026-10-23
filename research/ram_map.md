@@ -59,10 +59,25 @@ La **sauvegarde** (`.SaveRAM`, 8 Ko) n'est pas chiffrée : signature `mDBZ`, 2 c
 | Fiches des personnages | `0x0CD300` (+ `0x24C` par personnage) | `0x020CD300` | 0x24C par personnage | Commence par PV actuels, PV max, ki actuel, ki max (4 octets chacun) | 🟡 | PV/ki de la sauvegarde (445/148, 290/95, 660/225) retrouvés dans la photo 07 | 2026-10-23 |
 
 ## 3. Drapeaux de coffres
-Pas encore trouvés. Il y a 6 octets drapeaux (0 → 1) juste après l'inventaire : `0x0CC542`, `0x0CC548`, `0x0CC572`, `0x0CC584`, `0x0CC587`, `0x0CC5E1`. C'est trop peu pour 8 coffres + l'histoire de l'île. `0x0CC584` passe à 1 au moment du 1er Petit haricot (❓). Pour la Plume de phénix, aucun drapeau propre n'a été trouvé dans la zone de la partie en cours. Prochaine expérience : 3 photos rapprochées autour d'un seul coffre, puis en quittant l'écran (le drapeau n'est peut-être écrit qu'au changement d'écran).
+**Bloc des drapeaux permanents** : Main RAM `0x09F7E8`–`0x09FB47` (DS `0x0209F7E8`), 0x360 octets = 6912 drapeaux d'un bit.
+C'est une copie exacte de la zone `0x010`–`0x36F` de la sauvegarde (861/864 octets identiques sur la photo 07, prise au même moment que la sauvegarde).
+**N° de drapeau** = (adresse − `0x09F7E8`) × 8 + n° de bit (bit 0 = valeur 0x01).
+Le bit passe à 1 **au moment même** où l'on ouvre le coffre (photos 08 → 09, 12 s d'écart : seul ce bit et la quantité de l'objet ont changé dans la zone de jeu).
+
+| Élément | Drapeau | Adresse (Main RAM) | Bit | Statut | Comment trouvé | Date |
+|---|---|---|---|---|---|---|
+| Île d'entraînement : 1er Petit haricot ouvert par le joueur | 1401 | `0x09F897` | 1 | ✅ | 0 → 1 dans les 2 parties (photos 01→03 et 08→09), en même temps que Petit haricot 5 → 6 | 2026-10-23 |
+| Île d'entraînement : Plume de phénix | 1402 | `0x09F897` | 2 | 🟡 | 0 → 1 entre les photos 05 et 06, en même temps que Plume de phénix 0 → 1 | 2026-10-23 |
+| Île d'entraînement : 4 autres coffres des écrans 1 et 2 (Capsule 50 PV, Petit haricot, Haricot moyen, Petit haricot) | 1400, 1403, 1404, 1405 | `0x09F897` | 0, 3, 4, 5 | 🟡 | À 1 seulement après l'île (photo 07) ; quel bit = quel coffre : pas encore établi | 2026-10-23 |
+| Île d'entraînement : 2 coffres après l'appel de Bulma (Masque à gaz, Carte d'obscurité) | 1583, 1584 | `0x09F8AD` / `0x09F8AE` | 7 / 0 | ❓ | Seuls autres drapeaux consécutifs allumés pendant l'île ; l'attribution est une déduction | 2026-10-23 |
+
+Les coffres sont mis en place par les scripts de carte (`script/cf0/<zone>/<carte>.sb`, fonctions `TreasureInit_<zone>` et `TreasureSet_<carte>`). Les décoder donnerait la liste de tous les coffres du jeu avec leur drapeau (phase 6).
+
+Les 6 octets 0 → 1 vus juste après l'inventaire (`0x0CC542`, `0x0CC548`, `0x0CC572`, `0x0CC584`, `0x0CC587`, `0x0CC5E1`) ne sont **pas** des coffres. Ce sont d'autres drapeaux (histoire, tutoriels ?), à classer plus tard.
 
 ## 4. Drapeaux d'histoire, quêtes, boss
-_(phase 2)_
+Même bloc que les coffres (§3). Drapeaux allumés pendant le prologue, hors coffres (photo 01 → photo 07) : 11, 12, 15, 20, 55, 60, 1703, 2529, 2530, 2600, 2601, 2647, 2667, 2683, 4304, 4305, 4312, 4313, 4320–4322, 4328–4330, 4335 (❓, à classer). Déjà allumés avant l'île : 0, 5, 10, 1700, 1701, 2528, 2659, 3200.
+Le drapeau de victoire contre Jackie Choun en fait sans doute partie (à isoler).
 
 ## 5. Techniques par personnage
 _(phase 2)_

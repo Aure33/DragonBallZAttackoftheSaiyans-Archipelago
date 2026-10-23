@@ -48,3 +48,12 @@ Format : date — décision — raison. Les décisions les plus récentes en bas
 | C6 | La ROM contient bien **7** Dragon Balls (objets clés One-Star à Seven-Star Ball) | Tranche le désaccord DSR (7) / LP (6) |
 | C7 | Les « S-Combo memo » des guides ne sont **pas** des objets dans les tables de la ROM. Les 20 S-Combos ont leur propre table (`cf_mes_COMBO`) | Un memo apprend sans doute le combo directement. À vérifier en jeu, car ça décide si un memo peut devenir un objet Archipelago |
 | C8 | Chaque zone de la carte du monde a un **code de carte** interne (ex. `kam01_00` = Kame House, `tut01_00` = Training Island) | Piste pour la phase 2 : chercher ce code (ou son numéro) en mémoire pour savoir où se trouve le joueur |
+
+## 2026-10-23 — Phase 2 (carte mémoire)
+
+| # | Décision / constat | Raison |
+|---|---|---|
+| C9 | **Correction de C5** : le numéro interne d'un objet n'est pas toujours son numéro de texte. Il faut passer par les tables de données (`Use_Item`…), voir `ram_map.md` §2 | Le texte n° 29 n'est pas utilisé, ce qui décale tous les objets suivants. Les identifiants du world devront venir des tables de données |
+| D17 | Le client détectera l'ouverture d'un coffre grâce à son **drapeau** (bloc `0x0209F7E8`, bit allumé à l'instant de l'ouverture). Pour retirer l'objet d'origine (approche A), il regardera **quel objet vient d'augmenter** dans l'inventaire | Pas besoin de connaître à l'avance le contenu de chaque coffre. Le guide sert seulement à nommer les lieux |
+| D18 | La liste complète des coffres du jeu (drapeau + contenu) sera tirée des scripts de carte `TreasureSet_*` (phase 6) plutôt que d'observations en jeu | Une seule extraction au lieu de rejouer chaque zone |
+| D19 | Les photos mémoire se prennent avec `dump_ram.lua`, déclenché par les états de sauvegarde (`Shift+F<n>`) | Le moins de manipulations possible pour le joueur. Les fichiers `.State` ne sont pas exploitables (le cœur n'y garde que les pages modifiées) |

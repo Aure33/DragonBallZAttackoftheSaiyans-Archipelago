@@ -25,7 +25,7 @@ Only one BizHawk Client can talk to BizHawk at a time: close any other BizHawk C
 
 ## Known limitations
 
-- Chests still show their original item when opened; the client removes it from your inventory right away.
-  If a chest is opened while the client is not connected, you keep that original item.
+- Chests and hidden spots still show their original item; the client removes it from your inventory right away.
+  If you take one while the client is not connected, you keep that original item.
 - Received items are added while you are on the field; during a battle they wait until it ends.
 - Received items are only added to your inventory: use the Ki-Blast Fruits and equip the Gas Mask yourself.

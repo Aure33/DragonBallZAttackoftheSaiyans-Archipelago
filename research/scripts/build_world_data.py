@@ -1,17 +1,17 @@
-"""Construit les données des coffres du world à partir de la ROM (coffres) et du guide DSR (chapitre).
+"""Construit les données des lieux du world à partir de la ROM (coffres, objets à examiner) et du guide DSR.
 
 Usage (après extract_chests.py, qui écrit research/extracted/chests.json) :
     python3 research/scripts/build_world_data.py
 
 Écrit :
-- research/chests.md : tous les coffres de la ROM, avec le chapitre, la source et ceux mis de côté ;
-- worlds/dbz_aots/chest_data.py : les coffres retenus pour le world (fichier généré, ne pas modifier à la main).
+- research/chests.md : tous les lieux trouvés dans la ROM, avec le chapitre, la source et ceux mis de côté ;
+- worlds/dbz_aots/location_data.py : les lieux retenus pour le world (fichier généré, ne pas modifier à la main).
 
-Règle d'association : un coffre de la ROM (préfixe de carte → zone) est relié à la ligne du guide DSR
+Règle d'association : un lieu de la ROM (carte → zone) est relié à la ligne du guide DSR
 (research/game_data.md, « Tous les objets ramassables ») de la même zone et du même objet. Le chapitre du coffre
 est celui de cette ligne : c'est le moment où l'auteur du guide l'a réellement ouvert, donc une condition
 suffisante (histoire + niveau de Ki Blast de ce moment-là). « Fin de jeu » = chapitre 15, avant le combat final.
-Un coffre sans ligne DSR est mis de côté (pas de lieu Archipelago) jusqu'à vérification.
+Un lieu sans ligne DSR est mis de côté (pas de lieu Archipelago) jusqu'à vérification.
 """
 from __future__ import annotations
 
@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parent.parent.parent
 CHESTS_JSON = ROOT / "research" / "extracted" / "chests.json"
 GAME_DATA = ROOT / "research" / "game_data.md"
 CHESTS_MD = ROOT / "research" / "chests.md"
-WORLD_DATA = ROOT / "worlds" / "dbz_aots" / "chest_data.py"
+WORLD_DATA = ROOT / "worlds" / "dbz_aots" / "location_data.py"
 
 # Préfixe de carte → (nom de zone du world (EN, ROM EU), zones correspondantes dans le guide DSR).
 ZONES: dict[str, tuple[str, tuple[str, ...]]] = {
@@ -56,9 +56,17 @@ ZONES: dict[str, tuple[str, tuple[str, ...]]] = {
     "mut": ("Mutaito Training Grounds", ("Mutaito's Grounds",)),
     "nap": ("Paprika Wasteland", ("Paprika Wasteland",)),
     "las": ("Gizard Wasteland", ("Gizard Wasteland",)),
-    "est": ("East City Ruins", ("East City", "East City Ruins")),
+    "est": ("East City", ("East City",)),
     "ges": ("Sewer", ()),
+    "kam": ("Kame House", ("Kame House",)),
+    "bud": ("Martial Arts Temple", ("Martial Arts Temple",)),
+    "ura": ("Baba's Palace", ("Baba's Palace",)),
+    "gok": ("Goku's House", ("East Mt. Paozu",)),
+    "kar": ("Korin Tower", ("Korin Tower",)),
+    "hel": ("Underworld", ("Underworld",)),
 }
+# East City est détruite au chapitre 10 : ses écrans 7 à 9 sont les Ruines, qui n'ouvrent qu'avec les Dragon Balls.
+EAST_CITY_RUINS = ("East City Ruins", ("East City Ruins",))
 BONUS_ZONES = {"East City Ruins"}  # 7 Dragon Balls + vœu « To Go Somewhere New » (DSR Odds-and-Ends)
 # Coffres connus sans ligne DSR (l'en-tête « Items » du prologue les oublie ; vus en jeu le 2026-10-23).
 KNOWN_WITHOUT_DSR = {1583: "Prologue", 1584: "Prologue"}
@@ -96,7 +104,7 @@ def match(chests: list[dict], rows: list[dict]) -> dict[int, dict | None]:
     left = {row["n"]: row["qty"] for row in rows}
     found: dict[int, dict | None] = {}
     for chest in sorted(chests, key=lambda c: c["flag"]):
-        zones = ZONES[chest["function"].removeprefix("TreasureSet_")[:3]][1]
+        zones = zone_of(chest["map"])[1]
         candidates = [row for row in rows if row["zone"] in zones and left[row["n"]] > 0]
         exact = [row for row in candidates if normalize(row["item"]) == normalize(chest["EN"])]
         # Le guide colle parfois deux objets (« Large Beam Ki Drink Z ») ou abrège (« HP Capsule », « Bushido »).
@@ -107,6 +115,12 @@ def match(chests: list[dict], rows: list[dict]) -> dict[int, dict | None]:
             left[row["n"]] -= 1
         found[chest["flag"]] = row
     return found
+
+
+def zone_of(map_code: str) -> tuple[str, tuple[str, ...]]:
+    if map_code[:3] == "est" and int(map_code[3:5]) >= 7:
+        return EAST_CITY_RUINS
+    return ZONES[map_code[:3]]
 
 
 def screen(map_code: str) -> str:
@@ -120,22 +134,24 @@ def main() -> None:
     matches = match(chests, rows)
     kept, set_aside = [], []
     for chest in sorted(chests, key=lambda c: c["flag"]):
-        map_code = chest["function"].removeprefix("TreasureSet_")
-        zone = ZONES[map_code[:3]][0]
+        map_code = chest["map"]
+        zone = zone_of(map_code)[0]
         row = matches[chest["flag"]]
         if row is None and chest["flag"] not in KNOWN_WITHOUT_DSR:
             set_aside.append((chest, map_code, zone))
             continue
         chapter = chapter_number(row["chapter"] if row else KNOWN_WITHOUT_DSR[chest["flag"]])
         source = f"DSR n° {row['n']} ({row['chapter']}, {row['zone']})" if row else "OBS 2026-10-23 (DSR Prologue, texte)"
-        kept.append({"flag": chest["flag"], "map": map_code, "zone": zone, "item": chest["EN"], "fr": chest["FR"],
+        kept.append({"kind": chest["kind"], "flag": chest["flag"], "map": map_code, "zone": zone, "item": chest["EN"], "fr": chest["FR"],
                      "category": chest["category"], "index": chest["index"], "chapter": chapter,
                      "bonus": zone in BONUS_ZONES, "source": source})
 
-    # Noms de lieux : « <zone> <écran> - <objet d'origine> Chest », numérotés si répétés sur le même écran.
+    # Noms de lieux : « <zone> <écran> - <objet d'origine> Chest » (coffre) ou « … - Hidden <objet> » (objet à
+    # examiner), numérotés si répétés sur le même écran.
     seen: Counter[str] = Counter()
     for chest in kept:
-        base = f"{chest['zone']} {screen(chest['map'])} - {chest['item']} Chest"
+        what = f"{chest['item']} Chest" if chest["kind"] == "chest" else f"Hidden {chest['item']}"
+        base = f"{chest['zone']} {screen(chest['map'])} - {what}"
         seen[base] += 1
         chest["name"] = base if seen[base] == 1 else f"{base} {seen[base]}"
     names = [chest["name"] for chest in kept]
@@ -143,18 +159,19 @@ def main() -> None:
     slots = {(c["category"], c["index"]): c["item"] for c in kept}
     assert len(set(slots.values())) == len(slots), "deux objets différents portent le même nom"
 
-    lines = ['"""Chests of the game, generated by research/scripts/build_world_data.py: do not edit by hand.',
+    lines = ['"""Locations of the game, generated by research/scripts/build_world_data.py: do not edit by hand.',
              "",
-             "Each chest comes from a CreateBox call in the ROM map scripts (research/chests.md); its chapter is the",
-             "one where the DSR guide opened it (story progress and Ki Blast level known to be enough).",
+             "Chests come from CreateBox calls in the ROM map scripts, hidden items from flagged GetItem calls",
+             "(research/chests.md). The chapter is the one where the DSR guide got the item (story progress and Ki",
+             "Blast level known to be enough).",
              '"""',
              "from typing import NamedTuple",
              "",
              "",
-             "class ChestData(NamedTuple):",
+             "class LocationData(NamedTuple):",
              "    name: str",
              "    flag: int",
-             '    """Game flag set when the chest is opened (research/ram_map.md, section 3)."""',
+             '    """Game flag set when the item is taken (research/ram_map.md, section 3)."""',
              "    item: str",
              '    """Original contents, put in the item pool."""',
              "    chapter: int",
@@ -163,34 +180,36 @@ def main() -> None:
              '    """Needs the 7 Dragon Balls (East City Ruins), only included by an option."""',
              "",
              "",
-             "CHESTS: tuple[ChestData, ...] = ("]
+             "LOCATIONS: tuple[LocationData, ...] = ("]
     for c in kept:
-        lines.append(f"    ChestData({c['name']!r}, {c['flag']}, {c['item']!r}, {c['chapter']}, {c['bonus']}),")
-    lines += [")", "", "# Inventory slot of each chest item: (category, number in the game's data table).",
+        lines.append(f"    LocationData({c['name']!r}, {c['flag']}, {c['item']!r}, {c['chapter']}, {c['bonus']}),")
+    lines += [")", "", "# Inventory slot of each item found at a location: (category, number in the game's data table).",
               "ITEM_SLOTS: dict[str, tuple[int, int]] = {"]
     for (category, index), item in sorted(slots.items()):
         lines.append(f"    {item!r}: ({category}, {index}),")
     lines.append("}")
     WORLD_DATA.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
-    out = ["# Coffres du jeu (extraits de la ROM)", "",
+    out = ["# Coffres et objets à examiner du jeu (extraits de la ROM)", "",
            "Généré par [scripts/build_world_data.py](scripts/build_world_data.py) à partir de",
-           "[scripts/extract_chests.py](scripts/extract_chests.py) (appels `CreateBox` des scripts de carte) et des",
+           "[scripts/extract_chests.py](scripts/extract_chests.py) (appels `CreateBox` et `GetItem` des scripts) et des",
            "lignes du guide DSR de [game_data.md](game_data.md). Ne pas modifier à la main.", "",
-           f"**{len(chests)} coffres** dans la ROM : {len(kept)} retenus pour le world "
+           f"**{sum(c['kind'] == 'chest' for c in chests)} coffres et {sum(c['kind'] == 'examine' for c in chests)} "
+           f"objets à examiner** dans la ROM : {len(kept)} retenus pour le world "
            f"(dont {sum(c['bonus'] for c in kept)} en option « bonus »), {len(set_aside)} mis de côté.", "",
-           "## Coffres retenus", "",
+           "## Lieux retenus", "",
            "| Drapeau | Carte | Lieu (world) | Objet FR | Chapitre | Bonus | Source |",
            "|---|---|---|---|---|---|---|"]
     for c in kept:
         out.append(f"| {c['flag']} | `{c['map']}` | {c['name']} | {c['fr']} | {c['chapter']} | "
                    f"{'oui' if c['bonus'] else ''} | {c['source']} |")
-    out += ["", "## Coffres mis de côté (pas de ligne DSR : accès et chapitre inconnus, à vérifier en jeu)", "",
-            "| Drapeau | Carte | Zone | Objet EN | Objet FR |", "|---|---|---|---|---|"]
+    out += ["", "## Lieux mis de côté (pas de ligne DSR : accès et chapitre inconnus, à vérifier en jeu)", "",
+            "| Drapeau | Type | Carte | Zone | Objet EN | Objet FR |", "|---|---|---|---|---|---|"]
     for chest, map_code, zone in set_aside:
-        out.append(f"| {chest['flag']} | `{map_code}` | {zone} | {chest['EN']} | {chest.get('FR', '')} |")
+        kind = "coffre" if chest["kind"] == "chest" else "à examiner"
+        out.append(f"| {chest['flag']} | {kind} | `{map_code}` | {zone} | {chest['EN']} | {chest.get('FR', '')} |")
     CHESTS_MD.write_text("\n".join(out) + "\n", encoding="utf-8")
-    print(f"{len(kept)} coffres retenus, {len(set_aside)} mis de côté")
+    print(f"{len(kept)} lieux retenus, {len(set_aside)} mis de côté")
 
 
 if __name__ == "__main__":

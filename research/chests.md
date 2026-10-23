@@ -1,12 +1,12 @@
-# Coffres du jeu (extraits de la ROM)
+# Coffres et objets à examiner du jeu (extraits de la ROM)
 
 Généré par [scripts/build_world_data.py](scripts/build_world_data.py) à partir de
-[scripts/extract_chests.py](scripts/extract_chests.py) (appels `CreateBox` des scripts de carte) et des
+[scripts/extract_chests.py](scripts/extract_chests.py) (appels `CreateBox` et `GetItem` des scripts) et des
 lignes du guide DSR de [game_data.md](game_data.md). Ne pas modifier à la main.
 
-**219 coffres** dans la ROM : 200 retenus pour le world (dont 6 en option « bonus »), 19 mis de côté.
+**219 coffres et 19 objets à examiner** dans la ROM : 215 retenus pour le world (dont 6 en option « bonus »), 23 mis de côté.
 
-## Coffres retenus
+## Lieux retenus
 
 | Drapeau | Carte | Lieu (world) | Objet FR | Chapitre | Bonus | Source |
 |---|---|---|---|---|---|---|
@@ -31,6 +31,7 @@ lignes du guide DSR de [game_data.md](game_data.md). Ne pas modifier à la main.
 | 1422 | `snd02_00` | Desert 2 - Evasion Crest Chest | Blason esquive | 10 |  | DSR n° 132 (Ch. 10, Desert) |
 | 1423 | `snd03_00` | Desert 3 - Phoenix Tail Feather Chest | Plume queue phénix | 10 |  | DSR n° 131 (Ch. 10, Desert) |
 | 1424 | `snd05_00` | Desert 5 - Ninja Sandals Chest | Sandales ninja | 10 |  | DSR n° 133 (Ch. 10, Desert) |
+| 1425 | `snd06_00` | Desert 6 - Empty Capsule Chest | Capsule vide | 10 |  | DSR n° 134 (Ch. 10, Desert) |
 | 1427 | `mas03_00` | Muscle Tower 3 - Senzu Bean Chest | Haricot senzu | 10 |  | DSR n° 135 (Ch. 10, Muscle Tower) |
 | 1428 | `mas04_00` | Muscle Tower 4 - Double Capsule 50 Chest | Capsule double 50 | 10 |  | DSR n° 136 (Ch. 10, Muscle Tower) |
 | 1429 | `mas05_00` | Muscle Tower 5 - Energy Necklace Chest | Collier énergie | 10 |  | DSR n° 137 (Ch. 10, Muscle Tower) |
@@ -210,27 +211,45 @@ lignes du guide DSR de [game_data.md](game_data.md). Ne pas modifier à la main.
 | 1621 | `for04_00` | Yemma Forest 4 - Sleep Bracelet Chest | Bracelet dodo | 9 |  | DSR n° 117 (Ch. 9, Yemma Forest) |
 | 1622 | `for04_00` | Yemma Forest 4 - Super Sacred Water Chest | Eau super sacrée | 13 |  | DSR n° 201 (Ch. 13, Yemma Forest) |
 | 1623 | `for04_00` | Yemma Forest 4 - Guard Sense Chest | Sens parade | 13 |  | DSR n° 202 (Ch. 13, Yemma Forest) |
+| 3200 | `kam03_00` | Kame House 3 - Hidden Luck Fruit | Fruit chance | 0 |  | DSR n° 1 (Prologue, Kame House) |
+| 3201 | `est01_00` | East City 1 - Hidden Skill Fruit | Fruit technique | 1 |  | DSR n° 7 (Ch. 1, East City) |
+| 3202 | `est03_00` | East City 3 - Hidden Speed Fruit | Fruit vitesse | 1 |  | DSR n° 8 (Ch. 1, East City) |
+| 3204 | `bud03_01` | Martial Arts Temple 3-1 - Hidden Speed Fruit | Fruit vitesse | 4 |  | DSR n° 18 (Ch. 4, Martial Arts Temple) |
+| 3205 | `bud04_00` | Martial Arts Temple 4 - Hidden Ki Fruit | Fruit ki | 4 |  | DSR n° 19 (Ch. 4, Martial Arts Temple) |
+| 3207 | `wst04_00` | West City 4 - Hidden Defense Fruit | Fruit défense | 8 |  | DSR n° 53 (Ch. 8, West City) |
+| 3209 | `ura03_00` | Baba's Palace 3 - Hidden Power Fruit | Fruit puissance | 5 |  | DSR n° 21 (Ch. 5, Baba's Palace) |
+| 3211 | `gok02_00` | Goku's House 2 - Hidden Recovery Fruit | Fruit récupération | 8 |  | DSR n° 69 (Ch. 8, East Mt. Paozu) |
+| 3214 | `jin03_00` | Jingle Village 3 - Hidden HP Fruit | Fruit PV | 8 |  | DSR n° 59 (Ch. 8, Jingle Village) |
+| 3218 | `skr06_00` | Sacred Land of Korin 6 - Hidden Ki Fruit | Fruit ki | 8 |  | DSR n° 87 (Ch. 8, Sacred Land of Korin) |
+| 3220 | `kar01_00` | Korin Tower 1 - Hidden Power Fruit | Fruit puissance | 8 |  | DSR n° 89 (Ch. 8, Korin Tower) |
+| 3221 | `sen04_00` | Hermit Spring 4 - Hidden Defense Fruit | Fruit défense | 8 |  | DSR n° 95 (Ch. 8, Hermit Spring) |
+| 3225 | `kos04_00` | King Kai's Planet 4 - Hidden Finisher Bean | Haricot finisseur | 9 |  | DSR n° 108 (Ch. 9, King Kai's Planet) |
+| 3232 | `pir07_00` | Pilaf's Castle 7 - Hidden Skill Fruit | Fruit technique | 10 |  | DSR n° 170 (Ch. 10, Pilaf Castle) |
 
-## Coffres mis de côté (pas de ligne DSR : accès et chapitre inconnus, à vérifier en jeu)
+## Lieux mis de côté (pas de ligne DSR : accès et chapitre inconnus, à vérifier en jeu)
 
-| Drapeau | Carte | Zone | Objet EN | Objet FR |
-|---|---|---|---|---|
-| 1425 | `snd06_00` | Desert | ? code 330 |  |
-| 1426 | `wst01_00` | West City | Speed Mark | Marque vitesse |
-| 1431 | `mas06_00` | Muscle Tower | Ki Fruit | Fruit ki |
-| 1432 | `mas08_00` | Muscle Tower | Ki Seed | Graine de Ki |
-| 1433 | `mas08_00` | Muscle Tower | Best Rice Cooker | Cuiseur ultime |
-| 1445 | `spi07_00` | Spinach Wastes | Attitude Belt | Ceinture attitude |
-| 1446 | `spi07_00` | Spinach Wastes | Speed Fruit | Fruit vitesse |
-| 1447 | `spi07_00` | Spinach Wastes | Hammock | Hamac |
-| 1448 | `spi07_00` | Spinach Wastes | Confrontation Brace | Bracelet leurre |
-| 1449 | `ges01_00` | Sewer | Ki-Blast Fruit | Fruit Kikoha |
-| 1450 | `ges02_00` | Sewer | Shenron's Nail | Griffe Sheron |
-| 1455 | `mut05_00` | Mutaito Training Grounds | Master's Secret | Secret maître |
-| 1505 | `kou06_00` | Break Wasteland | Kami's Eyes | Yeux de Dieu |
-| 1506 | `kou06_00` | Break Wasteland | All Recover | Récup. Totale |
-| 1526 | `kiu04_00` | Kiwi Volcano | Psyonic Bracelet | Bracelet psyonique |
-| 1550 | `sna03_00` | Princess Snake's House | Large Bean | Grand haricot |
-| 1551 | `sna06_00` | Princess Snake's House | Counter Bracelet | Bracelet contre |
-| 1588 | `pir05_00` | Pilaf's Castle | Ki-Blast Fruit | Fruit Kikoha |
-| 1608 | `mas08_00` | Muscle Tower | Recovery Necklace | Collier récupération |
+| Drapeau | Type | Carte | Zone | Objet EN | Objet FR |
+|---|---|---|---|---|---|
+| 1426 | coffre | `wst01_00` | West City | Speed Mark | Marque vitesse |
+| 1431 | coffre | `mas06_00` | Muscle Tower | Ki Fruit | Fruit ki |
+| 1432 | coffre | `mas08_00` | Muscle Tower | Ki Seed | Graine de Ki |
+| 1433 | coffre | `mas08_00` | Muscle Tower | Best Rice Cooker | Cuiseur ultime |
+| 1445 | coffre | `spi07_00` | Spinach Wastes | Attitude Belt | Ceinture attitude |
+| 1446 | coffre | `spi07_00` | Spinach Wastes | Speed Fruit | Fruit vitesse |
+| 1447 | coffre | `spi07_00` | Spinach Wastes | Hammock | Hamac |
+| 1448 | coffre | `spi07_00` | Spinach Wastes | Confrontation Brace | Bracelet leurre |
+| 1449 | coffre | `ges01_00` | Sewer | Ki-Blast Fruit | Fruit Kikoha |
+| 1450 | coffre | `ges02_00` | Sewer | Shenron's Nail | Griffe Sheron |
+| 1455 | coffre | `mut05_00` | Mutaito Training Grounds | Master's Secret | Secret maître |
+| 1505 | coffre | `kou06_00` | Break Wasteland | Kami's Eyes | Yeux de Dieu |
+| 1506 | coffre | `kou06_00` | Break Wasteland | All Recover | Récup. Totale |
+| 1526 | coffre | `kiu04_00` | Kiwi Volcano | Psyonic Bracelet | Bracelet psyonique |
+| 1550 | coffre | `sna03_00` | Princess Snake's House | Large Bean | Grand haricot |
+| 1551 | coffre | `sna06_00` | Princess Snake's House | Counter Bracelet | Bracelet contre |
+| 1588 | coffre | `pir05_00` | Pilaf's Castle | Ki-Blast Fruit | Fruit Kikoha |
+| 1608 | coffre | `mas08_00` | Muscle Tower | Recovery Necklace | Collier récupération |
+| 2590 | à examiner | `hel02_00` | Underworld | Double Capsule Z | Capsule double Z |
+| 3203 | à examiner | `pao04_00` | Mt. Paozu | HP Fruit | Fruit PV |
+| 3206 | à examiner | `wst01_00` | West City | Finisher Bean | Haricot finisseur |
+| 3223 | à examiner | `sna06_00` | Princess Snake's House | Recovery Fruit | Fruit récupération |
+| 3233 | à examiner | `pir10_00` | Pilaf's Castle | Luck Fruit | Fruit chance |

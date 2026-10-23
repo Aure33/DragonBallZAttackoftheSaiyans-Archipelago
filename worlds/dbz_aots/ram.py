@@ -49,6 +49,9 @@ FLAGS = 0x09F7E8
 """Permanent event flags (chests, story...), one bit each; saved verbatim in the save file."""
 FLAGS_SIZE = 0x360
 
+CHAPTER_START_FLAGS = (55, 110, 165, 220, 275, 380, 435, 490, 595, 650, 755, 810, 865, 920, 1025)
+"""Story flags set when chapters 1 to 15 start (first scenes c0100_00 to c1500_00): research/ram_map.md, section 4."""
+
 GOAL_FLAG = 1050
 """Story flag set when scene c1505_00 starts, right after the last battle of the game (Vegeta, battle LAS_EB05 of
 scene c1504_01): research/ram_map.md, section 4."""

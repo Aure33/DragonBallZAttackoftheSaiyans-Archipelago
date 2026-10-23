@@ -88,7 +88,7 @@ Total prologue : 1 tiroir + 1 don + 8 coffres + 1 objet d'histoire (+ récompens
 | Bamboo Forest | **Coffre** après le passage caché et le dernier morceau de fourré | Fruit PV / HP Fruit | DSR Ch. 1 | 📖 |
 
 ### Liste exacte des coffres (ROM)
-Depuis la phase 6, la liste de référence des coffres est **[chests.md](chests.md)**, extraite des scripts de la ROM (219 coffres, drapeau et contenu d'origine), reliée ligne à ligne au tableau DSR ci-dessous pour le chapitre. Le tableau DSR reste la source pour les dons de PNJ, mémos, tiroirs et boutiques.
+Depuis la phase 6, la liste de référence des coffres et des objets à examiner (tiroirs, étals, portes) est **[chests.md](chests.md)**, extraite des scripts de la ROM (219 coffres + 19 objets à examiner, drapeau et contenu d'origine), reliée ligne à ligne au tableau DSR ci-dessous pour le chapitre. Le tableau DSR reste la source pour les dons de PNJ, mémos, tiroirs et boutiques.
 
 Conditions d'accès vérifiées (2026-10-24) :
 - **Ki-Blast Fruit** : description ROM « Raises the maximum size of the Ki-blast meter on the field map » (FR « Augmente la taille max. de la jauge de décharge d'énergie hors combat »). Le guide passe au niveau 2 après le 1er fruit (ch. 7) et au niveau 3 après le 2e (ch. 12). L'histoire exige le niveau 2 au ch. 8 (rocher sur le chemin d'East Mt. Paozu) et le niveau 3 au ch. 13 (portes de Yemma Forest). Il y a 4 fruits dans les coffres (`kou01`, `mut01`, `pir05`, `ges01`) ; le guide n'a pas vu les deux derniers.

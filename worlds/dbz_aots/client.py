@@ -11,7 +11,7 @@ from worlds._bizhawk.client import BizHawkClient
 
 from . import ram
 from .items import GAME_NAME, ITEM_NAME_TO_ID, item_slot
-from .locations import LOCATION_ID_BASE, LOCATION_NAME_TO_ID
+from .locations import LOCATION_ID_BASE, ORIGINAL_ITEM_LOCATION_IDS
 
 if TYPE_CHECKING:
     from worlds._bizhawk.context import BizHawkClientContext
@@ -20,7 +20,6 @@ logger = logging.getLogger("Client")
 
 MAP_CODE = re.compile(rb"[a-z]{3}\d\d_\d\d")
 IN_BATTLE = b"\xff\xff"
-CHEST_IDS = frozenset(LOCATION_NAME_TO_ID.values())
 ITEM_NAMES = {ap_id: name for name, ap_id in ITEM_NAME_TO_ID.items()}
 
 
@@ -130,9 +129,13 @@ class DbzAotsClient(BizHawkClient):
     async def take_back_original_items(
         self, ctx: BizHawkClientContext, map_code: bytes, flags: bytes, inventory: bytes
     ) -> bytes:
-        """Approach A of the design: a chest still gives its original item, the client removes it right after."""
+        """Approach A of the design: a location still gives its original item, the client removes it right after.
+
+        Story steps are left out: they give no item of their own, but a scene may give a key item at that moment.
+        """
         if self.previous_flags is not None and self.previous_inventory is not None and self.previous_map == map_code:
-            newly_opened = opened_locations(flags, CHEST_IDS) - opened_locations(self.previous_flags, CHEST_IDS)
+            newly_opened = (opened_locations(flags, ORIGINAL_ITEM_LOCATION_IDS)
+                            - opened_locations(self.previous_flags, ORIGINAL_ITEM_LOCATION_IDS))
             restore = original_items_to_take_back(self.previous_inventory, inventory, len(newly_opened))
             if newly_opened and not restore:
                 logger.info("A chest was opened but its original item could not be identified; it was kept")

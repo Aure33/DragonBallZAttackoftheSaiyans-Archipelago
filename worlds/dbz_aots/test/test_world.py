@@ -2,32 +2,42 @@ from collections import Counter
 
 from .bases import DbzAotsTestBase
 from .. import ram
-from ..chest_data import CHESTS
+from ..location_data import LOCATIONS
 from ..items import GAS_MASK, ITEM_NAME_TO_ID, ITEMS, KI_BLAST_FRUIT
-from ..locations import GOAL_EVENT, LOCATION_ID_BASE, LOCATION_NAME_TO_ID
+from ..locations import GOAL_EVENT, LOCATION_ID_BASE, LOCATION_NAME_TO_ID, STORY_LOCATIONS
 
 BONUS_CHEST = "East City Ruins 7 - Invigorate Ring Chest"
 
 
-def chests_of(locations) -> list[str]:
+def addresses_of(locations) -> list[str]:
     return [location.name for location in locations if location.address is not None]
 
 
 class TestDefaultWorld(DbzAotsTestBase):
     def test_bonus_chests_are_left_out(self) -> None:
-        chests = chests_of(self.multiworld.get_locations(self.player))
-        self.assertEqual(len([chest for chest in CHESTS if not chest.bonus]), len(chests))
-        self.assertNotIn(BONUS_CHEST, chests)
+        names = addresses_of(self.multiworld.get_locations(self.player))
+        self.assertEqual(len([data for data in LOCATIONS if not data.bonus]) + len(STORY_LOCATIONS), len(names))
+        self.assertNotIn(BONUS_CHEST, names)
 
     def test_pool_is_the_original_contents(self) -> None:
         pool = Counter(item.name for item in self.multiworld.itempool if item.player == self.player)
-        self.assertEqual(Counter(chest.item for chest in CHESTS if not chest.bonus), pool)
+        expected = Counter(data.item for data in LOCATIONS if not data.bonus)
+        expected[self.world.get_filler_item_name()] += len(STORY_LOCATIONS)  # story steps hold filler
+        self.assertEqual(expected, pool)
+
+    def test_story_steps_follow_the_chapter_requirements(self) -> None:
+        self.assertEqual(15, len(STORY_LOCATIONS))
+        self.assertTrue(self.can_reach_location("Prologue Cleared"))
+        self.assertFalse(self.can_reach_location("Chapter 7 Cleared"))
+        self.collect_by_name(GAS_MASK)
+        self.assertTrue(self.can_reach_location("Chapter 7 Cleared"))
+        self.assertFalse(self.can_reach_location("Chapter 8 Cleared"))
 
     def test_chapters_before_spinach_wastes_need_nothing(self) -> None:
-        for chest in CHESTS:
-            if chest.chapter < 6:
-                with self.subTest(chest.name):
-                    self.assertTrue(self.can_reach_location(chest.name))
+        for data in LOCATIONS:
+            if data.chapter < 6:
+                with self.subTest(data.name):
+                    self.assertTrue(self.can_reach_location(data.name))
 
     def test_chapter_6_needs_the_gas_mask(self) -> None:
         self.assertFalse(self.can_reach_location("Spinach Wastes 1 - Large Bean Chest"))
@@ -59,7 +69,8 @@ class TestEastCityRuins(DbzAotsTestBase):
     options = {"east_city_ruins": True}
 
     def test_bonus_chests_are_included(self) -> None:
-        self.assertEqual(len(CHESTS), len(chests_of(self.multiworld.get_locations(self.player))))
+        self.assertEqual(len(LOCATIONS) + len(STORY_LOCATIONS),
+                         len(addresses_of(self.multiworld.get_locations(self.player))))
         self.assertTrue(self.multiworld.get_location(BONUS_CHEST, self.player).address)
 
 
@@ -84,7 +95,8 @@ class TestIds(DbzAotsTestBase):
         self.assertEqual(len(LOCATION_NAME_TO_ID), len(set(LOCATION_NAME_TO_ID.values())))
 
     def test_flags_fit_in_the_flag_block(self) -> None:
-        for chest in CHESTS:
-            with self.subTest(chest.name):
-                ram.flag_position(chest.flag)
-        ram.flag_position(ram.GOAL_FLAG)
+        for data in LOCATIONS:
+            with self.subTest(data.name):
+                ram.flag_position(data.flag)
+        for flag in (*ram.CHAPTER_START_FLAGS, ram.GOAL_FLAG):
+            ram.flag_position(flag)

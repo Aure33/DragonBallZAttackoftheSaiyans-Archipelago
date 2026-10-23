@@ -2,13 +2,14 @@
 
 ## Status
 
-This world is a work in progress. It covers the chests of the whole story: 200 of the 219 chests of the game.
-The 19 others are left untouched until their access is checked in game.
+This world is a work in progress. It covers the whole story: 201 of the 219 chests of the game, 14 hidden items
+and the end of each chapter. The other chests and hidden items are left untouched until their access is checked
+in game.
 
 ## What does randomization do to this game?
 
-The items found in chests are shuffled into the multiworld. Opening a chest sends a check; items received from
-other players are added directly to your inventory.
+The items found in chests and hidden spots are shuffled into the multiworld. Taking one sends a check; items
+received from other players are added directly to your inventory.
 
 ## What is the goal?
 
@@ -17,14 +18,19 @@ this battle starts. There is no save after the final battle, so do everything el
 
 ## Which locations are randomized?
 
-The chests of every area of the story, from Training Island to Gizard Wasteland: 194 chests.
+224 locations:
+
+- the chests of every area of the story, from Training Island to Gizard Wasteland (195);
+- the hidden items you get by examining a drawer, a stall, a door... (14);
+- the end of the prologue and of chapters 1 to 14 (15).
+
 The 6 chests of East City Ruins are added with the `east_city_ruins` option; reaching them needs the 7 Dragon
 Balls and Shenron's wish "To Go Somewhere New".
 
 ## Which items can be found?
 
-The original contents of those chests: healing items, stat fruits, accessories and capsules. Three of them matter
-for progression:
+The original contents of those chests and hidden spots: healing items, stat fruits, accessories and capsules,
+plus filler for the chapter ends. Three of them matter for progression:
 
 - **Gas Mask** (capsule): equip it to cross the gas floors of the story, from Spinach Wastes (chapter 6) onwards.
 - **Ki-Blast Fruit** (2 in the pool): use it from the Items menu to raise your Ki-blast meter. One fruit breaks the

@@ -42,6 +42,10 @@ Depuis `~/Coding/ArchipelagoRom/Archipelago` :
 # Tests limités à notre world (à vérifier en phase 3, quand le world existera)
 AP_TEST_WORLDS=dbz_aots .venv/bin/python -m pytest -q -n auto
 
+# Recherche : extraire les noms officiels (EN/US/FR) de la ROM -> research/rom_names.md
+# (depuis ce dépôt ; environnement research/.venv avec ndspy)
+research/.venv/bin/python research/scripts/extract_rom_names.py "/mnt/c/Users/Aurelien/Desktop/Jeu/SAve jeu/Rom DS/Dragon Ball Z Attack of the Saiyans.nds"
+
 # Construire le .apworld (sortie : build/apworlds/dbz_aots.apworld), puis le copier côté Windows
 .venv/bin/python Launcher.py "Build APWorlds" -- "Dragon Ball Z: Attack of the Saiyans"
 cp build/apworlds/dbz_aots.apworld /mnt/c/ProgramData/Archipelago/custom_worlds/
@@ -49,6 +53,7 @@ cp build/apworlds/dbz_aots.apworld /mnt/c/ProgramData/Archipelago/custom_worlds/
 
 ## Conventions
 - **Pas d'invention** : aucune adresse, aucun nom d'objet/zone/quête, aucune API sans source. Sinon on le dit et on propose comment vérifier.
+- Noms officiels du jeu (EN EU / US / FR) : [research/rom_names.md](research/rom_names.md), extraits de la ROM. Les noms du world = colonne EN (EU).
 - Sources : chaque donnée de jeu dans [research/game_data.md](research/game_data.md), chaque adresse dans [research/ram_map.md](research/ram_map.md), avec la façon dont elle a été trouvée.
 - Langues : code, noms d'objets/lieux et docs du world en **anglais** ; recherche, journal, ce fichier en **français**. Chaque donnée de jeu a un nom FR (écran) et EN (guides).
 - World : `worlds/dbz_aots/`, nom du jeu `Dragon Ball Z: Attack of the Saiyans`. Imports internes relatifs (`from .items import …`), imports d'Archipelago absolus (`from worlds.AutoWorld import World`).

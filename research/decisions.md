@@ -37,3 +37,14 @@ Format : date — décision — raison. Les décisions les plus récentes en bas
 | C2 | Le contenu bonus doit être fait **avant** le dernier combat contre Vegeta : il n'y a pas de sauvegarde après les crédits | Confirme D7 (victoire = dernier Vegeta). Les lieux bonus seront donc à option |
 | C3 | Les techniques s'achètent surtout avec les AP (2 viennent de l'histoire, les S-Combos viennent d'objets « memo ») | L'option « mélanger les techniques » ne pourra porter, au début, que sur les S-Combo memos |
 | C4 | Le randomizer existant (RND) ne s'occupe pas des coffres et ne donne aucun identifiant d'objet | Il ne nous aide pas pour la liste des lieux. Il pourra servir plus tard pour le format de données `bdat.bin` (patch, approche B) |
+
+## 2026-10-23 — Phase 1 : extraction des textes de la ROM
+
+| # | Décision / constat | Raison |
+|---|---|---|
+| D15 | Les noms d'objets et de lieux du world seront les noms **anglais de la ROM EU** (colonne « EN (EU) » de `rom_names.md`), pas ceux des guides | Ce sont les noms officiels de notre version. Les guides (US) ne servent plus qu'à trouver *où* sont les objets |
+| D16 | Les textes de la ROM sont extraits par un script (`research/scripts/extract_rom_names.py`, environnement `research/.venv` avec `ndspy` 4.2.0). Seuls les **noms** vont dans Git ; descriptions et dialogues restent dans `research/extracted/` (ignoré) | Pas de fichier du jeu dans le dépôt. Les noms, eux, sont de toute façon nécessaires dans `items.py` |
+| C5 | Le numéro de ligne d'un objet dans sa table (ex. `use_item_mes` n° 0 = Small Bean) est **probablement son identifiant interne**. À confirmer en phase 2, en lisant l'inventaire en mémoire | Ça simplifierait beaucoup le client : donner l'objet n = écrire n dans l'inventaire |
+| C6 | La ROM contient bien **7** Dragon Balls (objets clés One-Star à Seven-Star Ball) | Tranche le désaccord DSR (7) / LP (6) |
+| C7 | Les « S-Combo memo » des guides ne sont **pas** des objets dans les tables de la ROM. Les 20 S-Combos ont leur propre table (`cf_mes_COMBO`) | Un memo apprend sans doute le combo directement. À vérifier en jeu, car ça décide si un memo peut devenir un objet Archipelago |
+| C8 | Chaque zone de la carte du monde a un **code de carte** interne (ex. `kam01_00` = Kame House, `tut01_00` = Training Island) | Piste pour la phase 2 : chercher ce code (ou son numéro) en mémoire pour savoir où se trouve le joueur |

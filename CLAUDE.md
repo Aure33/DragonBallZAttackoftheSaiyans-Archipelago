@@ -13,7 +13,9 @@ Cahier des charges complet : [Prompt_archipelago_dbz.md](Prompt_archipelago_dbz.
 - Quand il doit faire quelque chose (jouer, état de sauvegarde, lire une valeur) : instructions numérotées, puis on attend son retour.
 
 ## État actuel
-- **Phase 4 — Client minimal : terminée (2026-10-23).** Phase suivante : 5 — Test réel (partie avec un autre jeu). Tableau des phases : cahier des charges, §9.
+- **Phase 6 — Extension : en cours (2026-10-23).** Tableau des phases : cahier des charges, §9.
+- **Phase 5 — Test réel : terminée (2026-10-23).** Seed DBZ + APQuest (2e joueur simulé par `/send_location` du serveur), jouée par Claude via la télécommande : checks, objets envoyés et reçus, objectif, `collect`, aucun doublon (`research/decisions.md`, C14).
+- **Phase 4 — Client minimal : terminée (2026-10-23).**
   - `client.py` : coffres → checks, retrait de l'objet d'origine, objets reçus hors combat, compteur dans la sauvegarde, objectif (arrivée en Ville est). 22 tests du world. Essai réel réussi (`research/decisions.md`, C11). World 0.2.0 installé côté Windows.
 - **Phase 3 — World minimal : terminée (2026-10-23).**
   - `worlds/dbz_aots` : Île d'entraînement, 8 coffres, objectif « Defeat Jackie Chun », 15 tests qui passent ; `.apworld` construit et testé (seed à 3 joueurs avec ChecksFinder et APQuest).
@@ -80,6 +82,7 @@ tools/live_test.sh server <dossier>/AP_xxx.archipelago
 tools/live_test.sh client
 tools/live_test.sh to-client "Aure"                 # nom du joueur, quand le client le demande
 tools/live_test.sh to-server "/send Aure Gas Mask"  # faire recevoir un objet
+tools/live_test.sh to-server "/send_location Ami Top Middle Chest"  # simuler l'autre joueur qui ouvre un coffre
 tools/live_test.sh logs
 python3 research/scripts/remote.py "read 0CC398 2"  # vérifier la mémoire
 ```

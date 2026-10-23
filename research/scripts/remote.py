@@ -27,7 +27,10 @@ def send(orders: list[str]) -> str:
         if done.exists():
             text = done.read_text(encoding="utf-8", errors="replace")
             if text.startswith("id " + command_id + "\n"):
-                (REMOTE_DIR / "cmd.txt").unlink(missing_ok=True)
+                try:
+                    (REMOTE_DIR / "cmd.txt").unlink(missing_ok=True)
+                except PermissionError:  # BizHawk relit le fichier au même instant : l'ordre suivant l'écrasera
+                    pass
                 return text.split("\n", 1)[1]
         time.sleep(0.2)
     raise TimeoutError("Pas de réponse de BizHawk : le script remote.lua tourne-t-il, émulation non en pause ?")

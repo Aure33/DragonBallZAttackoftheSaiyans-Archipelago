@@ -59,51 +59,60 @@ local function split(text)
     return words
 end
 
+-- Exécute un ordre instantané, ou prépare un ordre qui dure plusieurs images (press, wait, touch).
+local function run_order(words)
+    local order = words[1]
+    if order == "press" then
+        local buttons = {}
+        for button in words[2]:gmatch("[^+]+") do
+            buttons[button] = true
+        end
+        hold = { buttons = buttons, frames = tonumber(words[3]) or 1, release = 4 }
+    elseif order == "wait" then
+        waiting = tonumber(words[2]) or 1
+    elseif order == "shot" then
+        client.screenshot(REMOTE_DIR .. words[2] .. ".png")
+        note("shot " .. words[2] .. " ok")
+    elseif order == "dump" then
+        dump(words[2])
+    elseif order == "read" then
+        local bytes = memory.read_bytes_as_array(tonumber(words[2], 16), tonumber(words[3]), DOMAIN)
+        local hex = {}
+        for i = 1, #bytes do
+            hex[i] = string.format("%02X", bytes[i])
+        end
+        note("read " .. words[2] .. " : " .. table.concat(hex, " "))
+    elseif order == "save" then
+        savestate.saveslot(tonumber(words[2]))
+        note("save " .. words[2] .. " ok")
+    elseif order == "load" then
+        savestate.loadslot(tonumber(words[2]))
+        note("load " .. words[2] .. " ok")
+    elseif order == "touch" then
+        hold = { buttons = { Touch = true }, frames = tonumber(words[4]) or 2, release = 4,
+                 analog = { ["Touch X"] = tonumber(words[2]), ["Touch Y"] = tonumber(words[3]) } }
+    elseif order == "buttons" then
+        local names = {}
+        for name, _ in pairs(joypad.get()) do
+            names[#names + 1] = name
+        end
+        table.sort(names)
+        note("buttons : " .. table.concat(names, ", "))
+    elseif order == "frame" then
+        note("frame " .. emu.framecount())
+    elseif order ~= nil then
+        note("ordre inconnu : " .. order)
+    end
+end
+
 -- Exécute les ordres instantanés ; s'arrête sur un ordre qui dure plusieurs images.
+-- Un ordre mal écrit (ex. « press » sans bouton) est signalé dans le compte rendu au lieu d'arrêter le script.
 local function run_queue()
     while hold == nil and waiting == 0 and #queue > 0 do
-        local words = split(table.remove(queue, 1))
-        local order = words[1]
-        if order == "press" then
-            local buttons = {}
-            for button in words[2]:gmatch("[^+]+") do
-                buttons[button] = true
-            end
-            hold = { buttons = buttons, frames = tonumber(words[3]) or 1, release = 4 }
-        elseif order == "wait" then
-            waiting = tonumber(words[2]) or 1
-        elseif order == "shot" then
-            client.screenshot(REMOTE_DIR .. words[2] .. ".png")
-            note("shot " .. words[2] .. " ok")
-        elseif order == "dump" then
-            dump(words[2])
-        elseif order == "read" then
-            local bytes = memory.read_bytes_as_array(tonumber(words[2], 16), tonumber(words[3]), DOMAIN)
-            local hex = {}
-            for i = 1, #bytes do
-                hex[i] = string.format("%02X", bytes[i])
-            end
-            note("read " .. words[2] .. " : " .. table.concat(hex, " "))
-        elseif order == "save" then
-            savestate.saveslot(tonumber(words[2]))
-            note("save " .. words[2] .. " ok")
-        elseif order == "load" then
-            savestate.loadslot(tonumber(words[2]))
-            note("load " .. words[2] .. " ok")
-        elseif order == "touch" then
-            hold = { buttons = { Touch = true }, frames = tonumber(words[4]) or 2, release = 4,
-                     analog = { ["Touch X"] = tonumber(words[2]), ["Touch Y"] = tonumber(words[3]) } }
-        elseif order == "buttons" then
-            local names = {}
-            for name, _ in pairs(joypad.get()) do
-                names[#names + 1] = name
-            end
-            table.sort(names)
-            note("buttons : " .. table.concat(names, ", "))
-        elseif order == "frame" then
-            note("frame " .. emu.framecount())
-        elseif order ~= nil then
-            note("ordre inconnu : " .. order)
+        local line = table.remove(queue, 1)
+        local ok, problem = pcall(run_order, split(line))
+        if not ok then
+            note("ERREUR « " .. line .. " » : " .. tostring(problem))
         end
     end
     if hold == nil and waiting == 0 and #queue == 0 and current_id ~= nil then

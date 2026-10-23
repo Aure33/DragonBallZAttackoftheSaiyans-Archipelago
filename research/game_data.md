@@ -60,6 +60,7 @@ Ordre = ordre de première visite dans l'histoire (sous-titres du guide DSR). Le
 ## Coffres
 « Coffre » = tout ce qui donne un objet sur le terrain : coffres (« chest »), tiroirs, étals, portes, buissons, dons de PNJ. Le type est indiqué en tête de la description.
 Certains coffres sont cachés derrière des rochers/buissons : on maintient B pour charger une attaque Ki et casser les objets qui clignotent (LP Update 02). Certains obstacles exigent un niveau de Ki Blast plus élevé (2 ou 3), obtenu plus tard (DSR Ch. 2, 7, 8).
+Observé en jeu (OBS 2026-10-23, partie de test de la phase 5) : il faut être **collé** au rocher et tourné vers lui ; un tir ne part pas si le personnage affiché (Krilin) est **K.O.** ; les rochers bruns des coffres de l'Île d'entraînement (anneau de l'écran 1, chemin nord de l'écran 2) demandent **2 tirs chargés** (renseigné par le joueur, puis vérifié).
 
 ### Première zone : Prologue (Kame House + Training Island) — complet selon DSR, LP et IT
 | Zone | Description de l'emplacement | Contenu d'origine (FR / EN) | Source | Statut |

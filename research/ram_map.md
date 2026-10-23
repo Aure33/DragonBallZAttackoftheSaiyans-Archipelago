@@ -88,7 +88,7 @@ _(phase 2)_
 | Élément | Adresse (Main RAM) | Adresse DS | Sens | Statut | Comment trouvé | Date |
 |---|---|---|---|---|---|---|
 | **Code de la carte en cours** | `0x0D226C` | `0x020D226C` | 8 caractères ASCII, ex. `kam01_00` (Kame House), `tut01_00` (Île d'entraînement), `est01_00` (Ville est). **Tout à zéro quand aucune partie n'est chargée** (logos, écran titre) | ✅ | Photos 01, 07, île (carte/combat/menu), écran titre après « Power » | 2026-10-23 |
-| **En combat** | `0x09B236` | `0x0209B236` | 2 octets : `FF FF` en combat, `00 00` sur la carte et dans le menu. Vaut aussi `FF FF` sans partie chargée → toujours tester d'abord le code de carte | 🟡 | 3 photos en combat, 9 hors combat, écran titre | 2026-10-23 |
+| **En combat** | `0x09B236` | `0x0209B236` | 2 octets : `FF FF` en combat, `00 00` sur la carte et dans le menu (`01 00` sur l'écran 2 de l'île, `tut02_00` : la valeur hors combat n'est pas toujours 0). Vaut aussi `FF FF` sans partie chargée → toujours tester d'abord le code de carte | 🟡 | 3 photos en combat, 9 hors combat, écran titre | 2026-10-23 |
 | Menu ouvert | — | — | Aucun indicateur fiable trouvé (1 seule photo du menu) | ❓ | Photo r04_menu | 2026-10-23 |
 | Zone de données de combat | `0x0CC600`–`0x0CD200` | `0x020CC600` | Remplie seulement pendant un combat, à zéro sinon | 🟡 | Photos 02, r01_combat | 2026-10-23 |
 

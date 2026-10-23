@@ -60,3 +60,13 @@ Format : date — décision — raison. Les décisions les plus récentes en bas
 | D20 | Compteur d'objets reçus : **provisoirement** dans les 4 derniers octets du bloc de drapeaux (`0x0209FB44`), qui est enregistré dans la sauvegarde | Il survit à la sauvegarde et revient à la bonne valeur si le joueur recharge une ancienne partie. À confirmer (plus grand drapeau utilisé par le jeu) avant la partie avec les amis. Plan B : fichier côté client |
 | D21 | Le client n'agit que si le code de carte (`0x020D226C`) est valide, et ne donne les objets que hors combat (`0x0209B236` ≠ `FF FF`) | Évite d'écrire pendant les logos, l'écran titre ou un combat |
 | D22 | Expériences en jeu menées par Claude via la télécommande BizHawk (emplacements d'états 7, 8, 9 réservés à Claude ; 1, 2, 4 au joueur) | Le joueur ne veut pas faire les manipulations lui-même |
+
+## 2026-10-23 — Phase 3 (world minimal)
+
+| # | Décision / constat | Raison |
+|---|---|---|
+| C10 | Discord Archipelago vérifié par le joueur : personne ne travaille sur ce jeu. Seul un fil d'idées de 2025 existe (unknownCleric, 17/11/2025), qui propose en vérifications les coffres, les personnages, les Dragon Balls, les captures de l'Evil Containment Wave, les échanges de carottes. Il suggère comme objectifs Vegeta ou Broly (en boostant l'XP) | Pas de doublon. Idées à garder pour la phase 6 |
+| D4bis | **Nom du jeu : « Dragon Ball Z - Attack of the Saiyans »** (tiret au lieu des deux-points) | Le nom sert de nom de fichier pour la doc ; « : » est interdit sous Windows. C'est la convention de « Castlevania - Circle of the Moon » |
+| D23 | ID d'objet = 1000 × (catégorie + 1) + numéro interne ; ID de coffre = 100000 + n° de drapeau | Le client passe de l'ID à l'adresse mémoire par un simple calcul (`ram.inventory_address`, `ram.flag_position`) |
+| D24 | Les 8 lieux s'appellent « Training Island Chest 1 » à « 8 » (ordre des drapeaux), et le pool contient les 8 objets d'origine sans les relier à un coffre précis | Le lien drapeau ↔ coffre n'est connu que pour 2 coffres. On renommera quand les scripts `TreasureSet` seront décodés |
+| D25 | Objectif du world minimal : l'événement « Defeat Jackie Chun » (fin du prologue) | Seule zone couverte. La détection par le client reste à trouver (phase 4) |

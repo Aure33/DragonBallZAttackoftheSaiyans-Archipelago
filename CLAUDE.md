@@ -13,7 +13,10 @@ Cahier des charges complet : [Prompt_archipelago_dbz.md](Prompt_archipelago_dbz.
 - Quand il doit faire quelque chose (jouer, état de sauvegarde, lire une valeur) : instructions numérotées, puis on attend son retour.
 
 ## État actuel
-- **Phase 2 — Carte mémoire : terminée (2026-10-23).** Phase suivante : 3 — World minimal (après vérification Discord par l'utilisateur). Tableau des phases : cahier des charges, §9.
+- **Phase 3 — World minimal : terminée (2026-10-23).** Phase suivante : 4 — Client minimal. Tableau des phases : cahier des charges, §9.
+  - `worlds/dbz_aots` : Île d'entraînement, 8 coffres, objectif « Defeat Jackie Chun », 15 tests qui passent ; `.apworld` construit et testé (seed à 3 joueurs avec ChecksFinder et APQuest).
+  - Discord vérifié : personne ne travaille sur ce jeu.
+- **Phase 2 — Carte mémoire : terminée (2026-10-23).**
   - `ram_map.md` : en-tête ROM, inventaire, zénis, drapeaux (dont les 8 coffres de l'île), code de carte, combat, emplacement provisoire du compteur.
 - **Phase 1 — Recherche du contenu : terminée (2026-10-23).**
   - `game_data.md` : 40 zones, ~240 objets par zone (guide DSR), 42 boss, noms FR tirés de la ROM ; prologue vérifié en jeu (✅).
@@ -51,8 +54,8 @@ Depuis `~/Coding/ArchipelagoRom/Archipelago` :
 # Tests généraux d'Archipelago
 .venv/bin/python -m pytest test/general -q -n auto
 
-# Tests limités à notre world (à vérifier en phase 3, quand le world existera)
-AP_TEST_WORLDS=dbz_aots .venv/bin/python -m pytest -q -n auto
+# Tests limités à notre world (+ tests génériques appliqués au world) — voir le skill build-and-test
+AP_TEST_WORLDS=dbz_aots .venv/bin/python -m pytest -q -n auto -p no:cacheprovider
 
 # Recherche : extraire les noms officiels (EN/US/FR) de la ROM -> research/rom_names.md
 # (depuis ce dépôt ; environnement research/.venv avec ndspy)
@@ -61,9 +64,8 @@ research/.venv/bin/python research/scripts/extract_rom_names.py "/mnt/c/Users/Au
 # Télécommande BizHawk (remote.lua doit tourner dans la console Lua de BizHawk)
 python3 research/scripts/remote.py "shot ecran" "read 0CC398 8"   # capture -> dbz_research/remote/ecran.png
 
-# Construire le .apworld (sortie : build/apworlds/dbz_aots.apworld), puis le copier côté Windows
-.venv/bin/python Launcher.py "Build APWorlds" -- "Dragon Ball Z: Attack of the Saiyans"
-cp build/apworlds/dbz_aots.apworld /mnt/c/ProgramData/Archipelago/custom_worlds/
+# Construire le .apworld (build/apworlds/dbz_aots.apworld) ; --deploy le copie aussi côté Windows
+<ce dépôt>/tools/build_apworld.sh --deploy
 ```
 
 ## Conventions
@@ -71,7 +73,7 @@ cp build/apworlds/dbz_aots.apworld /mnt/c/ProgramData/Archipelago/custom_worlds/
 - Noms officiels du jeu (EN EU / US / FR) : [research/rom_names.md](research/rom_names.md), extraits de la ROM. Les noms du world = colonne EN (EU).
 - Sources : chaque donnée de jeu dans [research/game_data.md](research/game_data.md), chaque adresse dans [research/ram_map.md](research/ram_map.md), avec la façon dont elle a été trouvée.
 - Langues : code, noms d'objets/lieux et docs du world en **anglais** ; recherche, journal, ce fichier en **français**. Chaque donnée de jeu a un nom FR (écran) et EN (guides).
-- World : `worlds/dbz_aots/`, nom du jeu `Dragon Ball Z: Attack of the Saiyans`. Imports internes relatifs (`from .items import …`), imports d'Archipelago absolus (`from worlds.AutoWorld import World`).
+- World : `worlds/dbz_aots/`, nom du jeu `Dragon Ball Z - Attack of the Saiyans` (tiret, pas de « : »). ID objet = 1000 × (catégorie + 1) + numéro interne ; ID coffre = 100000 + drapeau. Imports internes relatifs (`from .items import …`), imports d'Archipelago absolus (`from worlds.AutoWorld import World`).
 - Python typé, style Archipelago (`docs/style.md` du clone). Toutes les adresses mémoire dans `ram.py`, commentées.
 - Vérifier l'API dans le clone 0.6.8, pas de mémoire.
 - Git : petits commits clairs. **Jamais** de ROM, sauvegarde, état de sauvegarde ou extrait de la ROM dans le dépôt (voir `.gitignore`).
@@ -79,6 +81,7 @@ cp build/apworlds/dbz_aots.apworld /mnt/c/ProgramData/Archipelago/custom_worlds/
 - À chaque fin de phase : mettre à jour ce fichier, `ram_map.md`, `game_data.md`, `decisions.md`.
 
 ## Agents et skills
-Créés au moment où leur phase arrive (cahier des charges §11) :
-- Phases 1–2 : agents `game-data-researcher`, `ram-researcher` ; skill `ram-diff`.
-- Phase 3+ : `apworld-dev`, `client-dev`, `logic-reviewer`, `tester` ; skills `add-location`, `add-item`, `build-and-test`, `playtest-checklist`.
+Créés au moment où leur phase arrive (cahier des charges §11), dans `.claude/agents/` et `.claude/skills/` :
+- Recherche : agents `game-data-researcher`, `ram-researcher` ; skill `ram-diff`.
+- World : agents `apworld-dev`, `logic-reviewer`, `tester` ; skills `build-and-test`, `add-location`, `add-item`.
+- À venir : agent `client-dev` (phase 4), skill `playtest-checklist` (phase 8).

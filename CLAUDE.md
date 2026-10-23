@@ -18,7 +18,8 @@ Cahier des charges complet : [Prompt_archipelago_dbz.md](Prompt_archipelago_dbz.
   - Étape 2 faite : world 0.4.0 = 224 lieux par défaut (195 coffres + 14 objets à examiner + 15 fins de chapitre), 230 avec l'option. 34 tests du world, 40 seeds sans échec. Décisions D34–D35, constats C21–C24.
   - Données : `research/chests.md` et `worlds/dbz_aots/location_data.py` sont **générés** (`extract_chests.py` puis `build_world_data.py`) ; ne pas les modifier à la main.
   - Étape 3 faite : zones manquables exclues de la progression (D36), groupes de lieux (D37). 96 tests, 60 seeds sans échec.
-  - Reste : 23 lieux mis de côté à vérifier, dons à plusieurs drapeaux (carottes, captures…), options (expérience…), voir le drapeau 1050 en jeu.
+  - Étape 4 faite : option `experience_multiplier` (1–10, D38), validée en jeu (exp. et PA triplés, montées de niveau faites par le jeu). World 0.5.0, 103 tests.
+  - Reste : 23 lieux mis de côté à vérifier, dons à plusieurs drapeaux (carottes, captures…), DeathLink ?, voir le drapeau 1050 en jeu.
 - **Phase 5 — Test réel : terminée (2026-10-23).** Seed DBZ + APQuest (2e joueur simulé par `/send_location` du serveur), jouée par Claude via la télécommande : checks, objets envoyés et reçus, objectif, `collect`, aucun doublon (`research/decisions.md`, C14).
 - **Phase 4 — Client minimal : terminée (2026-10-23).**
   - `client.py` : coffres → checks, retrait de l'objet d'origine, objets reçus hors combat, compteur dans la sauvegarde, objectif (arrivée en Ville est). 22 tests du world. Essai réel réussi (`research/decisions.md`, C11). World 0.2.0 installé côté Windows.

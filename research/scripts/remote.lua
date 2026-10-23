@@ -8,12 +8,14 @@
 --   shot <nom>                 capture d'écran -> REMOTE_DIR/<nom>.png
 --   dump <nom>                 photo de Main RAM -> DUMP_DIR/<nom>.bin
 --   read <adresse> <taille>    lire des octets de Main RAM (adresse en hexadécimal, ex. 0CC398)
+--   write <adresse> <octets>   écrire des octets en hexadécimal (ex. « write 0CDB80 C8 00 00 00 »)
 --   save <emplacement>         état de sauvegarde dans l'emplacement 0-9
 --   load <emplacement>         charger l'état de sauvegarde 0-9
 --   touch <x> <y> <images>     toucher l'écran tactile en (x, y)
 --   buttons                    lister les noms des boutons de la manette
 --   frame                      numéro de l'image en cours
--- Il ne fait qu'appuyer sur des boutons et LIRE la mémoire : aucune écriture dans la mémoire du jeu.
+-- Il n'écrit dans la mémoire du jeu que sur un ordre « write », réservé aux expériences de recherche dans les
+-- emplacements d'état de Claude (7, 8, 9), jamais dans une partie du joueur.
 -- Les états de sauvegarde faits à la main (Shift+F<n>) prennent toujours une photo mémoire, comme dump_ram.lua.
 
 local REMOTE_DIR = "C:/Users/Aurelien/Desktop/archipelago/dbz_research/remote/"
@@ -82,6 +84,13 @@ local function run_order(words)
             hex[i] = string.format("%02X", bytes[i])
         end
         note("read " .. words[2] .. " : " .. table.concat(hex, " "))
+    elseif order == "write" then
+        local bytes = {}
+        for i = 3, #words do
+            bytes[#bytes + 1] = tonumber(words[i], 16)
+        end
+        memory.write_bytes_as_array(tonumber(words[2], 16), bytes, DOMAIN)
+        note("write " .. words[2] .. " ok")
     elseif order == "save" then
         savestate.saveslot(tonumber(words[2]))
         note("save " .. words[2] .. " ok")

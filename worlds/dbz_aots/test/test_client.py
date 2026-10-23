@@ -1,7 +1,8 @@
 import unittest
 
 from .. import ram
-from ..client import flag_is_set, in_game, items_to_give, opened_locations, original_items_to_take_back
+from ..client import (Progress, battle_bonus, flag_is_set, in_game, items_to_give, opened_locations,
+                      original_items_to_take_back, read_progress)
 from ..items import ITEM_NAME_TO_ID
 from ..locations import LOCATION_NAME_TO_ID, ORIGINAL_ITEM_LOCATION_IDS
 
@@ -57,3 +58,40 @@ class TestClientLogic(unittest.TestCase):
 
     def test_unknown_item_is_skipped(self) -> None:
         self.assertEqual({}, items_to_give(bytes(ram.INVENTORY_SIZE), [99_999], 0))
+
+
+class TestExperienceMultiplier(unittest.TestCase):
+    # Seen in game (research/decisions.md, C26): Tien won 72 experience and 12 AP in one battle.
+    BEFORE = Progress(level=4, experience=597, to_next=294, ap=98)
+    AFTER = Progress(level=4, experience=669, to_next=222, ap=110)
+
+    def test_extra_gain(self) -> None:
+        self.assertEqual((144, 24, 0), battle_bonus(self.BEFORE, self.AFTER, 3, 0))
+
+    def test_multiplier_one_adds_nothing(self) -> None:
+        self.assertEqual((0, 0, 0), battle_bonus(self.BEFORE, self.AFTER, 1, 0))
+
+    def test_never_reaches_the_next_level(self) -> None:
+        # 72 * 9 = 648 wanted, but only 221 fit before the next level: the rest waits in reserve.
+        self.assertEqual((221, 108, 427), battle_bonus(self.BEFORE, self.AFTER, 10, 0))
+
+    def test_reserve_is_spent_after_the_next_battle(self) -> None:
+        self.assertEqual((144 + 50, 24, 0), battle_bonus(self.BEFORE, self.AFTER, 3, 50))
+
+    def test_level_up_counts_as_a_battle(self) -> None:
+        # Krillin, level 1 -> 2: the counter was reset by the level up.
+        before = Progress(level=1, experience=48, to_next=22, ap=8)
+        after = Progress(level=2, experience=120, to_next=100, ap=20)
+        self.assertEqual((72, 12, 0), battle_bonus(before, after, 2, 0))
+
+    def test_unrelated_changes_are_ignored(self) -> None:
+        loaded_state = Progress(level=4, experience=900, to_next=100, ap=98)
+        self.assertEqual((0, 0, 7), battle_bonus(self.BEFORE, loaded_state, 3, 7))
+        self.assertEqual((0, 0, 0), battle_bonus(self.AFTER, self.BEFORE, 3, 0))  # experience went down
+
+    def test_read_progress(self) -> None:
+        sheets = bytearray(ram.CHARACTER_SHEETS_SIZE)
+        tien = 4 * ram.CHARACTER_SHEET_SIZE
+        sheets[tien + ram.LEVEL_OFFSET] = 4
+        sheets[tien + ram.EXPERIENCE_OFFSET:tien + ram.EXPERIENCE_OFFSET + 12] = bytes.fromhex("55020000 26010000 62000000")
+        self.assertEqual(Progress(4, 597, 294, 98), read_progress(bytes(sheets))[4])

@@ -45,6 +45,19 @@ INVENTORY_SIZE = 0x130 + 108
 MAX_QUANTITY = 99
 """Highest quantity the client ever writes: a safety cap, the game's own limit has not been observed yet."""
 
+CHARACTER_SHEETS = 0x0CD308
+"""Max HP of Goku, start of the 6 character sheets (Goku, Gohan, Piccolo, Krillin, Tien, Yamcha): offsets below are
+relative to a sheet's max HP (research/ram_map.md, section 2)."""
+CHARACTER_SHEET_SIZE = 0x24C
+CHARACTER_COUNT = 6
+LEVEL_OFFSET = 0x60  # 1 byte
+EXPERIENCE_OFFSET = 0x194  # 4 bytes, total experience (shown in the menu, not used to level up)
+EXPERIENCE_TO_NEXT_OFFSET = 0x198  # 4 bytes; the game levels up when a battle brings it below 0
+AP_OFFSET = 0x19C  # 4 bytes
+CHARACTER_SHEETS_SIZE = (CHARACTER_COUNT - 1) * CHARACTER_SHEET_SIZE + AP_OFFSET + 4
+MAX_AP = 999_999
+"""Highest AP total the client ever writes: a safety cap, the game's own limit has not been observed yet."""
+
 FLAGS = 0x09F7E8
 """Permanent event flags (chests, story...), one bit each; saved verbatim in the save file."""
 FLAGS_SIZE = 0x360

@@ -58,6 +58,7 @@ La **sauvegarde** (`.SaveRAM`, 8 Ko) n'est pas chiffrée : signature `mDBZ`, 2 c
 
 | Élément | Adresse (Main RAM) | Adresse DS | Taille | Sens | Statut | Comment trouvé | Date |
 |---|---|---|---|---|---|---|---|
+| **Fiches des personnages** | `0x0CD9EC` + (n − 3) × `0x24C` (n : 0 Goku, 1 Gohan, 2 Piccolo, 3 Krillin, 4 Tien, 5 Yamcha) = adresse des **PV max** (4 octets) | `0x020CD9EC` | 0x24C par fiche | Autour : PV actuels à −8, Ki max/actuels à +8/+0xC, **niveau** à +0x60 (1 octet), **expérience** à +0x194, **expérience pour le niveau suivant** à +0x198, **PA** à +0x19C (4 octets chacun) | ✅ | Photos `exp_a` / `exp_b` autour d'un combat (île, état 9) : Krillin niv. 1 → 2, exp. 48 → 120, PA 8 → 20, PV max 300 → 320 ; Tien exp. 597 → 669, « suivant » 294 → 222 ; Yamcha (K.O.) inchangé ; mêmes écarts de 0x24C entre fiches ; valeurs du menu retrouvées | 2026-10-24 |
 | ~~Fiches des personnages~~ | ~~`0x0CD300`~~ | | | **Faux** : vaut 445 aussi dans une partie où Krillin a 320 PV. Ce sont sans doute des tables de valeurs | ❌ | Lecture par la télécommande | 2026-10-23 |
 
 ## 3. Drapeaux de coffres

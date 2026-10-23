@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import re
 from collections.abc import Collection
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, NamedTuple
 
 from NetUtils import ClientStatus
 import worlds._bizhawk as bizhawk
@@ -69,6 +69,41 @@ def items_to_give(inventory: bytes, received_ids: list[int], already_given: int)
     return quantities
 
 
+class Progress(NamedTuple):
+    level: int
+    experience: int
+    to_next: int
+    """Experience still needed for the next level."""
+    ap: int
+
+
+def read_progress(sheets: bytes) -> list[Progress]:
+    """Level, experience and AP of each character, from the block read at ram.CHARACTER_SHEETS."""
+    progress = []
+    for character in range(ram.CHARACTER_COUNT):
+        sheet = character * ram.CHARACTER_SHEET_SIZE
+        values = [int.from_bytes(sheets[sheet + offset:sheet + offset + 4], "little")
+                  for offset in (ram.EXPERIENCE_OFFSET, ram.EXPERIENCE_TO_NEXT_OFFSET, ram.AP_OFFSET)]
+        progress.append(Progress(sheets[sheet + ram.LEVEL_OFFSET], *values))
+    return progress
+
+
+def battle_bonus(before: Progress, after: Progress, multiplier: int, reserve: int) -> tuple[int, int, int]:
+    """(experience to add, AP to add, experience kept in reserve) for one character after a battle.
+
+    Only a real battle gain counts: experience went up by as much as the "to next level" counter went down, or the
+    character gained one level. The added experience leaves at least 1 in that counter, so the game itself does every
+    level up (research/decisions.md, D38); the rest waits in reserve for the next battles.
+    """
+    gained = after.experience - before.experience
+    if gained <= 0 or not (after.level == before.level + 1 or before.to_next - after.to_next == gained):
+        return 0, 0, reserve
+    wanted = gained * (multiplier - 1) + reserve
+    experience = max(0, min(wanted, after.to_next - 1))
+    ap = max(0, min((after.ap - before.ap) * (multiplier - 1), ram.MAX_AP - after.ap))
+    return experience, ap, wanted - experience
+
+
 class DbzAotsClient(BizHawkClient):
     game = GAME_NAME
     system = "NDS"
@@ -78,6 +113,9 @@ class DbzAotsClient(BizHawkClient):
         self.previous_map: bytes | None = None
         self.previous_flags: bytes | None = None
         self.previous_inventory: bytes | None = None
+        self.was_in_battle = False
+        self.progress_before_battle: list[Progress] | None = None
+        self.experience_reserve = [0] * ram.CHARACTER_COUNT
 
     async def validate_rom(self, ctx: BizHawkClientContext) -> bool:
         try:
@@ -90,7 +128,7 @@ class DbzAotsClient(BizHawkClient):
             return False
         ctx.game = self.game
         ctx.items_handling = 0b111  # every item comes from the server, own world included (chests are emptied)
-        ctx.want_slot_data = False
+        ctx.want_slot_data = True  # the experience multiplier
         ctx.watcher_timeout = 0.5
         return True
 
@@ -98,15 +136,17 @@ class DbzAotsClient(BizHawkClient):
         if ctx.server is None or ctx.server.socket.closed or ctx.slot is None:
             return
         try:
-            map_code, battle, flags, inventory, counter = await bizhawk.read(ctx.bizhawk_ctx, [
+            map_code, battle, flags, inventory, counter, sheets = await bizhawk.read(ctx.bizhawk_ctx, [
                 (ram.CURRENT_MAP, ram.MAP_CODE_LENGTH, ram.MAIN_RAM),
                 (ram.BATTLE_STATE, len(IN_BATTLE), ram.MAIN_RAM),
                 (ram.FLAGS, ram.FLAGS_SIZE, ram.MAIN_RAM),
                 (ram.INVENTORY, ram.INVENTORY_SIZE, ram.MAIN_RAM),
                 (ram.RECEIVED_ITEMS_COUNTER, 4, ram.MAIN_RAM),
+                (ram.CHARACTER_SHEETS, ram.CHARACTER_SHEETS_SIZE, ram.MAIN_RAM),
             ])
             if not in_game(map_code):
                 self.previous_map = self.previous_flags = self.previous_inventory = None
+                self.was_in_battle, self.progress_before_battle = False, None
                 return
 
             opened = opened_locations(flags, ctx.server_locations)
@@ -123,6 +163,7 @@ class DbzAotsClient(BizHawkClient):
 
             if battle != IN_BATTLE:
                 await self.give_items(ctx, map_code, battle, inventory, counter)
+            await self.multiply_experience(ctx, map_code, battle, sheets)
         except bizhawk.RequestFailedError:
             pass
 
@@ -151,6 +192,36 @@ class DbzAotsClient(BizHawkClient):
                 inventory = bytes(updated)
         self.previous_map, self.previous_flags, self.previous_inventory = map_code, flags, inventory
         return inventory
+
+    async def multiply_experience(
+        self, ctx: BizHawkClientContext, map_code: bytes, battle: bytes, sheets: bytes
+    ) -> None:
+        """After each battle, add the extra experience and AP of the experience_multiplier option."""
+        multiplier = (ctx.slot_data or {}).get("experience_multiplier", 1)
+        in_battle = battle == IN_BATTLE
+        progress = read_progress(sheets)
+        if multiplier > 1 and self.was_in_battle and not in_battle and self.progress_before_battle is not None:
+            writes, guards = [], [(ram.CURRENT_MAP, map_code, ram.MAIN_RAM), (ram.BATTLE_STATE, battle, ram.MAIN_RAM)]
+            reserve = list(self.experience_reserve)
+            for character, (before, after) in enumerate(zip(self.progress_before_battle, progress)):
+                experience, ap, reserve[character] = battle_bonus(before, after, multiplier, reserve[character])
+                sheet = ram.CHARACTER_SHEETS + character * ram.CHARACTER_SHEET_SIZE
+                for offset, old, new in ((ram.EXPERIENCE_OFFSET, after.experience, after.experience + experience),
+                                         (ram.EXPERIENCE_TO_NEXT_OFFSET, after.to_next, after.to_next - experience),
+                                         (ram.AP_OFFSET, after.ap, after.ap + ap)):
+                    if new != old:
+                        writes.append((sheet + offset, new.to_bytes(4, "little"), ram.MAIN_RAM))
+                        guards.append((sheet + offset, old.to_bytes(4, "little"), ram.MAIN_RAM))
+            if not writes or await bizhawk.guarded_write(ctx.bizhawk_ctx, writes, guards):
+                self.experience_reserve = reserve
+                if writes:
+                    sheets = (await bizhawk.read(
+                        ctx.bizhawk_ctx, [(ram.CHARACTER_SHEETS, ram.CHARACTER_SHEETS_SIZE, ram.MAIN_RAM)]
+                    ))[0]
+                    progress = read_progress(sheets)
+        if not in_battle:
+            self.progress_before_battle = progress
+        self.was_in_battle = in_battle
 
     async def give_items(
         self, ctx: BizHawkClientContext, map_code: bytes, battle: bytes, inventory: bytes, counter: bytes

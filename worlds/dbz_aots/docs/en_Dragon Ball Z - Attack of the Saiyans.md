@@ -42,6 +42,12 @@ plus filler for the chapter ends. Three of them matter for progression:
 
 Received items are not used or equipped automatically: use the fruits and equip the capsules yourself.
 
+## Options
+
+- `east_city_ruins`: add the 6 chests of East City Ruins (see above).
+- `experience_multiplier` (1 to 10): multiply the experience and AP earned in battle. The client adds the extra
+  after each battle; it never makes a character skip a level at once, the rest is added after the next battles.
+
 ## Supported version
 
 Only the European release (game code `BRPP`, revision 0) is supported. It has only been tested in French.

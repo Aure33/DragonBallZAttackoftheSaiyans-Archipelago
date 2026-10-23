@@ -1,3 +1,5 @@
+from typing import Any
+
 from BaseClasses import Tutorial
 from worlds.AutoWorld import WebWorld, World
 
@@ -51,3 +53,6 @@ class DbzAotsWorld(World):
 
     def get_filler_item_name(self) -> str:
         return items.FILLER_ITEM
+
+    def fill_slot_data(self) -> dict[str, Any]:
+        return {"experience_multiplier": self.options.experience_multiplier.value}

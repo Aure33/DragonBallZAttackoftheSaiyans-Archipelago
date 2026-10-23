@@ -87,6 +87,13 @@ Total prologue : 1 tiroir + 1 don + 8 coffres + 1 objet d'histoire (+ récompens
 | Bamboo Forest | **Coffre** derrière un gros buisson (longer le bord gauche vers le nord, après un buisson lumineux) | Haricot moyen / Medium Bean | DSR Ch. 1 | 📖 |
 | Bamboo Forest | **Coffre** après le passage caché et le dernier morceau de fourré | Fruit PV / HP Fruit | DSR Ch. 1 | 📖 |
 
+### Liste exacte des coffres (ROM)
+Depuis la phase 6, la liste de référence des coffres est **[chests.md](chests.md)**, extraite des scripts de la ROM (219 coffres, drapeau et contenu d'origine), reliée ligne à ligne au tableau DSR ci-dessous pour le chapitre. Le tableau DSR reste la source pour les dons de PNJ, mémos, tiroirs et boutiques.
+
+Conditions d'accès vérifiées (2026-10-24) :
+- **Ki-Blast Fruit** : description ROM « Raises the maximum size of the Ki-blast meter on the field map » (FR « Augmente la taille max. de la jauge de décharge d'énergie hors combat »). Le guide passe au niveau 2 après le 1er fruit (ch. 7) et au niveau 3 après le 2e (ch. 12). L'histoire exige le niveau 2 au ch. 8 (rocher sur le chemin d'East Mt. Paozu) et le niveau 3 au ch. 13 (portes de Yemma Forest). Il y a 4 fruits dans les coffres (`kou01`, `mut01`, `pir05`, `ges01`) ; le guide n'a pas vu les deux derniers.
+- **Capsules de sol** (description ROM) : Masque à gaz = sols gazés, Bottes froides = sols enflammés, Fourrure argentée = sols gelés, Bottes isolantes = sols électrifiés, Œil de Shenron = tous. Sans elles on traverse en perdant des PV (DSR, ch. 10 : « soignez-vous après le premier champ électrique »).
+
 ### Tous les objets ramassables, par zone (en-têtes « Items: » du guide DSR)
 Liste générée par [scripts/extract_dsr_items.py](scripts/extract_dsr_items.py) à partir des en-têtes « Items: » que DSR place au début de chaque zone (2026-10-23). C'est la **base des futurs lieux** du randomizer. Limites connues :
 - Les en-têtes peuvent **oublier** des objets : Gas Mask et Darkness Card (prologue) n'y sont pas, alors que le texte du guide les cite.

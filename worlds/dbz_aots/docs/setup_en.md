@@ -1,6 +1,6 @@
 # Dragon Ball Z - Attack of the Saiyans Setup Guide
 
-This world is an early version: only the prologue (Training Island) is randomized.
+This world randomizes the chests of the whole story (see the game page for what is covered).
 
 ## Required software
 
@@ -28,3 +28,4 @@ Only one BizHawk Client can talk to BizHawk at a time: close any other BizHawk C
 - Chests still show their original item when opened; the client removes it from your inventory right away.
   If a chest is opened while the client is not connected, you keep that original item.
 - Received items are added while you are on the field; during a battle they wait until it ends.
+- Received items are only added to your inventory: use the Ki-Blast Fruits and equip the Gas Mask yourself.

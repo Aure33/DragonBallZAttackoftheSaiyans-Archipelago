@@ -13,7 +13,10 @@ Cahier des charges complet : [Prompt_archipelago_dbz.md](Prompt_archipelago_dbz.
 - Quand il doit faire quelque chose (jouer, état de sauvegarde, lire une valeur) : instructions numérotées, puis on attend son retour.
 
 ## État actuel
-- **Phase 6 — Extension : en cours (2026-10-23).** Tableau des phases : cahier des charges, §9.
+- **Phase 6 — Extension : en cours (2026-10-24).** Tableau des phases : cahier des charges, §9.
+  - Étape 1 faite : world 0.3.0 = 200 coffres de toute l'histoire (194 + 6 en option `east_city_ruins`), logique par chapitre (Masque à gaz, Ki-Blast Fruit ×2), objectif = drapeau 1050 (après le dernier Vegeta). 32 tests du world, 40 seeds générées sans échec. Décisions D28–D33.
+  - Données : `research/chests.md` et `worlds/dbz_aots/chest_data.py` sont **générés** (`extract_chests.py` puis `build_world_data.py`) ; ne pas les modifier à la main.
+  - Reste : 19 coffres mis de côté à vérifier, autres lieux (dons, boss, quêtes ?), options, voir le drapeau 1050 en jeu.
 - **Phase 5 — Test réel : terminée (2026-10-23).** Seed DBZ + APQuest (2e joueur simulé par `/send_location` du serveur), jouée par Claude via la télécommande : checks, objets envoyés et reçus, objectif, `collect`, aucun doublon (`research/decisions.md`, C14).
 - **Phase 4 — Client minimal : terminée (2026-10-23).**
   - `client.py` : coffres → checks, retrait de l'objet d'origine, objets reçus hors combat, compteur dans la sauvegarde, objectif (arrivée en Ville est). 22 tests du world. Essai réel réussi (`research/decisions.md`, C11). World 0.2.0 installé côté Windows.
@@ -64,6 +67,10 @@ AP_TEST_WORLDS=dbz_aots .venv/bin/python -m pytest -q -n auto -p no:cacheprovide
 # Recherche : extraire les noms officiels (EN/US/FR) de la ROM -> research/rom_names.md
 # (depuis ce dépôt ; environnement research/.venv avec ndspy)
 research/.venv/bin/python research/scripts/extract_rom_names.py "/mnt/c/Users/Aurelien/Desktop/Jeu/SAve jeu/Rom DS/Dragon Ball Z Attack of the Saiyans.nds"
+
+# Coffres et drapeaux d'histoire depuis la ROM -> research/chests.md + worlds/dbz_aots/chest_data.py
+(cd research/scripts && ../.venv/bin/python extract_chests.py "<ROM>" > /dev/null && ../.venv/bin/python extract_story_flags.py "<ROM>")
+python3 research/scripts/build_world_data.py
 
 # Télécommande BizHawk (remote.lua doit tourner dans la console Lua de BizHawk)
 python3 research/scripts/remote.py "shot ecran" "read 0CC398 8"   # capture -> dbz_research/remote/ecran.png

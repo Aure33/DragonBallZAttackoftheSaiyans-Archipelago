@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, NamedTuple
+from typing import TYPE_CHECKING
 
 from BaseClasses import Location
 
+from .chest_data import CHESTS, ChestData
 from .items import GAME_NAME, DbzAotsItem
-from .regions import TRAINING_ISLAND
+from .regions import LAST_CHAPTER, chapter_region
 
 if TYPE_CHECKING:
     from . import DbzAotsWorld
@@ -13,35 +14,9 @@ if TYPE_CHECKING:
 LOCATION_ID_BASE = 100_000
 """A chest's Archipelago ID is LOCATION_ID_BASE + the game flag set when the chest is opened."""
 
+LOCATION_NAME_TO_ID: dict[str, int] = {chest.name: LOCATION_ID_BASE + chest.flag for chest in CHESTS}
 
-class LocationData(NamedTuple):
-    region: str
-    flag: int
-
-
-# Flags from research/ram_map.md, section 3. Flags 1400-1405 are the six chests of Training Island screens 1-2
-# (1401: a Small Bean, 1402: the Phoenix Feather); 1583-1584 are the two chests found after Bulma's call.
-# Which chest holds which flag is not fully known yet, so the names are numbered for now.
-LOCATIONS: dict[str, LocationData] = {
-    "Training Island Chest 1": LocationData(TRAINING_ISLAND, 1400),
-    "Training Island Chest 2": LocationData(TRAINING_ISLAND, 1401),
-    "Training Island Chest 3": LocationData(TRAINING_ISLAND, 1402),
-    "Training Island Chest 4": LocationData(TRAINING_ISLAND, 1403),
-    "Training Island Chest 5": LocationData(TRAINING_ISLAND, 1404),
-    "Training Island Chest 6": LocationData(TRAINING_ISLAND, 1405),
-    "Training Island Chest 7": LocationData(TRAINING_ISLAND, 1583),
-    "Training Island Chest 8": LocationData(TRAINING_ISLAND, 1584),
-}
-
-# Original contents of the eight chests, checked in game (research/game_data.md, prologue): they go into the pool.
-ORIGINAL_CONTENTS: list[str] = [
-    "HP Capsule 50", "Small Bean", "Small Bean", "Small Bean",
-    "Phoenix Feather", "Medium Bean", "Gas Mask", "Darkness Card",
-]
-
-LOCATION_NAME_TO_ID: dict[str, int] = {name: LOCATION_ID_BASE + data.flag for name, data in LOCATIONS.items()}
-
-GOAL_EVENT = "Defeat Jackie Chun"
+GOAL_EVENT = "Defeat Vegeta"
 VICTORY = "Victory"
 
 
@@ -49,9 +24,21 @@ class DbzAotsLocation(Location):
     game = GAME_NAME
 
 
+def included_chests(world: DbzAotsWorld) -> list[ChestData]:
+    return [chest for chest in CHESTS if not chest.bonus or world.options.east_city_ruins]
+
+
+def original_contents(world: DbzAotsWorld) -> list[str]:
+    """Items found in the included chests in the original game: they make up the item pool."""
+    return [chest.item for chest in included_chests(world)]
+
+
 def create_all_locations(world: DbzAotsWorld) -> None:
-    for name, data in LOCATIONS.items():
-        world.get_region(data.region).add_locations({name: LOCATION_NAME_TO_ID[name]}, DbzAotsLocation)
-    world.get_region(TRAINING_ISLAND).add_event(
+    for chest in included_chests(world):
+        world.get_region(chapter_region(chest.chapter)).add_locations(
+            {chest.name: LOCATION_NAME_TO_ID[chest.name]}, DbzAotsLocation
+        )
+    # The last battle (Vegeta, end of chapter 15); the client sees it through the story flag of the next scene.
+    world.get_region(chapter_region(LAST_CHAPTER)).add_event(
         GOAL_EVENT, VICTORY, location_type=DbzAotsLocation, item_type=DbzAotsItem
     )

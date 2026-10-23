@@ -1,7 +1,7 @@
 import unittest
 
 from .. import ram
-from ..client import in_game, items_to_give, opened_locations, original_items_to_take_back
+from ..client import flag_is_set, in_game, items_to_give, opened_locations, original_items_to_take_back
 from ..items import ITEM_NAME_TO_ID
 from ..locations import LOCATION_NAME_TO_ID
 
@@ -14,8 +14,14 @@ class TestClientLogic(unittest.TestCase):
     def test_opened_chest_is_found_from_its_flag(self) -> None:
         flags = bytearray(ram.FLAGS_SIZE)
         flags[1402 // 8] |= 1 << (1402 % 8)
-        chest_3 = LOCATION_NAME_TO_ID["Training Island Chest 3"]
-        self.assertEqual({chest_3}, opened_locations(bytes(flags), LOCATION_NAME_TO_ID.values()))
+        chest = LOCATION_NAME_TO_ID["Training Island 1 - Phoenix Feather Chest"]
+        self.assertEqual({chest}, opened_locations(bytes(flags), LOCATION_NAME_TO_ID.values()))
+
+    def test_goal_flag(self) -> None:
+        flags = bytearray(ram.FLAGS_SIZE)
+        self.assertFalse(flag_is_set(bytes(flags), ram.GOAL_FLAG))
+        flags[ram.GOAL_FLAG // 8] |= 1 << (ram.GOAL_FLAG % 8)
+        self.assertTrue(flag_is_set(bytes(flags), ram.GOAL_FLAG))
 
     def test_original_item_is_taken_back(self) -> None:
         before = bytes(ram.INVENTORY_SIZE)

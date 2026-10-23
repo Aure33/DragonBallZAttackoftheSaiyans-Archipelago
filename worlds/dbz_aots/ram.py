@@ -49,6 +49,10 @@ FLAGS = 0x09F7E8
 """Permanent event flags (chests, story...), one bit each; saved verbatim in the save file."""
 FLAGS_SIZE = 0x360
 
+GOAL_FLAG = 1050
+"""Story flag set when scene c1505_00 starts, right after the last battle of the game (Vegeta, battle LAS_EB05 of
+scene c1504_01): research/ram_map.md, section 4."""
+
 RECEIVED_ITEMS_COUNTER = 0x09FB44
 """4 bytes at the end of the flag block, never used by the game so far: provisional (research/decisions.md, D20)."""
 

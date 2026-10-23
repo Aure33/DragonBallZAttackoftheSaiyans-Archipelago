@@ -4,12 +4,18 @@ from typing import TYPE_CHECKING, NamedTuple
 
 from BaseClasses import Item, ItemClassification
 
+from .chest_data import ITEM_SLOTS
 from .ram import ItemCategory
 
 if TYPE_CHECKING:
     from . import DbzAotsWorld
 
 GAME_NAME = "Dragon Ball Z - Attack of the Saiyans"
+
+KI_BLAST_FRUIT = "Ki-Blast Fruit"
+"""Raises the size of the Ki-blast meter on the field (ROM description): one per level of breakable rocks."""
+GAS_MASK = "Gas Mask"
+"""Makes gas floors safe (ROM description); Spinach Wastes (chapter 6) and later story paths cross them."""
 
 
 class ItemData(NamedTuple):
@@ -29,16 +35,25 @@ def item_slot(ap_id: int) -> tuple[ItemCategory, int]:
     return ItemCategory(ap_id // 1000 - 1), ap_id % 1000
 
 
-# Names are the English text of the EU ROM (research/rom_names.md); indexes were checked in the inventory
-# (research/ram_map.md, section 2). Only the contents of the Training Island chests for now.
+PROGRESSION = {KI_BLAST_FRUIT, GAS_MASK}
+# Consumables worth more than a heal: permanent stat boosts, the EXP booster and the reusable Dragon Stone.
+USEFUL_USE_ITEMS = {"HP Fruit", "Ki Fruit", "Power Fruit", "Defense Fruit", "Speed Fruit", "Luck Fruit",
+                    "Skill Fruit", "Recovery Fruit", "EXP Boost", "Dragon Stone", "Super Senzu Bean"}
+
+
+def classification(name: str, category: ItemCategory) -> ItemClassification:
+    if name in PROGRESSION:
+        return ItemClassification.progression
+    if category in (ItemCategory.BATTLE_ACCESSORY, ItemCategory.CAPSULE) or name in USEFUL_USE_ITEMS:
+        return ItemClassification.useful
+    return ItemClassification.filler
+
+
+# Every item found in a chest. Names are the English text of the EU ROM and slots come from its data tables
+# (research/chests.md); the inventory layout was checked in game (research/ram_map.md, section 2).
 ITEMS: dict[str, ItemData] = {
-    "Small Bean": ItemData(ItemCategory.USE_ITEM, 0, ItemClassification.filler),
-    "Medium Bean": ItemData(ItemCategory.USE_ITEM, 1, ItemClassification.filler),
-    "HP Capsule 50": ItemData(ItemCategory.USE_ITEM, 7, ItemClassification.filler),
-    "Phoenix Feather": ItemData(ItemCategory.USE_ITEM, 29, ItemClassification.filler),
-    # Needed later to cross the poison mist of Spinach Wastes (chapter 6).
-    "Gas Mask": ItemData(ItemCategory.CAPSULE, 30, ItemClassification.progression),
-    "Darkness Card": ItemData(ItemCategory.CAPSULE, 37, ItemClassification.useful),
+    name: ItemData(ItemCategory(category), index, classification(name, ItemCategory(category)))
+    for name, (category, index) in ITEM_SLOTS.items()
 }
 
 ITEM_NAME_TO_ID: dict[str, int] = {name: item_id(data.category, data.index) for name, data in ITEMS.items()}

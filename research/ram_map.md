@@ -69,17 +69,29 @@ Le bit passe à 1 **au moment même** où l'on ouvre le coffre (photos 08 → 09
 | Élément | Drapeau | Adresse (Main RAM) | Bit | Statut | Comment trouvé | Date |
 |---|---|---|---|---|---|---|
 | Île d'entraînement : 1er Petit haricot ouvert par le joueur | 1401 | `0x09F897` | 1 | ✅ | 0 → 1 dans les 2 parties (photos 01→03 et 08→09), en même temps que Petit haricot 5 → 6 | 2026-10-23 |
-| Île d'entraînement : Plume de phénix | 1402 | `0x09F897` | 2 | 🟡 | 0 → 1 entre les photos 05 et 06, en même temps que Plume de phénix 0 → 1 | 2026-10-23 |
-| Île d'entraînement : 4 autres coffres des écrans 1 et 2 (Capsule 50 PV, Petit haricot, Haricot moyen, Petit haricot) | 1400, 1403, 1404, 1405 | `0x09F897` | 0, 3, 4, 5 | 🟡 | À 1 seulement après l'île (photo 07) ; quel bit = quel coffre : pas encore établi | 2026-10-23 |
-| Île d'entraînement : 2 coffres après l'appel de Bulma (Masque à gaz, Carte d'obscurité) | 1583, 1584 | `0x09F8AD` / `0x09F8AE` | 7 / 0 | ❓ | Seuls autres drapeaux consécutifs allumés pendant l'île ; l'attribution est une déduction | 2026-10-23 |
+| Île d'entraînement : Plume de phénix | 1402 | `0x09F897` | 2 | ✅ | 0 → 1 entre les photos 05 et 06, en même temps que Plume de phénix 0 → 1 ; confirmé par le script de la carte (`CreateBox`, objet 30 = Plume de phénix) | 2026-10-24 |
+| Île d'entraînement : 4 autres coffres des écrans 1 et 2 (1400 Capsule 50 PV, 1403 Petit haricot, 1404 Haricot moyen, 1405 Petit haricot) | 1400, 1403, 1404, 1405 | `0x09F897` | 0, 3, 4, 5 | ✅ | Scripts de carte (`CreateBox`) ; 1400, 1403 et 1404 ouverts un par un pendant la partie de test (phase 5) | 2026-10-24 |
+| Île d'entraînement : 2 coffres après l'appel de Bulma (1583 Masque à gaz, 1584 Carte d'obscurité) | 1583, 1584 | `0x09F8AD` / `0x09F8AE` | 7 / 0 | ✅ | Scripts de carte (`CreateBox`, objets 287 et 294) | 2026-10-24 |
 
-Les coffres sont mis en place par les scripts de carte (`script/cf0/<zone>/<carte>.sb`, fonctions `TreasureInit_<zone>` et `TreasureSet_<carte>`). Les décoder donnerait la liste de tous les coffres du jeu avec leur drapeau (phase 6).
+Les coffres sont mis en place par les scripts de carte (`script/cf0/<zone>/<carte>.sb`, fonctions `TreasureSet_<carte>`, qui appellent la fonction du jeu `CreateBox(unité, ?, ?, x, y, objet, drapeau, 7)`). **Liste complète des 219 coffres avec leur drapeau : [chests.md](chests.md)** (décodage : [scripts/extract_chests.py](scripts/extract_chests.py), 2026-10-24). Tous les drapeaux de coffres sont entre 1400 et 1623.
 
 Les 6 octets 0 → 1 vus juste après l'inventaire (`0x0CC542`, `0x0CC548`, `0x0CC572`, `0x0CC584`, `0x0CC587`, `0x0CC5E1`) ne sont **pas** des coffres. Ce sont d'autres drapeaux (histoire, tutoriels ?), à classer plus tard.
 
 ## 4. Drapeaux d'histoire, quêtes, boss
 Même bloc que les coffres (§3). Drapeaux allumés pendant le prologue, hors coffres (photo 01 → photo 07) : 11, 12, 15, 20, 55, 60, 1703, 2529, 2530, 2600, 2601, 2647, 2667, 2683, 4304, 4305, 4312, 4313, 4320–4322, 4328–4330, 4335 (❓, à classer). Déjà allumés avant l'île : 0, 5, 10, 1700, 1701, 2528, 2659, 3200.
-Le drapeau de victoire contre Jackie Choun en fait sans doute partie (à isoler).
+
+**Avancement de l'histoire (2026-10-24, ✅)** : chaque scène d'histoire `script/cf1/cXXYY_ZZ.sb` commence par `SetScenarioCnt(n)`, c'est-à-dire `SetFlag(n, 1, 2)` : un drapeau du même bloc. Les valeurs extraites des scripts du prologue (0, 5, 10, 11, 12, 15, 20 puis 55, 60) sont **exactement** celles vues en mémoire ci-dessus (méthode : [scripts/extract_story_flags.py](scripts/extract_story_flags.py)). 20 = scène `c0004_00`, juste après Jackie Choun (fin du prologue).
+
+| Moment | Scène | Drapeau |
+|---|---|---|
+| Début des chapitres 1 à 15 | `c0100_00` … `c1500_00` | 55, 110, 165, 220, 275, 380, 435, 490, 595, 650, 755, 810, 865, 920, 1025 |
+| Dernier combat (Vegeta, combat `LAS_EB05`) | `c1504_01` | 1046 |
+| **Scène qui suit le dernier combat = objectif du world** | `c1505_00` | **1050** |
+| Épilogue, puis retour au titre (`ExitGame`) | `c1600_00` … `c1610_06` | 1080 … 1134 |
+
+Le dernier combat est le 3e boss du chapitre 15 selon le guide DSR (Vegeta → Vegeta Gorille géant → Vegeta) ; `LAS_EB05` est le dernier combat appelé par les scènes du chapitre 15. ❓ Reste à voir en jeu le drapeau 1050 s'allumer (fin de partie : pas encore atteinte).
+
+Autres drapeaux d'histoire : posés par `SetFlag(n, 1, 2)` à valeur fixe dans les scripts. Le plus grand numéro écrit en dur dans un script est **3854**.
 
 ## 5. Techniques par personnage
 _(phase 2)_
@@ -99,7 +111,7 @@ Le bloc des drapeaux (§3) est enregistré tel quel dans la sauvegarde. Sur tout
 
 | Élément | Adresse (Main RAM) | Adresse DS | Taille | Statut | Comment trouvé | Date |
 |---|---|---|---|---|---|---|
-| Emplacement **provisoire** du compteur d'objets reçus : les 4 derniers octets du bloc | `0x09FB44` | `0x0209FB44` | 4 octets | ❓ | Toujours à zéro jusqu'ici, mais on n'a vu que le prologue. À confirmer en décodant les scripts (plus grand n° de drapeau utilisé par le jeu) | 2026-10-23 |
+| Emplacement **provisoire** du compteur d'objets reçus : les 4 derniers octets du bloc (= drapeaux 6880–6911) | `0x09FB44` | `0x0209FB44` | 4 octets | 🟡 | Toujours à zéro jusqu'ici. Les scripts n'écrivent aucun drapeau au-delà de 3854 (décodage, 2026-10-24) ; le jeu lui-même en allume jusqu'à 4335. Utilisé sans problème pendant les phases 4 et 5 | 2026-10-24 |
 
 En-tête de la sauvegarde : `0x0` = `mDBZ`, `0x4` = compteur de sauvegardes (12 sur la copie 1, 13 sur la copie 2), `0x8` = somme de contrôle (4 octets ?). Le client n'écrit **jamais** dans le fichier : il écrit en mémoire, et c'est le jeu qui recalcule la somme quand le joueur sauvegarde.
 

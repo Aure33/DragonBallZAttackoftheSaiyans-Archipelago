@@ -43,7 +43,7 @@ class DbzAotsWorld(World):
         rules.set_all_rules(self)
 
     def create_items(self) -> None:
-        items.create_all_items(self, locations.ORIGINAL_CONTENTS)
+        items.create_all_items(self, locations.original_contents(self))
 
     def create_item(self, name: str) -> items.DbzAotsItem:
         return items.create_item(self, name)

@@ -20,8 +20,6 @@ logger = logging.getLogger("Client")
 
 MAP_CODE = re.compile(rb"[a-z]{3}\d\d_\d\d")
 IN_BATTLE = b"\xff\xff"
-GOAL_MAP_PREFIX = b"est"
-"""Chapter 1 opens in East City right after Jackie Chun is beaten: provisional goal check (decisions.md, D25)."""
 CHEST_IDS = frozenset(LOCATION_NAME_TO_ID.values())
 ITEM_NAMES = {ap_id: name for name, ap_id in ITEM_NAME_TO_ID.items()}
 
@@ -31,12 +29,15 @@ def in_game(map_code: bytes) -> bool:
     return MAP_CODE.fullmatch(map_code) is not None
 
 
+def flag_is_set(flags: bytes, flag: int) -> bool:
+    return 0 <= flag < len(flags) * 8 and flags[flag // 8] >> (flag % 8) & 1 == 1
+
+
 def opened_locations(flags: bytes, location_ids: Collection[int]) -> set[int]:
     """Locations among `location_ids` whose game flag is set in the flag block `flags`."""
     opened: set[int] = set()
     for location_id in location_ids:
-        flag = location_id - LOCATION_ID_BASE
-        if 0 <= flag < len(flags) * 8 and flags[flag // 8] >> (flag % 8) & 1:
+        if flag_is_set(flags, location_id - LOCATION_ID_BASE):
             opened.add(location_id)
     return opened
 
@@ -117,7 +118,7 @@ class DbzAotsClient(BizHawkClient):
 
             inventory = await self.take_back_original_items(ctx, map_code, flags, inventory)
 
-            if not ctx.finished_game and map_code.startswith(GOAL_MAP_PREFIX):
+            if not ctx.finished_game and flag_is_set(flags, ram.GOAL_FLAG):
                 await ctx.send_msgs([{"cmd": "StatusUpdate", "status": ClientStatus.CLIENT_GOAL}])
                 ctx.finished_game = True
 

@@ -13,7 +13,8 @@ Cahier des charges complet : [Prompt_archipelago_dbz.md](Prompt_archipelago_dbz.
 - Quand il doit faire quelque chose (jouer, état de sauvegarde, lire une valeur) : instructions numérotées, puis on attend son retour.
 
 ## État actuel
-- **Phase 6 — Extension : en cours (2026-10-24).** Tableau des phases : cahier des charges, §9.
+- **Phase 7 — Tests : terminée (2026-10-24).** `tools/mass_seeds.py` (D39) : 1000 seeds variées sur 1000 réussies (1 à 3 joueurs DBZ aux options au hasard + APQuest/ChecksFinder). Prochaine : phase 8 (partie avec les amis), sur feu vert de l'utilisateur.
+- **Phase 6 — Extension : terminée (2026-10-24).** Tableau des phases : cahier des charges, §9.
   - Étape 1 faite : world 0.3.0 = 200 coffres de toute l'histoire (194 + 6 en option `east_city_ruins`), logique par chapitre (Masque à gaz, Ki-Blast Fruit ×2), objectif = drapeau 1050 (après le dernier Vegeta). 32 tests du world, 40 seeds générées sans échec. Décisions D28–D33.
   - Étape 2 faite : world 0.4.0 = 224 lieux par défaut (195 coffres + 14 objets à examiner + 15 fins de chapitre), 230 avec l'option. 34 tests du world, 40 seeds sans échec. Décisions D34–D35, constats C21–C24.
   - Données : `research/chests.md` et `worlds/dbz_aots/location_data.py` sont **générés** (`extract_chests.py` puis `build_world_data.py`) ; ne pas les modifier à la main.

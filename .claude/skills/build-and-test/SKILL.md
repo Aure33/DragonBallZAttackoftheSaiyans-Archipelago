@@ -26,6 +26,15 @@ Ajouter un autre jeu sans ROM (ChecksFinder, APQuest) pour vérifier le mélange
 ```
 Vérifier dans `*_Spoiler.txt` que les lieux « Training Island Chest N » contiennent des objets des autres joueurs.
 
+## 2 bis. Générer beaucoup de seeds (phase 7)
+`tools/mass_seeds.py` mélange 1 à 3 joueurs DBZ (options au hasard : `east_city_ruins`, `experience_multiplier`,
+`accessibility`, `progression_balancing`) et 0 à 2 joueurs APQuest / ChecksFinder, lance `Generate.py` en entier
+(spoiler 2) et compte comme échec un code de sortie ≠ 0 ou l'avertissement « Location Accessibility requirements
+not fulfilled ». À relancer après tout changement de logique ou de lieux :
+```bash
+python3 <ce dépôt>/tools/mass_seeds.py --count 1000 --jobs 8   # ~25 min (0,65 seed/s) ; seeds 1 à 1000, reproductibles
+```
+
 ## 3. Construire / déployer le .apworld
 ```bash
 <ce dépôt>/tools/build_apworld.sh            # -> build/apworlds/dbz_aots.apworld

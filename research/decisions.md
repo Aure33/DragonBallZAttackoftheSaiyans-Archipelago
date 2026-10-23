@@ -133,3 +133,9 @@ Format : date — décision — raison. Les décisions les plus récentes en bas
 |---|---|---|
 | D39 | `tools/mass_seeds.py` : chaque seed (numéro = graine, donc reproductible) mélange 1 à 3 joueurs DBZ aux options tirées au hasard (`east_city_ruins`, `experience_multiplier`, `accessibility` full/minimal, `progression_balancing`) et 0 à 2 joueurs APQuest/ChecksFinder. `Generate.py` tourne **en entier** (spoiler 2), car avec `--skip_output` Archipelago ne vérifie ni que la partie est gagnable ni que tous les lieux sont accessibles. Échec = code de sortie ≠ 0 ou avertissement « Location Accessibility requirements not fulfilled » | Tester la logique dans des parties variées, pas seulement sur une graine |
 | C29 | Seeds 1 à 1000 : **1000/1000 réussies** (25 min avec 8 tâches). Tests du world : 42 tests, 710 sous-tests, tous OK | Phase 7 validée |
+
+## 2026-10-24 — Recherche pour DeathLink
+
+| # | Décision / constat | Raison |
+|---|---|---|
+| C30 | **PV actuels** = fiche − 8 (`0x0CD300` + n × `0x24C`), suivis de 4 octets égaux aux PV max puis des PV max (`0x0CD308`). Le combat lit et écrit **directement** ces PV : en écrire 1 (état 9 de Claude, grotte `tut02`, Krillin/Tien/Yamcha) affiche 1/300 au combat. En se défendant seulement, les trois tombent à 0 l'un après l'autre (le jeu continue tant qu'il en reste un), puis **défaite = retour à l'écran titre** (« Sélectionner les données à charger »), sans écran intermédiaire durable. Au retour au titre, les PV de la mémoire reprennent ceux de la sauvegarde. `0x09B236` passe parfois à 00 00 en plein combat : ce n'est pas un indicateur de combat fiable | Base de DeathLink : envoyer une mort quand, en combat, tous les combattants sont à 0 PV ; recevoir une mort = mettre à 0 les PV des combattants (à essayer). **Manque** : savoir quels personnages sont au combat (liste de l'équipe) pour ne pas compter les absents |

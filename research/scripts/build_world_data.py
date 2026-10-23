@@ -170,6 +170,7 @@ def main() -> None:
              "",
              "class LocationData(NamedTuple):",
              "    name: str",
+             "    zone: str",
              "    flag: int",
              '    """Game flag set when the item is taken (research/ram_map.md, section 3)."""',
              "    item: str",
@@ -182,7 +183,8 @@ def main() -> None:
              "",
              "LOCATIONS: tuple[LocationData, ...] = ("]
     for c in kept:
-        lines.append(f"    LocationData({c['name']!r}, {c['flag']}, {c['item']!r}, {c['chapter']}, {c['bonus']}),")
+        lines.append(f"    LocationData({c['name']!r}, {c['zone']!r}, {c['flag']}, {c['item']!r}, {c['chapter']}, "
+                     f"{c['bonus']}),")
     lines += [")", "", "# Inventory slot of each item found at a location: (category, number in the game's data table).",
               "ITEM_SLOTS: dict[str, tuple[int, int]] = {"]
     for (category, index), item in sorted(slots.items()):

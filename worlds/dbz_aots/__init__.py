@@ -34,6 +34,7 @@ class DbzAotsWorld(World):
 
     item_name_to_id = items.ITEM_NAME_TO_ID
     location_name_to_id = locations.LOCATION_NAME_TO_ID
+    location_name_groups = locations.LOCATION_NAME_GROUPS
 
     def create_regions(self) -> None:
         regions.create_and_connect_regions(self)

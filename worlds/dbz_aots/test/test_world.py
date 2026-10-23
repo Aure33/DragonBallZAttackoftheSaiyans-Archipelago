@@ -1,10 +1,12 @@
 from collections import Counter
 
+from BaseClasses import LocationProgressType
+
 from .bases import DbzAotsTestBase
 from .. import ram
-from ..location_data import LOCATIONS
 from ..items import GAS_MASK, ITEM_NAME_TO_ID, ITEMS, KI_BLAST_FRUIT
-from ..locations import GOAL_EVENT, LOCATION_ID_BASE, LOCATION_NAME_TO_ID, STORY_LOCATIONS
+from ..location_data import LOCATIONS
+from ..locations import GOAL_EVENT, LOCATION_ID_BASE, LOCATION_NAME_TO_ID, MISSABLE_ZONES, STORY_LOCATIONS
 
 BONUS_CHEST = "East City Ruins 7 - Invigorate Ring Chest"
 
@@ -60,6 +62,17 @@ class TestDefaultWorld(DbzAotsTestBase):
         for name in ("Yemma Forest 2 - Demon Seal Chest", GOAL_EVENT):
             with self.subTest(name):
                 self.assertTrue(self.can_reach_location(name))
+
+    def test_missable_areas_hold_no_progression(self) -> None:
+        for data in LOCATIONS:
+            if data.bonus:
+                continue
+            location = self.multiworld.get_location(data.name, self.player)
+            with self.subTest(data.name):
+                expected = data.zone in MISSABLE_ZONES
+                self.assertEqual(expected, location.progress_type == LocationProgressType.EXCLUDED)
+                if expected and location.item:
+                    self.assertFalse(location.item.advancement)
 
     def test_both_ki_blast_fruits_are_in_the_pool(self) -> None:
         self.assertEqual(2, len(self.get_items_by_name(KI_BLAST_FRUIT)))

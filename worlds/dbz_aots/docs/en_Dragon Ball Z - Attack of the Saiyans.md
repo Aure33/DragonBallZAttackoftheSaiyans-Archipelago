@@ -27,6 +27,10 @@ this battle starts. There is no save after the final battle, so do everything el
 The 6 chests of East City Ruins are added with the `east_city_ruins` option; reaching them needs the 7 Dragon
 Balls and Shenron's wish "To Go Somewhere New".
 
+The story closes some areas for a while: the Other World after chapter 9 (until chapter 13) and maybe Nemuria
+Ruins after chapter 11. Their locations never hold progression items, so a chest left behind there never blocks
+anyone. Location groups are available for hints: one per area (for example "Kiwi Volcano") and "Story".
+
 ## Which items can be found?
 
 The original contents of those chests and hidden spots: healing items, stat fruits, accessories and capsules,

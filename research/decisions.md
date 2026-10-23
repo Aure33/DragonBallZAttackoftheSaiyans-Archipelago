@@ -70,3 +70,12 @@ Format : date — décision — raison. Les décisions les plus récentes en bas
 | D23 | ID d'objet = 1000 × (catégorie + 1) + numéro interne ; ID de coffre = 100000 + n° de drapeau | Le client passe de l'ID à l'adresse mémoire par un simple calcul (`ram.inventory_address`, `ram.flag_position`) |
 | D24 | Les 8 lieux s'appellent « Training Island Chest 1 » à « 8 » (ordre des drapeaux), et le pool contient les 8 objets d'origine sans les relier à un coffre précis | Le lien drapeau ↔ coffre n'est connu que pour 2 coffres. On renommera quand les scripts `TreasureSet` seront décodés |
 | D25 | Objectif du world minimal : l'événement « Defeat Jackie Chun » (fin du prologue) | Seule zone couverte. La détection par le client reste à trouver (phase 4) |
+
+## 2026-10-23 — Phase 4 (client minimal)
+
+| # | Décision / constat | Raison |
+|---|---|---|
+| C11 | Essai réel réussi (seed à 2 joueurs, serveur WSL, BizHawk Client Windows, télécommande) : coffre ouvert hors connexion envoyé à la connexion ; objet reçu ajouté ; coffre ouvert en direct → check + objet d'origine retiré ; rechargement d'un ancien état → objets manquants redonnés une seule fois ; rechargement récent → aucun doublon ; objectif envoyé en arrivant en Ville est | Résultat attendu de la phase 4 (cahier des charges §9) |
+| C12 | Limites connues de la v1 : un coffre ouvert sans client connecté laisse l'objet d'origine ; le message du jeu montre l'objet d'origine ; le joueur doit taper son nom de joueur (pas de patch de ROM) ; plafond de 99 par objet (choix prudent, limite réelle du jeu inconnue) | Approche A (D6). La plupart disparaîtront avec un patch (approche B, phase 9) |
+| C13 | Le script de connexion de BizHawk n'accepte **qu'un seul client** : un ancien BizHawk Client resté ouvert bloque tout (« Connection timed out ») | Piège rencontré : un client ouvert à 19 h tenait la connexion. Noté dans le guide d'installation |
+| D26 | Essais réels pilotés depuis WSL avec `tools/live_test.sh` : serveur dans WSL, client Windows lancé par l'interop en mode texte (`ArchipelagoLauncherDebug.exe "BizHawk Client" -- --nogui`), nom du joueur et commandes serveur passés par des tubes nommés | Aucune manipulation du joueur, sauf charger `connector_bizhawk_generic.lua` dans BizHawk |

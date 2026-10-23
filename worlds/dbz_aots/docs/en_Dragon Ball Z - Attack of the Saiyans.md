@@ -2,8 +2,7 @@
 
 ## Status
 
-This world is an early work in progress. It only covers the prologue (Training Island) and is not playable yet:
-the game client is still being written.
+This world is an early work in progress: it only covers the prologue (Training Island).
 
 ## What does randomization do to this game?
 
@@ -12,8 +11,8 @@ other players are added directly to your inventory.
 
 ## What is the goal?
 
-Defeat Jackie Chun at the end of the prologue. The final goal will be to defeat Vegeta once the whole story is
-supported.
+Defeat Jackie Chun at the end of the prologue: the goal is sent when chapter 1 starts in East City. The final goal
+will be to defeat Vegeta once the whole story is supported.
 
 ## Which locations are randomized?
 

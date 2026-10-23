@@ -1,6 +1,6 @@
 # Dragon Ball Z - Attack of the Saiyans Setup Guide
 
-This world is not playable yet: the BizHawk client is still being written. This guide describes the intended setup.
+This world is an early version: only the prologue (Training Island) is randomized.
 
 ## Required software
 
@@ -15,7 +15,16 @@ This world is not playable yet: the BizHawk client is still being written. This 
 
 ## Connecting
 
-1. Open your ROM in BizHawk (melonDS core).
+1. Open your ROM in BizHawk (melonDS core) and load or start a save file.
 2. In BizHawk, open `Tools > Lua Console` and load `data/lua/connector_bizhawk_generic.lua` from your Archipelago
    installation.
 3. Open the Archipelago Launcher, start the BizHawk Client and connect to the server.
+4. The client asks for your slot name (the `name` of your YAML): type it in the client.
+
+Only one BizHawk Client can talk to BizHawk at a time: close any other BizHawk Client window first.
+
+## Known limitations
+
+- Chests still show their original item when opened; the client removes it from your inventory right away.
+  If a chest is opened while the client is not connected, you keep that original item.
+- Received items are added while you are on the field; during a battle they wait until it ends.

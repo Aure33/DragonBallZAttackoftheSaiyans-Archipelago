@@ -13,7 +13,9 @@ Cahier des charges complet : [Prompt_archipelago_dbz.md](Prompt_archipelago_dbz.
 - Quand il doit faire quelque chose (jouer, état de sauvegarde, lire une valeur) : instructions numérotées, puis on attend son retour.
 
 ## État actuel
-- **Phase 3 — World minimal : terminée (2026-10-23).** Phase suivante : 4 — Client minimal. Tableau des phases : cahier des charges, §9.
+- **Phase 4 — Client minimal : terminée (2026-10-23).** Phase suivante : 5 — Test réel (partie avec un autre jeu). Tableau des phases : cahier des charges, §9.
+  - `client.py` : coffres → checks, retrait de l'objet d'origine, objets reçus hors combat, compteur dans la sauvegarde, objectif (arrivée en Ville est). 22 tests du world. Essai réel réussi (`research/decisions.md`, C11). World 0.2.0 installé côté Windows.
+- **Phase 3 — World minimal : terminée (2026-10-23).**
   - `worlds/dbz_aots` : Île d'entraînement, 8 coffres, objectif « Defeat Jackie Chun », 15 tests qui passent ; `.apworld` construit et testé (seed à 3 joueurs avec ChecksFinder et APQuest).
   - Discord vérifié : personne ne travaille sur ce jeu.
 - **Phase 2 — Carte mémoire : terminée (2026-10-23).**
@@ -68,6 +70,21 @@ python3 research/scripts/remote.py "shot ecran" "read 0CC398 8"   # capture -> d
 <ce dépôt>/tools/build_apworld.sh --deploy
 ```
 
+## Essai du client en conditions réelles
+Prérequis : BizHawk ouvert avec la ROM, `remote.lua` **et** `connector_bizhawk_generic.lua` chargés dans la console Lua,
+**aucun autre BizHawk Client ouvert** (le script de connexion n'accepte qu'un client).
+```bash
+tools/build_apworld.sh --deploy                     # world à jour côté Windows
+# générer une seed (skill build-and-test), puis, chacun en arrière-plan :
+tools/live_test.sh server <dossier>/AP_xxx.archipelago
+tools/live_test.sh client
+tools/live_test.sh to-client "Aure"                 # nom du joueur, quand le client le demande
+tools/live_test.sh to-server "/send Aure Gas Mask"  # faire recevoir un objet
+tools/live_test.sh logs
+python3 research/scripts/remote.py "read 0CC398 2"  # vérifier la mémoire
+```
+À la fin : arrêter client et serveur, puis **recharger l'état du joueur** (ex. état 4) pour effacer les objets de test.
+
 ## Conventions
 - **Pas d'invention** : aucune adresse, aucun nom d'objet/zone/quête, aucune API sans source. Sinon on le dit et on propose comment vérifier.
 - Noms officiels du jeu (EN EU / US / FR) : [research/rom_names.md](research/rom_names.md), extraits de la ROM. Les noms du world = colonne EN (EU).
@@ -84,4 +101,5 @@ python3 research/scripts/remote.py "shot ecran" "read 0CC398 8"   # capture -> d
 Créés au moment où leur phase arrive (cahier des charges §11), dans `.claude/agents/` et `.claude/skills/` :
 - Recherche : agents `game-data-researcher`, `ram-researcher` ; skill `ram-diff`.
 - World : agents `apworld-dev`, `logic-reviewer`, `tester` ; skills `build-and-test`, `add-location`, `add-item`.
-- À venir : agent `client-dev` (phase 4), skill `playtest-checklist` (phase 8).
+- Client : agent `client-dev`.
+- À venir : skill `playtest-checklist` (phase 8).

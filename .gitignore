@@ -19,6 +19,8 @@
 research/savestates/
 # Extraits de la ROM (fichiers, overlays, données brutes)
 research/extracted/
+# Photos de la mémoire (dumps RAM)
+research/dumps/
 *.bin
 *.bdat
 

@@ -24,6 +24,11 @@ def item_id(category: ItemCategory, index: int) -> int:
     return 1000 * (category + 1) + index
 
 
+def item_slot(ap_id: int) -> tuple[ItemCategory, int]:
+    """Inverse of item_id: the category and number of the game item behind an Archipelago ID."""
+    return ItemCategory(ap_id // 1000 - 1), ap_id % 1000
+
+
 # Names are the English text of the EU ROM (research/rom_names.md); indexes were checked in the inventory
 # (research/ram_map.md, section 2). Only the contents of the Training Island chests for now.
 ITEMS: dict[str, ItemData] = {

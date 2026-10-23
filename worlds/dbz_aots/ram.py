@@ -40,6 +40,10 @@ INVENTORY_OFFSET: dict[ItemCategory, int] = {
     ItemCategory.CAPSULE: 0x100,  # 48 entries, ROM table Pt_Eqp
     ItemCategory.KEY_ITEM: 0x130,  # 108 entries, ROM table Key_Item
 }
+INVENTORY_SIZE = 0x130 + 108
+
+MAX_QUANTITY = 99
+"""Highest quantity the client ever writes: a safety cap, the game's own limit has not been observed yet."""
 
 FLAGS = 0x09F7E8
 """Permanent event flags (chests, story...), one bit each; saved verbatim in the save file."""

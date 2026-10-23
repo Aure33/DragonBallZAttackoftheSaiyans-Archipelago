@@ -1,6 +1,7 @@
 from BaseClasses import Tutorial
 from worlds.AutoWorld import WebWorld, World
 
+from . import client as client  # importing the module registers the BizHawk client
 from . import items, locations, regions, rules
 from .options import DbzAotsOptions
 

@@ -86,6 +86,255 @@ Total prologue : 1 tiroir + 1 don + 8 coffres + 1 objet d'histoire (+ récompens
 | Bamboo Forest | **Coffre** derrière un gros buisson (longer le bord gauche vers le nord, après un buisson lumineux) | — / Medium Bean | DSR Ch. 1 | 📖 |
 | Bamboo Forest | **Coffre** après le passage caché et le dernier morceau de fourré | — / HP Fruit | DSR Ch. 1 | 📖 |
 
+### Tous les objets ramassables, par zone (en-têtes « Items: » du guide DSR)
+Liste générée par [scripts/extract_dsr_items.py](scripts/extract_dsr_items.py) à partir des en-têtes « Items: » que DSR place au début de chaque zone (2026-10-23). C'est la **base des futurs lieux** du randomizer. Limites connues :
+- Les en-têtes peuvent **oublier** des objets : Gas Mask et Darkness Card (prologue) n'y sont pas, alors que le texte du guide les cite.
+- Certaines lignes sont des **dons de PNJ ou des objets d'histoire**, pas des coffres (ex. Scouter, Hermit Spring Water, Korin's Staff, « Y-Yajirobe (Skill) »). Le type exact reste à vérifier.
+- Une zone revisitée plus tard (ex. Break Wasteland, Kiwi Volcano) a de nouvelles lignes au chapitre où l'on y revient. Souvent, ces objets sont derrière des rochers qui demandent un Ki Blast plus fort.
+- Les fautes du guide sont gardées telles quelles. Par exemple, « Large Beam Ki Drink Z » (n° 104) désigne sans doute 2 objets : Large Bean + Ki Drink Z. Variantes à vérifier : « Recover Capsule » / « Recovery », « MAX Bean » / « Max Bean », « Invigorate Ring » / « Invigoration Ring ».
+- Qté > 1 = le guide écrit « (x2) », sans dire si c'est un seul coffre ou deux.
+
+| N° | Chapitre | Zone | Emplacement (DSR) | Objet (EN) | Qté | Nom FR | Source | Statut |
+|---|---|---|---|---|---|---|---|---|
+| 1 | Prologue | Kame House |  | Luck Fruit | 1 | | DSR Prologue (en-tête Items) | 📖 |
+| 2 | Prologue | Training Island | First Screen | HP Capsule 50 | 1 | | DSR Prologue (en-tête Items) | 📖 |
+| 3 | Prologue | Training Island | First Screen | Small Bean | 2 | | DSR Prologue (en-tête Items) | 📖 |
+| 4 | Prologue | Training Island | First Screen | Phoenix Feather | 1 | | DSR Prologue (en-tête Items) | 📖 |
+| 5 | Prologue | Training Island | Second Screen | Medium Bean | 1 | | DSR Prologue (en-tête Items) | 📖 |
+| 6 | Prologue | Training Island | Second Screen | Small Bean | 1 | | DSR Prologue (en-tête Items) | 📖 |
+| 7 | Ch. 1 | East City |  | Skill Fruit | 1 | | DSR Ch. 1 (en-tête Items) | 📖 |
+| 8 | Ch. 1 | East City |  | Speed Fruit | 1 | | DSR Ch. 1 (en-tête Items) | 📖 |
+| 9 | Ch. 1 | Bamboo Forest |  | Medium Bean | 1 | | DSR Ch. 1 (en-tête Items) | 📖 |
+| 10 | Ch. 1 | Bamboo Forest |  | HP Fruit | 1 | | DSR Ch. 1 (en-tête Items) | 📖 |
+| 11 | Ch. 2 | Mt. Paozu | First Screen | Small Bean | 1 | | DSR Ch. 2 (en-tête Items) | 📖 |
+| 12 | Ch. 2 | Mt. Paozu | Second Screen | Energy Ring | 1 | | DSR Ch. 2 (en-tête Items) | 📖 |
+| 13 | Ch. 2 | Mt. Paozu | Third Screen | Speed Fruit | 1 | | DSR Ch. 2 (en-tête Items) | 📖 |
+| 14 | Ch. 3 | Divine Crossing | First Screen | HP Capsule 50 | 1 | | DSR Ch. 3 (en-tête Items) | 📖 |
+| 15 | Ch. 3 | Divine Crossing | First Screen | Ki Drink 50 | 1 | | DSR Ch. 3 (en-tête Items) | 📖 |
+| 16 | Ch. 3 | Divine Crossing | Second Screen | Fighter's Mark | 1 | | DSR Ch. 3 (en-tête Items) | 📖 |
+| 17 | Ch. 3 | Divine Crossing | Second Screen | Medium Bean | 1 | | DSR Ch. 3 (en-tête Items) | 📖 |
+| 18 | Ch. 4 | Martial Arts Temple |  | Speed Fruit | 1 | | DSR Ch. 4 (en-tête Items) | 📖 |
+| 19 | Ch. 4 | Martial Arts Temple |  | Ki Fruit | 1 | | DSR Ch. 4 (en-tête Items) | 📖 |
+| 20 | Ch. 5 | Baba's Palace |  | 5000 Zeni | 1 | | DSR Ch. 5 (en-tête Items) | 📖 |
+| 21 | Ch. 5 | Baba's Palace |  | Power Fruit | 1 | | DSR Ch. 5 (en-tête Items) | 📖 |
+| 22 | Ch. 5 | Baba's Palace |  | Kamehameha S-Combo Memo | 1 | | DSR Ch. 5 (en-tête Items) | 📖 |
+| 23 | Ch. 5 | Mount Five Element | First Screen | Ki Capsule 50 | 1 | | DSR Ch. 5 (en-tête Items) | 📖 |
+| 24 | Ch. 5 | Mount Five Element | First Screen | Tension Up | 1 | | DSR Ch. 5 (en-tête Items) | 📖 |
+| 25 | Ch. 5 | Mount Five Element | Second Screen | Luck Fruit | 1 | | DSR Ch. 5 (en-tête Items) | 📖 |
+| 26 | Ch. 5 | Mount Five Element | Second Screen | HP Capsule 50 | 1 | | DSR Ch. 5 (en-tête Items) | 📖 |
+| 27 | Ch. 5 | Mount Five Element | Third Screen | Medium Bean | 1 | | DSR Ch. 5 (en-tête Items) | 📖 |
+| 28 | Ch. 5 | Mount Five Element | Third Screen | Evil Containment Stone | 1 | | DSR Ch. 5 (en-tête Items) | 📖 |
+| 29 | Ch. 5 | Mount Five Element | Third Screen | Full Ring | 1 | | DSR Ch. 5 (en-tête Items) | 📖 |
+| 30 | Ch. 5 | Kiwi Volcano | First Screen | HP Capsule | 1 | | DSR Ch. 5 (en-tête Items) | 📖 |
+| 31 | Ch. 5 | Kiwi Volcano | First Screen | Double Drink 50 | 1 | | DSR Ch. 5 (en-tête Items) | 📖 |
+| 32 | Ch. 5 | Kiwi Volcano | First Screen | Poison Card | 1 | | DSR Ch. 5 (en-tête Items) | 📖 |
+| 33 | Ch. 5 | Kiwi Volcano | First Screen | Confrontation Brace | 1 | | DSR Ch. 5 (en-tête Items) | 📖 |
+| 34 | Ch. 5 | Kiwi Volcano | Second Screen | Phoenix Feather | 1 | | DSR Ch. 5 (en-tête Items) | 📖 |
+| 35 | Ch. 5 | Kiwi Volcano | Second Screen | Cold Boots | 1 | | DSR Ch. 5 (en-tête Items) | 📖 |
+| 36 | Ch. 5 | Mt. Frappe | First Screen | Attack Water | 1 | | DSR Ch. 5 (en-tête Items) | 📖 |
+| 37 | Ch. 5 | Mt. Frappe | First Screen | Silver Fur | 1 | | DSR Ch. 5 (en-tête Items) | 📖 |
+| 38 | Ch. 5 | Mt. Frappe | First Screen | Ki Capsule | 1 | | DSR Ch. 5 (en-tête Items) | 📖 |
+| 39 | Ch. 5 | Mt. Frappe | Second Screen | Freeze Capsule | 1 | | DSR Ch. 5 (en-tête Items) | 📖 |
+| 40 | Ch. 5 | Mt. Frappe | Second Screen | Skill Fruit | 1 | | DSR Ch. 5 (en-tête Items) | 📖 |
+| 41 | Ch. 5 | Mt. Frappe | Second Screen | Sleep Card | 1 | | DSR Ch. 5 (en-tête Items) | 📖 |
+| 42 | Ch. 5 | Mt. Frappe | Third Screen | Recovery Fruit | 1 | | DSR Ch. 5 (en-tête Items) | 📖 |
+| 43 | Ch. 5 | Mt. Frappe | Third Screen | HP Fruit | 1 | | DSR Ch. 5 (en-tête Items) | 📖 |
+| 44 | Ch. 6 | Spinach Wastes | First Screen | Large Bean | 1 | | DSR Ch. 6 (en-tête Items) | 📖 |
+| 45 | Ch. 6 | Spinach Wastes | Second Screen | Battle Sense | 1 | | DSR Ch. 6 (en-tête Items) | 📖 |
+| 46 | Ch. 6 | Spinach Wastes | Second Screen | HP Capsule 50 | 1 | | DSR Ch. 6 (en-tête Items) | 📖 |
+| 47 | Ch. 6 | Spinach Wastes | Second Screen | Power Fruit | 1 | | DSR Ch. 6 (en-tête Items) | 📖 |
+| 48 | Ch. 6 | Spinach Wastes | Third Screen | Detect Earring | 1 | | DSR Ch. 6 (en-tête Items) | 📖 |
+| 49 | Ch. 6 | Spinach Wastes | Fourth Screen | Rattlesnake Scale | 1 | | DSR Ch. 6 (en-tête Items) | 📖 |
+| 50 | Ch. 7 | Break Wasteland |  | Ki-Blast Fruit | 1 | | DSR Ch. 7 (en-tête Items) | 📖 |
+| 51 | Ch. 7 | Break Wasteland |  | Double Drink 50 | 1 | | DSR Ch. 7 (en-tête Items) | 📖 |
+| 52 | Ch. 8 | East Mt. Paozu |  | Crane Wolf Strike memo | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 53 | Ch. 8 | West City |  | Defense Fruit | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 54 | Ch. 8 | West City |  | Evasion Mark | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 55 | Ch. 8 | West City |  | Precision Circuit | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 56 | Ch. 8 | West City |  | Spirit Saucer S-Combo memo | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 57 | Ch. 8 | Kame House |  | Scouter | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 58 | Ch. 8 | Jingle Village |  | Jingle Village Bomb | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 59 | Ch. 8 | Jingle Village |  | HP Fruit | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 60 | Ch. 8 | Jingle Village |  | Heavenly Sunlight S-Combo memo | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 61 | Ch. 8 | Jingle Village |  | Earthling Strike S-Combo memo | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 62 | Ch. 8 | Holly Plain | First Screen | Hermit Medicine | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 63 | Ch. 8 | Holly Plain | Second Screen | Ki Fruit | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 64 | Ch. 8 | Holly Plain | Second Screen | Tension Up | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 65 | Ch. 8 | Holly Plain | Third Screen | Large Bean | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 66 | Ch. 8 | Holly Plain | Third Screen | Freeze Knuckle | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 67 | Ch. 8 | Holly Plain | Third Screen | Defense Water | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 68 | Ch. 8 | Holly Plain | Fourth Screen | Absorb Bracelet | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 69 | Ch. 8 | East Mt. Paozu | Goku's House | Recovery Fruit | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 70 | Ch. 8 | East Mt. Paozu | Goku's House | Saiyan Attack S-Combo memo | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 71 | Ch. 8 | East Mt. Paozu | First Screen | Defense Fruit | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 72 | Ch. 8 | East Mt. Paozu | Second Screen | Poison Bracelet | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 73 | Ch. 8 | East Mt. Paozu | Second Screen | Large Bean | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 74 | Ch. 8 | East Mt. Paozu | Second Screen | Paozu Stone | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 75 | Ch. 8 | East Mt. Paozu | Fourth Screen | Ki Drink Z | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 76 | Ch. 8 | East Mt. Paozu | Fourth Screen | Amethyst | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 77 | Ch. 8 | East Mt. Paozu | Fifth Screen | Sleep Knuckle | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 78 | Ch. 8 | Kiwi Volcano |  | Rush Ring | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 79 | Ch. 8 | Kiwi Volcano |  | Guard Earring | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 80 | Ch. 8 | Mt. Frappe |  | Double-Edged Seal | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 81 | Ch. 8 | Mt. Frappe |  | Recovery Emblem | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 82 | Ch. 8 | Spinach Wastes |  | Tension Up | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 83 | Ch. 8 | Spinach Wastes |  | Bushido Spirit | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 84 | Ch. 8 | Sacred Land of Korin |  | Demon Cannon S-Combo memo | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 85 | Ch. 8 | Sacred Land of Korin |  | Earthling Strike S-Combo memo | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 86 | Ch. 8 | Sacred Land of Korin |  | CHA-LA | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 87 | Ch. 8 | Sacred Land of Korin |  | Ki Fruit | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 88 | Ch. 8 | Korin Tower |  | Earthling Strike S-Combo memo | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 89 | Ch. 8 | Korin Tower |  | Power Fruit | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 90 | Ch. 8 | Korin Tower |  | Crane Wolf S-Combo memo | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 91 | Ch. 8 | Hermit Spring | First Screen | Hermit Spring Water | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 92 | Ch. 8 | Hermit Spring | Second Screen | Large Bean | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 93 | Ch. 8 | Hermit Spring | Second Screen | Hermit Medicine | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 94 | Ch. 8 | Hermit Spring | Third Screen | Rush Ring | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 95 | Ch. 8 | Hermit Spring | Fourth Screen | Defense Fruit | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 96 | Ch. 8 | Break Wasteland | First Screen | Medium Bean | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 97 | Ch. 8 | Break Wasteland | Second Screen | Ki Drink Z | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 98 | Ch. 8 | Break Wasteland | Second Screen | Defense Fruit | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 99 | Ch. 8 | Break Wasteland | Second Screen | Medium Bean | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 100 | Ch. 8 | Break Wasteland | Third Screen | Giant Missile | 1 | | DSR Ch. 8 (en-tête Items) | 📖 |
+| 101 | Ch. 9 | King Yemma's Mansion |  | Attitude Belt | 1 | | DSR Ch. 9 (en-tête Items) | 📖 |
+| 102 | Ch. 9 | King Yemma's Mansion |  | Meditation Belt | 1 | | DSR Ch. 9 (en-tête Items) | 📖 |
+| 103 | Ch. 9 | King Yemma's Mansion |  | Meteor Impact S-Combo Memo | 1 | | DSR Ch. 9 (en-tête Items) | 📖 |
+| 104 | Ch. 9 | Princess Snake's Mansion | First Screen | Large Beam Ki Drink Z | 1 | | DSR Ch. 9 (en-tête Items) | 📖 |
+| 105 | Ch. 9 | Princess Snake's Mansion | Second Screen | Bing Ring | 1 | | DSR Ch. 9 (en-tête Items) | 📖 |
+| 106 | Ch. 9 | Princess Snake's Mansion | Second Screen | Large Bean | 1 | | DSR Ch. 9 (en-tête Items) | 📖 |
+| 107 | Ch. 9 | Princess Snake's Mansion | Princess's Room | Recovery Ring | 1 | | DSR Ch. 9 (en-tête Items) | 📖 |
+| 108 | Ch. 9 | King Kai's Planet |  | Finisher Bean | 1 | | DSR Ch. 9 (en-tête Items) | 📖 |
+| 109 | Ch. 9 | King Kai's Planet |  | Energy Bracelet | 1 | | DSR Ch. 9 (en-tête Items) | 📖 |
+| 110 | Ch. 9 | King Kai's Planet |  | Double Drink Z | 1 | | DSR Ch. 9 (en-tête Items) | 📖 |
+| 111 | Ch. 9 | King Kai's Planet |  | Shenron Scale | 1 | | DSR Ch. 9 (en-tête Items) | 📖 |
+| 112 | Ch. 9 | King Kai's Planet |  | Platonic Energy S-Combo Memo | 1 | | DSR Ch. 9 (en-tête Items) | 📖 |
+| 113 | Ch. 9 | Yemma Forest | First Screen | Dragonbone Powder | 1 | | DSR Ch. 9 (en-tête Items) | 📖 |
+| 114 | Ch. 9 | Yemma Forest | First Screen | HP Capsule Z | 1 | | DSR Ch. 9 (en-tête Items) | 📖 |
+| 115 | Ch. 9 | Yemma Forest | Second Screen | Max Bean | 1 | | DSR Ch. 9 (en-tête Items) | 📖 |
+| 116 | Ch. 9 | Yemma Forest | Third Screen | Comfort Ring | 1 | | DSR Ch. 9 (en-tête Items) | 📖 |
+| 117 | Ch. 9 | Yemma Forest | Fourth Screen | Sleep Bracelet | 1 | | DSR Ch. 9 (en-tête Items) | 📖 |
+| 118 | Ch. 9 | Yemma Forest | Fourth Screen | Burn Capsule | 1 | | DSR Ch. 9 (en-tête Items) | 📖 |
+| 119 | Ch. 10 | Korin Tower |  | Korin's Staff | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 120 | Ch. 10 | Kami's Temple |  | Demon-Wolf-Crane S-Combo Memo | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 121 | Ch. 10 | Kami's Temple |  | Demon Cannon S-Combo Memo | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 122 | Ch. 10 | Kami's Temple |  | Y-Yajirobe (Skill) | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 123 | Ch. 10 | Pirate Cave | First Screen | Recovery Fruit | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 124 | Ch. 10 | Pirate Cave | First Screen | Satellite Laser | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 125 | Ch. 10 | Pirate Cave | First Screen | Striker's Crest | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 126 | Ch. 10 | Pirate Cave | Basement from First Screen | Dragon Stone | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 127 | Ch. 10 | Pirate Cave | Basement from First Screen | Swift Boots | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 128 | Ch. 10 | Pirate Cave | Basement from First Screen | Fighter's Crest | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 129 | Ch. 10 | Desert | First Screen | Skill Fruit | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 130 | Ch. 10 | Desert | Second Screen | Agility Necklace | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 131 | Ch. 10 | Desert | Third Screen | Phoenix Tail Feather | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 132 | Ch. 10 | Desert | Fifth Screen | Evasion Crest | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 133 | Ch. 10 | Desert | Sixth Screen | Ninja Boots | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 134 | Ch. 10 | Desert | Seventh Screen | Empty Capsule | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 135 | Ch. 10 | Muscle Tower | Second Floor | Senzu Bean | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 136 | Ch. 10 | Muscle Tower | Third Floor | Double Capsule 50 | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 137 | Ch. 10 | Muscle Tower | Fourth Floor | Energy Necklace | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 138 | Ch. 10 | Muscle Tower | Fifth Floor | Thunder Capsule | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 139 | Ch. 10 | Yunzabit Heights | First Screen | Power Fruit | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 140 | Ch. 10 | Yunzabit Heights | First Screen | EXP Boost | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 141 | Ch. 10 | Yunzabit Heights | Second Screen | Double-Edged Seal | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 142 | Ch. 10 | Yunzabit Heights | Northeast Area of First Screen | Max Bean | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 143 | Ch. 10 | Yunzabit Heights | Northeast Area of First Screen | Bushido | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 144 | Ch. 10 | Yunzabit Heights | Northeast Area of First Screen | Double Capsule 50 | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 145 | Ch. 10 | Yunzabit Heights | Spaceship | Demon Fusion S-Combo Memo | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 146 | Ch. 10 | Yunzabit Heights | Ice Caves | Yunzabit Bomb | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 147 | Ch. 10 | Yunzabit Heights | Ice Caves | Selflessness Belt | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 148 | Ch. 10 | Yunzabit Heights | Ice Caves | Popo's Turban | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 149 | Ch. 10 | Devil's Toilet | Front Entrance | Ki Necklace | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 150 | Ch. 10 | Devil's Toilet | Lobby Room | Shenron Scale | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 151 | Ch. 10 | Devil's Toilet | Lobby Room | Large Bean | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 152 | Ch. 10 | Devil's Toilet | Lobby Room | Ki Drink Z | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 153 | Ch. 10 | Devil's Toilet | Left Basement | Evasion Secrets | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 154 | Ch. 10 | Devil's Toilet | Left Basement | Protective Crest | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 155 | Ch. 10 | Devil's Toilet | Left Basement | Double Capsule Z | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 156 | Ch. 10 | Devil's Toilet | Left Basement | Targeting Ring | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 157 | Ch. 10 | Devil's Toilet | Left Basement | Defense Necklace | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 158 | Ch. 10 | Devil's Toilet | Right Basement | Shenron's Nail | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 159 | Ch. 10 | Devil's Toilet | Right Basement | Freezing Card | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 160 | Ch. 10 | Devil's Toilet | Right Basement | Senzu Bean | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 161 | Ch. 10 | Devil's Toilet | Right Basement | Full Bracelet | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 162 | Ch. 10 | Pilaf Castle | Second Floor | Seismic Energy Ray S-Combo memo | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 163 | Ch. 10 | Pilaf Castle | Second Floor | Kamehameha Fever S-Combo memo | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 164 | Ch. 10 | Pilaf Castle | Second Floor | Recover Capsule (First floor) | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 165 | Ch. 10 | Pilaf Castle | Second Floor | Luck Necklace | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 166 | Ch. 10 | Pilaf Castle | Second Floor | Double Drink Z | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 167 | Ch. 10 | Pilaf Castle | Second Floor | Ki Capsule Z | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 168 | Ch. 10 | Pilaf Castle | Pinball Room | Max Bean | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 169 | Ch. 10 | Pilaf Castle | Pinball Room | Luck Fruit | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 170 | Ch. 10 | Pilaf Castle | Upper Level | Skill Fruit | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 171 | Ch. 10 | Pilaf Castle | Upper Level | Range Belt | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 172 | Ch. 10 | Pilaf Castle | Upper Level | Perfume | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 173 | Ch. 10 | Pilaf Castle | Upper Level | Binding Card | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 174 | Ch. 10 | Pilaf Castle | Upper Level | Speed Crest | 1 | | DSR Ch. 10 (en-tête Items) | 📖 |
+| 175 | Ch. 11 | Break Wasteland | Desert Area | Foe Charm | 1 | | DSR Ch. 11 (en-tête Items) | 📖 |
+| 176 | Ch. 11 | Break Wasteland | Desert Area | Kami's Judgement | 1 | | DSR Ch. 11 (en-tête Items) | 📖 |
+| 177 | Ch. 11 | Break Wasteland | Desert Area | Blindfold Knuckle | 1 | | DSR Ch. 11 (en-tête Items) | 📖 |
+| 178 | Ch. 11 | Break Wasteland | Desert Area | Large Bean | 1 | | DSR Ch. 11 (en-tête Items) | 📖 |
+| 179 | Ch. 11 | Nemuria Ruins | Gohan's Side | Max Bean | 1 | | DSR Ch. 11 (en-tête Items) | 📖 |
+| 180 | Ch. 11 | Nemuria Ruins | Gohan's Side | Spirit Light | 1 | | DSR Ch. 11 (en-tête Items) | 📖 |
+| 181 | Ch. 11 | Nemuria Ruins | Gohan's Side | Comfort Bracelet | 1 | | DSR Ch. 11 (en-tête Items) | 📖 |
+| 182 | Ch. 11 | Nemuria Ruins | Gohan's Side | Giant Missile | 1 | | DSR Ch. 11 (en-tête Items) | 📖 |
+| 183 | Ch. 11 | Nemuria Ruins | Gohan's Side | Large Bean | 1 | | DSR Ch. 11 (en-tête Items) | 📖 |
+| 184 | Ch. 11 | Nemuria Ruins | Gohan's Side | Ki Drink Z | 1 | | DSR Ch. 11 (en-tête Items) | 📖 |
+| 185 | Ch. 11 | Nemuria Ruins | Gohan's Side | Recovery Crest | 1 | | DSR Ch. 11 (en-tête Items) | 📖 |
+| 186 | Ch. 11 | Nemuria Ruins | Piccolo's Side | Large Bean | 1 | | DSR Ch. 11 (en-tête Items) | 📖 |
+| 187 | Ch. 11 | Nemuria Ruins | Piccolo's Side | Ki Drink Z | 1 | | DSR Ch. 11 (en-tête Items) | 📖 |
+| 188 | Ch. 11 | Nemuria Ruins | Piccolo's Side | HP Capsule 50 | 1 | | DSR Ch. 11 (en-tête Items) | 📖 |
+| 189 | Ch. 11 | Nemuria Ruins | Piccolo's Side | Energy Necklace | 1 | | DSR Ch. 11 (en-tête Items) | 📖 |
+| 190 | Ch. 11 | Nemuria Ruins |  | Phoenix Tail Feather | 1 | | DSR Ch. 11 (en-tête Items) | 📖 |
+| 191 | Ch. 11 | Nemuria Ruins |  | Skill Necklace | 1 | | DSR Ch. 11 (en-tête Items) | 📖 |
+| 192 | Ch. 11 | Nemuria Ruins |  | Invigoration Ring | 1 | | DSR Ch. 11 (en-tête Items) | 📖 |
+| 193 | Ch. 11 | Nemuria Ruins |  | Recover Capsule | 1 | | DSR Ch. 11 (en-tête Items) | 📖 |
+| 194 | Ch. 12 | Mutaito's Grounds | Inside Cave | Ki-Blast Fruit | 1 | | DSR Ch. 12 (en-tête Items) | 📖 |
+| 195 | Ch. 12 | Mutaito's Grounds | Bridge Area | Quad Siege S-Combo memo | 1 | | DSR Ch. 12 (en-tête Items) | 📖 |
+| 196 | Ch. 12 | Mutaito's Grounds | Bridge Area | Power Necklace | 1 | | DSR Ch. 12 (en-tête Items) | 📖 |
+| 197 | Ch. 12 | Mutaito's Grounds | Third Outside Area | Senzu Bean | 1 | | DSR Ch. 12 (en-tête Items) | 📖 |
+| 198 | Ch. 12 | Mutaito's Grounds | Second Cave | Item Rush | 1 | | DSR Ch. 12 (en-tête Items) | 📖 |
+| 199 | Ch. 12 | Mutaito's Grounds | Second Cave | Healing Bracelet | 1 | | DSR Ch. 12 (en-tête Items) | 📖 |
+| 200 | Ch. 13 | Yemma Forest |  | Demon Seal | 1 | | DSR Ch. 13 (en-tête Items) | 📖 |
+| 201 | Ch. 13 | Yemma Forest |  | Super Sacred Water | 1 | | DSR Ch. 13 (en-tête Items) | 📖 |
+| 202 | Ch. 13 | Yemma Forest |  | Guard Sense | 1 | | DSR Ch. 13 (en-tête Items) | 📖 |
+| 203 | Ch. 14 | Paprika Wasteland |  | Super Senzu Bean | 1 | | DSR Ch. 14 (en-tête Items) | 📖 |
+| 204 | Ch. 14 | Paprika Wasteland |  | Master's Scheme | 1 | | DSR Ch. 14 (en-tête Items) | 📖 |
+| 205 | Ch. 14 | Paprika Wasteland |  | Model Full Moon | 1 | | DSR Ch. 14 (en-tête Items) | 📖 |
+| 206 | Ch. 15 | Gizard Wasteland | Inside Cave | MAX Bean | 1 | | DSR Ch. 15 (en-tête Items) | 📖 |
+| 207 | Ch. 15 | Gizard Wasteland | Inside Cave | Shenron Scale | 1 | | DSR Ch. 15 (en-tête Items) | 📖 |
+| 208 | Ch. 15 | Gizard Wasteland | Inside Cave | Finisher Bean | 1 | | DSR Ch. 15 (en-tête Items) | 📖 |
+| 209 | Ch. 15 | Gizard Wasteland | Inside Cave | Ki Drink Z | 2 | | DSR Ch. 15 (en-tête Items) | 📖 |
+| 210 | Ch. 15 | Gizard Wasteland | Inside Cave | Recover Capsule | 1 | | DSR Ch. 15 (en-tête Items) | 📖 |
+| 211 | Ch. 15 | Gizard Wasteland | Inside Cave | Dragonbone Powder | 1 | | DSR Ch. 15 (en-tête Items) | 📖 |
+| 212 | Ch. 15 | Gizard Wasteland | Inside Cave | Senzu Bean | 1 | | DSR Ch. 15 (en-tête Items) | 📖 |
+| 213 | Ch. 15 | Gizard Wasteland | Inside Cave | Super Sacred Water | 1 | | DSR Ch. 15 (en-tête Items) | 📖 |
+| 214 | Fin de jeu | Kiwi Volcano |  | Adrenaline | 1 | | DSR Fin de jeu (en-tête Items) | 📖 |
+| 215 | Fin de jeu | Kiwi Volcano |  | Sacred Jewel | 1 | | DSR Fin de jeu (en-tête Items) | 📖 |
+| 216 | Fin de jeu | Mt. Frappe |  | Finisher Bean | 1 | | DSR Fin de jeu (en-tête Items) | 📖 |
+| 217 | Fin de jeu | Mt. Frappe |  | COMBO Up | 1 | | DSR Fin de jeu (en-tête Items) | 📖 |
+| 218 | Fin de jeu | Spinach Wastes |  | Healing Bracelet | 1 | | DSR Fin de jeu (en-tête Items) | 📖 |
+| 219 | Fin de jeu | Spinach Wastes |  | Finisher Bean | 1 | | DSR Fin de jeu (en-tête Items) | 📖 |
+| 220 | Fin de jeu | Spinach Wastes |  | Agitator | 1 | | DSR Fin de jeu (en-tête Items) | 📖 |
+| 221 | Fin de jeu | Break Wasteland |  | Shenron's Blessing | 1 | | DSR Fin de jeu (en-tête Items) | 📖 |
+| 222 | Fin de jeu | Break Wasteland |  | HP Capsule Z | 1 | | DSR Fin de jeu (en-tête Items) | 📖 |
+| 223 | Fin de jeu | Break Wasteland |  | Fortune Belt | 1 | | DSR Fin de jeu (en-tête Items) | 📖 |
+| 224 | Fin de jeu | Break Wasteland |  | HEAD-CHA-LA | 1 | | DSR Fin de jeu (en-tête Items) | 📖 |
+| 225 | Fin de jeu | Break Wasteland |  | Multi-Missile | 1 | | DSR Fin de jeu (en-tête Items) | 📖 |
+| 226 | Fin de jeu | East City |  | Quad-Siege S-Combo memo | 1 | | DSR Fin de jeu (en-tête Items) | 📖 |
+| 227 | Fin de jeu | East City |  | Platonic Energy S-Combo memo | 1 | | DSR Fin de jeu (en-tête Items) | 📖 |
+| 228 | Fin de jeu | East City Ruins |  | Invigorate Ring | 1 | | DSR Fin de jeu (en-tête Items) | 📖 |
+| 229 | Fin de jeu | East City Ruins |  | Blessing Belt | 1 | | DSR Fin de jeu (en-tête Items) | 📖 |
+| 230 | Fin de jeu | East City Ruins |  | Ki Necklace | 1 | | DSR Fin de jeu (en-tête Items) | 📖 |
+| 231 | Fin de jeu | East City Ruins |  | Senzu Bean | 1 | | DSR Fin de jeu (en-tête Items) | 📖 |
+| 232 | Fin de jeu | East City Ruins |  | Saiyan Spirit | 1 | | DSR Fin de jeu (en-tête Items) | 📖 |
+| 233 | Fin de jeu | East City Ruins |  | Oolong's Wallet | 1 | | DSR Fin de jeu (en-tête Items) | 📖 |
+| 234 | Fin de jeu | East Mt. Paozu |  | Full Necklace | 1 | | DSR Fin de jeu (en-tête Items) | 📖 |
+| 235 | Fin de jeu | East Mt. Paozu |  | Energy Seed | 1 | | DSR Fin de jeu (en-tête Items) | 📖 |
+| 236 | Fin de jeu | East Mt. Paozu |  | Popo's Turban | 1 | | DSR Fin de jeu (en-tête Items) | 📖 |
+| 237 | Fin de jeu | East Mt. Paozu |  | Dragon's Rage | 1 | | DSR Fin de jeu (en-tête Items) | 📖 |
+| 238 | Fin de jeu | East Mt. Paozu |  | Fortune Belt | 1 | | DSR Fin de jeu (en-tête Items) | 📖 |
+
 ## Quêtes
 | Nom FR | Nom EN | Donneur / lieu | Récompense | Condition | Source | Statut |
 |---|---|---|---|---|---|---|

@@ -26,3 +26,14 @@ Format : date — décision — raison. Les décisions les plus récentes en bas
 - **Client BizHawk** : une classe qui hérite de `BizHawkClient`, avec `game`, `system = "NDS"`, `validate_rom()` (reconnaître la ROM), `game_watcher()` (boucle principale), et éventuellement `set_auth()`. Pour lire et écrire : `bizhawk.read`, `bizhawk.write`, `bizhawk.guarded_write` (écrit seulement si une valeur témoin n'a pas changé, pour éviter les écritures au mauvais moment). Le connecteur Lua accepte BizHawk 2.7 et plus, et a été testé jusqu'à 2.11.
 - **Le client doit** : renvoyer à la connexion les checks faits hors ligne, pouvoir donner un objet à tout moment, accepter plus d'exemplaires d'un objet que le jeu n'en prévoit, et tenir un **compteur d'objets reçus** pour ne rien redonner en double.
 - **Exemples à étudier** : aucun jeu DS dans le dépôt officiel. Le world communautaire `pokemon_bw` (DS) est installé : il utilise le domaine `Main RAM` et vérifie l'en-tête de la ROM en mémoire. Côté RPG dans le dépôt officiel : `mlss` (Mario & Luigi Superstar Saga, GBA), `pokemon_emerald` (GBA), `ff1` (NES).
+
+## 2026-10-23 — Phase 1 (recherche du contenu)
+
+| # | Décision / constat | Raison |
+|---|---|---|
+| D13 | Base des futurs lieux = les ~240 objets des en-têtes « Items: » du guide DSR, plus les récompenses de boss et de quêtes | C'est la seule liste complète trouvée. Elle est à vérifier en jeu (oublis connus, dons de PNJ mélangés aux coffres) |
+| D14 | Les **Dragon Balls ne seront pas des lieux** | Leur position est aléatoire dans le jeu d'origine (DSR Odds-and-Ends), donc impossible de les relier à un emplacement fixe |
+| C1 | La progression suit surtout l'**histoire** (chapitres linéaires). Les objets clés repérés comme candidats à la progression : Gas Mask, Bansho Fan, Honey, Eggshell, Snowfield Key, Ki-Blast Fruit (×2, rochers devant des coffres), East City pass | À confirmer en phase 2 : le jeu vérifie-t-il l'objet dans l'inventaire ou un drapeau d'histoire ? (cahier des charges §7) |
+| C2 | Le contenu bonus doit être fait **avant** le dernier combat contre Vegeta : il n'y a pas de sauvegarde après les crédits | Confirme D7 (victoire = dernier Vegeta). Les lieux bonus seront donc à option |
+| C3 | Les techniques s'achètent surtout avec les AP (2 viennent de l'histoire, les S-Combos viennent d'objets « memo ») | L'option « mélanger les techniques » ne pourra porter, au début, que sur les S-Combo memos |
+| C4 | Le randomizer existant (RND) ne s'occupe pas des coffres et ne donne aucun identifiant d'objet | Il ne nous aide pas pour la liste des lieux. Il pourra servir plus tard pour le format de données `bdat.bin` (patch, approche B) |

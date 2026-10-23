@@ -1,0 +1,50 @@
+# --- Fichiers du jeu : JAMAIS dans Git ---
+# ROM DS (et variantes)
+*.nds
+*.srl
+*.dsi
+*.zip
+*.7z
+# Sauvegardes en jeu (cartouche, BizHawk, DeSmuME, melonDS)
+*.sav
+*.dsv
+*.SaveRAM
+*.saveram
+*.bak
+# États de sauvegarde (savestates) des émulateurs
+*.State
+*.state
+*.ds[0-9]
+*.mln
+research/savestates/
+# Extraits de la ROM (fichiers, overlays, données brutes)
+research/extracted/
+*.bin
+*.bdat
+
+# --- Sorties Archipelago ---
+output/
+*.apworld
+*.archipelago
+*.apsave
+*.apdbzaots
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- Éditeurs / OS ---
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# --- Claude Code : réglages locaux ---
+.claude/settings.local.json

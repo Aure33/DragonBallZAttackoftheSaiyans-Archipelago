@@ -20,6 +20,7 @@ Cahier des charges complet : [Prompt_archipelago_dbz.md](Prompt_archipelago_dbz.
   - Données : `research/chests.md` et `worlds/dbz_aots/location_data.py` sont **générés** (`extract_chests.py` puis `build_world_data.py`) ; ne pas les modifier à la main.
   - Étape 3 faite : zones manquables exclues de la progression (D36), groupes de lieux (D37). 96 tests, 60 seeds sans échec.
   - Étape 4 faite : option `experience_multiplier` (1–10, D38), validée en jeu (exp. et PA triplés, montées de niveau faites par le jeu). World 0.5.0, 103 tests.
+  - À faire (demande de l'utilisateur, 2026-10-24) : enrichir les options du YAML : quoi mélanger (coffres, objets cachés, fins de chapitre…), condition de victoire, DeathLink, etc. Le modèle YAML est généré par Archipelago à partir de `options.py`.
   - Reste : 23 lieux mis de côté à vérifier, dons à plusieurs drapeaux (carottes, captures…), DeathLink ?, voir le drapeau 1050 en jeu.
 - **Phase 5 — Test réel : terminée (2026-10-23).** Seed DBZ + APQuest (2e joueur simulé par `/send_location` du serveur), jouée par Claude via la télécommande : checks, objets envoyés et reçus, objectif, `collect`, aucun doublon (`research/decisions.md`, C14).
 - **Phase 4 — Client minimal : terminée (2026-10-23).**

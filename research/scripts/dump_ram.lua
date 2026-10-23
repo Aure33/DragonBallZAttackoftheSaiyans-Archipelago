@@ -1,15 +1,19 @@
 -- Photo de la mémoire de DBZ: Attack of the Saiyans (BizHawk 2.11, cœur melonDS).
 --
--- Ouvre une petite fenêtre : on tape une étiquette (ex. « avant_coffre1 ») et on clique « Prendre la photo ».
--- Le contenu complet du domaine « Main RAM » est alors écrit dans DUMP_DIR, sous le nom NN_etiquette.bin,
--- et une ligne est ajoutée à DUMP_DIR/index.txt (numéro ; étiquette ; image n° ; taille).
+-- Lancer le script une fois (Lua Console). Ensuite, CHAQUE état de sauvegarde (Shift+F<n>) prend
+-- automatiquement une photo : le contenu complet du domaine « Main RAM » est écrit dans DUMP_DIR
+-- sous le nom NN.bin, et une ligne est ajoutée à DUMP_DIR/index.txt (numéro ; état ; image n° ; taille).
 -- Le script ne fait que LIRE la mémoire du jeu.
+--
+-- Pourquoi pas directement les fichiers .State ? Le cœur melonDS n'y enregistre que les pages mémoire
+-- modifiées depuis son démarrage, sans adresse simple : inutilisable pour une carte mémoire.
 --
 -- Les photos contiennent des données du jeu : elles ne vont jamais dans Git.
 
 local DUMP_DIR = "C:/Users/Aurelien/Desktop/archipelago/dbz_research/dumps/"
 local DOMAIN = "Main RAM"
-local CHUNK = 4096
+local READ_SIZE = 65536 -- octets lus par appel à BizHawk
+local WRITE_SIZE = 4096 -- octets convertis en texte d'un coup (limite de table.unpack)
 
 local function count_existing_dumps()
     local index = io.open(DUMP_DIR .. "index.txt", "r")
@@ -26,13 +30,9 @@ end
 
 local photo_number = count_existing_dumps()
 
-local function take_photo(label)
-    label = (label or ""):gsub("[^%w_%-]", "_")
-    if label == "" then
-        label = "sans_nom"
-    end
+local function take_photo(state_name)
     photo_number = photo_number + 1
-    local name = string.format("%02d_%s.bin", photo_number, label)
+    local name = string.format("%02d.bin", photo_number)
     local size = memory.getmemorydomainsize(DOMAIN)
     local file, err = io.open(DUMP_DIR .. name, "wb")
     if file == nil then
@@ -40,34 +40,27 @@ local function take_photo(label)
         photo_number = photo_number - 1
         return
     end
-    for address = 0, size - 1, CHUNK do
-        local bytes = memory.read_bytes_as_array(address, math.min(CHUNK, size - address), DOMAIN)
-        file:write(string.char(table.unpack(bytes)))
+    for address = 0, size - 1, READ_SIZE do
+        local bytes = memory.read_bytes_as_array(address, math.min(READ_SIZE, size - address), DOMAIN)
+        for first = 1, #bytes, WRITE_SIZE do
+            file:write(string.char(table.unpack(bytes, first, math.min(first + WRITE_SIZE - 1, #bytes))))
+        end
     end
     file:close()
     local index = io.open(DUMP_DIR .. "index.txt", "a")
-    index:write(string.format("%02d;%s;%d;%d\n", photo_number, label, emu.framecount(), size))
+    index:write(string.format("%02d;%s;%d;%d\n", photo_number, tostring(state_name or ""), emu.framecount(), size))
     index:close()
-    print(string.format("Photo %02d enregistrée : %s (%d octets, image n° %d)", photo_number, name, size, emu.framecount()))
+    print(string.format("Photo %02d enregistrée (%d octets, image n° %d)", photo_number, size, emu.framecount()))
 end
 
--- Informations utiles pour la carte mémoire : liste des domaines et leur taille.
 print("Domaines mémoire disponibles :")
 for _, domain in pairs(memory.getmemorydomainlist()) do
     print(string.format("  %s : %d octets", domain, memory.getmemorydomainsize(domain)))
 end
 print(string.format("Photos déjà présentes : %d. Dossier : %s", photo_number, DUMP_DIR))
+print("Prêt : chaque état de sauvegarde (Shift+F<n>) prendra une photo.")
 
-local ok, form = pcall(forms.newform, 320, 120, "Photo mémoire DBZ")
-if not ok then
-    print("La fenêtre n'a pas pu s'ouvrir : une seule photo est prise maintenant (relancer le script pour la suivante).")
-    take_photo("photo")
-    return
-end
-local label_box = forms.textbox(form, "", 180, 20, nil, 10, 10)
-forms.button(form, "Prendre la photo", function() take_photo(forms.gettext(label_box)) end, 200, 8, 100, 24)
-forms.label(form, "Étiquette (sans espace), puis clic.", 10, 45, 290, 20)
-event.onexit(function() forms.destroy(form) end)
+event.onsavestate(take_photo, "photo_memoire")
 
 while true do
     emu.frameadvance()

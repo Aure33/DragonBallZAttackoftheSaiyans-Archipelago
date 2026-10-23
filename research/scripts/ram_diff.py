@@ -5,12 +5,12 @@ Offsets affichés : offset dans le domaine Main RAM, et adresse DS (0x02000000 +
 Exemples (dossier des photos côté Windows) :
     D=/mnt/c/Users/Aurelien/Desktop/archipelago/dbz_research/dumps
     python3 research/scripts/ram_diff.py list $D
-    python3 research/scripts/ram_diff.py find $D/01_test.bin "DB KAI RPG"
-    python3 research/scripts/ram_diff.py find $D/01_test.bin 4253 --hex
+    python3 research/scripts/ram_diff.py find $D/01.bin "DB KAI RPG"
+    python3 research/scripts/ram_diff.py find $D/01.bin 4253 --hex
     # Drapeaux : bits passés de 0 à 1 entre photo[i] et photo[i+1] et stables partout ailleurs
-    python3 research/scripts/ram_diff.py flags $D/02_avant.bin $D/03_apres1.bin $D/04_apres2.bin
+    python3 research/scripts/ram_diff.py flags $D/02.bin $D/03.bin $D/04.bin
     # Octets changés entre A et B, sauf ceux qui changent aussi entre les photos de bruit
-    python3 research/scripts/ram_diff.py diff $D/02_avant.bin $D/03_apres1.bin --noise $D/03_apres1.bin $D/03b_rien.bin
+    python3 research/scripts/ram_diff.py diff $D/02.bin $D/03.bin --noise $D/03.bin $D/04.bin
     # Valeur d'une adresse sur plusieurs photos
     python3 research/scripts/ram_diff.py value 0x1A2B3C 2 $D/*.bin
 """

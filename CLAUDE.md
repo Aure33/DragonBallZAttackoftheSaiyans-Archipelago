@@ -28,7 +28,8 @@ Cahier des charges complet : [Prompt_archipelago_dbz.md](Prompt_archipelago_dbz.
   - Sous-marin et Truc de Bubbles mélangés aussi (C46, D47), vérifiés en jeu et en essai réel. Clé des égouts facultative, laissée en place (C45). World 0.9.0, 146 tests.
   - Stats d'un personnage (C47) : 6 stats à +0x44 et niveau à +0x68 depuis les PV actuels. État 8 de Claude = devant le portail de Broly, stats au maximum.
   - Raccourcis mémoire (C39, `tools/warp.py`) : téléportation, saut de scène, drapeaux d'histoire ; Raditz sans fausse mort (C40) ; porte du champ de neige pas encore ouverte (C41).
-  - Reste : 23 lieux mis de côté à vérifier, dons à plusieurs drapeaux (carottes, captures…), voir le drapeau 1050 en jeu.
+  - Lieux mis de côté (C50, D49) : 17 vérifiés en jeu et ajoutés (ch. 15), 6 restent de côté (dont égouts). Drapeau 1050 vu en jeu (C51). World 0.11.0, 244 lieux par défaut.
+  - Reste : suivi automatique PopTracker, dons à plusieurs drapeaux (carottes, captures…), phase 8.
 - **Phase 5 — Test réel : terminée (2026-10-23).** Seed DBZ + APQuest (2e joueur simulé par `/send_location` du serveur), jouée par Claude via la télécommande : checks, objets envoyés et reçus, objectif, `collect`, aucun doublon (`research/decisions.md`, C14).
 - **Phase 4 — Client minimal : terminée (2026-10-23).**
   - `client.py` : coffres → checks, retrait de l'objet d'origine, objets reçus hors combat, compteur dans la sauvegarde, objectif (arrivée en Ville est). 22 tests du world. Essai réel réussi (`research/decisions.md`, C11). World 0.2.0 installé côté Windows.

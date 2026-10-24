@@ -80,8 +80,9 @@ class TestDefaultWorld(DbzAotsTestBase):
                 if expected and location.item:
                     self.assertFalse(location.item.advancement)
 
-    def test_both_ki_blast_fruits_are_in_the_pool(self) -> None:
-        self.assertEqual(2, len(self.get_items_by_name(KI_BLAST_FRUIT)))
+    def test_the_three_ki_blast_fruits_are_in_the_pool(self) -> None:
+        # Two from the story chests (chapters 7 and 12), one from Pilaf's Castle 5 (research/decisions.md, C50).
+        self.assertEqual(3, len(self.get_items_by_name(KI_BLAST_FRUIT)))
 
 
 class TestEastCityRuins(DbzAotsTestBase):

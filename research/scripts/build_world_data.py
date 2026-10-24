@@ -70,6 +70,11 @@ EAST_CITY_RUINS = ("East City Ruins", ("East City Ruins",))
 BONUS_ZONES = {"East City Ruins"}  # 7 Dragon Balls + vœu « To Go Somewhere New » (DSR Odds-and-Ends)
 # Coffres connus sans ligne DSR (l'en-tête « Items » du prologue les oublie ; vus en jeu le 2026-10-23).
 KNOWN_WITHOUT_DSR = {1583: "Prologue", 1584: "Prologue"}
+# Lieux sans ligne DSR ouverts en jeu par Claude au début du chapitre 15 (histoire 1025, tir de Ki niveau 3), avant le
+# combat final : téléportation à côté, objet obtenu et drapeau allumé (research/decisions.md, C50). Chapitre 15 : la
+# chasse aux boules y ramène dans ces zones, et toute la progression est alors acquise.
+VERIFIED_IN_GAME = {flag: "Fin de jeu" for flag in (1426, 1431, 1432, 1433, 1445, 1446, 1447, 1448, 1505, 1506, 1526,
+                                                     1551, 1588, 1608, 3203, 3223, 3233)}
 # Fautes ou variantes d'écriture du guide.
 DSR_SPELLING = {"recovery capsule": "recover capsule", "invigoration": "invigorate", "judgement": "judgment",
                 "ninja boots": "ninja sandals", "max bean": "max bean"}
@@ -137,11 +142,18 @@ def main() -> None:
         map_code = chest["map"]
         zone = zone_of(map_code)[0]
         row = matches[chest["flag"]]
-        if row is None and chest["flag"] not in KNOWN_WITHOUT_DSR:
+        if row is None and chest["flag"] not in KNOWN_WITHOUT_DSR and chest["flag"] not in VERIFIED_IN_GAME:
             set_aside.append((chest, map_code, zone))
             continue
-        chapter = chapter_number(row["chapter"] if row else KNOWN_WITHOUT_DSR[chest["flag"]])
-        source = f"DSR n° {row['n']} ({row['chapter']}, {row['zone']})" if row else "OBS 2026-10-23 (DSR Prologue, texte)"
+        if row:
+            chapter = chapter_number(row["chapter"])
+            source = f"DSR n° {row['n']} ({row['chapter']}, {row['zone']})"
+        elif chest["flag"] in KNOWN_WITHOUT_DSR:
+            chapter = chapter_number(KNOWN_WITHOUT_DSR[chest["flag"]])
+            source = "OBS 2026-10-23 (DSR Prologue, texte)"
+        else:
+            chapter = chapter_number(VERIFIED_IN_GAME[chest["flag"]])
+            source = "OBS 2026-10-24 (ouvert en jeu au ch. 15, C50)"
         kept.append({"kind": chest["kind"], "flag": chest["flag"], "map": map_code, "zone": zone, "item": chest["EN"], "fr": chest["FR"],
                      "category": chest["category"], "index": chest["index"], "chapter": chapter,
                      "bonus": zone in BONUS_ZONES, "source": source})

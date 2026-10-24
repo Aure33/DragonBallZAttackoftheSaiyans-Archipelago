@@ -27,11 +27,16 @@ there is no save after it.
 
 ## Which locations are randomized?
 
-224 locations:
+244 locations:
 
-- the chests of every area of the story, from Training Island to Gizard Wasteland (195);
-- the hidden items you get by examining a drawer, a stall, a door... (14);
-- the end of the prologue and of chapters 1 to 14 (15).
+- the chests of every area of the story, from Training Island to Gizard Wasteland (209);
+- the hidden items you get by examining a drawer, a stall, a door... (17);
+- the end of the prologue and of chapters 1 to 14 (15);
+- the three story scenes that give a key item, with the `key_items` option (3).
+
+17 of those chests and hidden items are off the story path (some under a rock to break with a Ki blast). The logic
+expects them during the tour before the final battle (chapter 15), when the Dragon Ball hunt brings you back to
+every area.
 
 The 6 chests of East City Ruins are added with the `east_city_ruins` option; reaching them needs the 7 Dragon
 Balls and Shenron's wish "To Go Somewhere New".
@@ -52,7 +57,7 @@ plus filler for the chapter ends. Six of them matter for progression:
   scene at Capsule Corp. no longer gives it.
 - **Bubbles' Thing** (key item, with the `key_items` option): repairs the five stumps of Yemma Forest in chapter 13.
   The scene on King Kai's Planet no longer gives it.
-- **Ki-Blast Fruit** (2 in the pool): use it from the Items menu to raise your Ki-blast meter. One fruit breaks the
+- **Ki-Blast Fruit** (3 in the pool, 2 needed): use it from the Items menu to raise your Ki-blast meter. One fruit breaks the
   level 2 rocks that block the story in chapter 8, two fruits break the level 3 doors of chapter 13.
 
 Received items are not used or equipped automatically: use the fruits and equip the capsules yourself.

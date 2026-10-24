@@ -23,9 +23,10 @@ IN_BATTLE = b"\xff\xff"
 ITEM_NAMES = {ap_id: name for name, ap_id in ITEM_NAME_TO_ID.items()}
 
 
-def in_game(map_code: bytes) -> bool:
-    """A save is loaded and the player is on a map (the map code is empty on the logos and the title screen)."""
-    return MAP_CODE.fullmatch(map_code) is not None
+def in_game(map_code: bytes, running: bytes) -> bool:
+    """A save is loaded and the player is on a map. After a defeat the game restarts from the logos: the map code
+    stays in memory, only ram.GAME_RUNNING tells the title screen apart."""
+    return int.from_bytes(running, "little") == 1 and MAP_CODE.fullmatch(map_code) is not None
 
 
 def flag_is_set(flags: bytes, flag: int) -> bool:
@@ -115,8 +116,14 @@ def party_hp_addresses(slots: bytes) -> list[int]:
 
 
 def party_defeated(hp: list[int]) -> bool:
-    """The whole party is down: the game then goes back to the title screen (research/decisions.md, C30)."""
+    """Every fighter is down. Not a death by itself: a story battle may be lost on purpose."""
     return len(hp) > 0 and all(value == 0 for value in hp)
+
+
+def game_over(party_was_defeated: bool | None, still_in_game: bool) -> bool:
+    """A real defeat: the "Defeat" banner is followed by a restart from the logos (research/decisions.md, C37).
+    Checking that every fighter was down just before keeps a soft reset by the player from counting as a death."""
+    return party_was_defeated is True and not still_in_game
 
 
 class DbzAotsClient(BizHawkClient):
@@ -155,7 +162,8 @@ class DbzAotsClient(BizHawkClient):
         if ctx.server is None or ctx.server.socket.closed or ctx.slot is None:
             return
         try:
-            map_code, battle, flags, inventory, counter, sheets, party = await bizhawk.read(ctx.bizhawk_ctx, [
+            running, map_code, battle, flags, inventory, counter, sheets, party = await bizhawk.read(ctx.bizhawk_ctx, [
+                (ram.GAME_RUNNING, 4, ram.MAIN_RAM),
                 (ram.CURRENT_MAP, ram.MAP_CODE_LENGTH, ram.MAIN_RAM),
                 (ram.BATTLE_STATE, len(IN_BATTLE), ram.MAIN_RAM),
                 (ram.FLAGS, ram.FLAGS_SIZE, ram.MAIN_RAM),
@@ -164,7 +172,8 @@ class DbzAotsClient(BizHawkClient):
                 (ram.CHARACTER_SHEETS, ram.CHARACTER_SHEETS_SIZE, ram.MAIN_RAM),
                 (ram.PARTY, ram.PARTY_SLOT_COUNT * 4, ram.MAIN_RAM),
             ])
-            if not in_game(map_code):
+            if not in_game(map_code, running):
+                await self.send_death_on_game_over(ctx)
                 self.previous_map = self.previous_flags = self.previous_inventory = None
                 self.was_in_battle, self.progress_before_battle = False, None
                 self.party_was_defeated = None
@@ -279,7 +288,7 @@ class DbzAotsClient(BizHawkClient):
     async def handle_death_link(
         self, ctx: BizHawkClientContext, map_code: bytes, battle: bytes, party: bytes
     ) -> None:
-        """Send a death when the whole party falls; a received death sets the party's HP to 0 at the next battle."""
+        """Watch the fighters for send_death_on_game_over; a received death sets their HP to 0 at the next battle."""
         if not (ctx.slot_data or {}).get("death_link"):
             return
         if "DeathLink" not in ctx.tags:
@@ -294,15 +303,10 @@ class DbzAotsClient(BizHawkClient):
             ctx.bizhawk_ctx, [(address, 4, ram.MAIN_RAM) for address in addresses]
         )] if addresses else []
         defeated = party_defeated(hp)
-        if defeated and self.party_was_defeated is False:
-            if self.ignore_next_defeat:
-                self.ignore_next_defeat = False
-            else:
-                await ctx.send_death(f"{ctx.player_names[ctx.slot]}'s party was defeated.")
-                self.previous_death_link = ctx.last_death_link
         self.party_was_defeated = defeated
 
-        # The game only checks for a defeat during a battle, at the end of an action (research/decisions.md, C32).
+        # The game only checks for a defeat during a battle, at the end of an action (research/decisions.md, C32);
+        # with every fighter down it shows "Defeat" and restarts.
         if self.death_pending and battle == IN_BATTLE and not defeated and addresses:
             if await bizhawk.guarded_write(
                 ctx.bizhawk_ctx,
@@ -312,3 +316,12 @@ class DbzAotsClient(BizHawkClient):
             ):
                 self.death_pending = False
                 self.ignore_next_defeat = True
+
+    async def send_death_on_game_over(self, ctx: BizHawkClientContext) -> None:
+        """Called when the game leaves the field: send a death if this is the restart that follows a defeat."""
+        if game_over(self.party_was_defeated, still_in_game=False) and (ctx.slot_data or {}).get("death_link"):
+            if self.ignore_next_defeat:
+                self.ignore_next_defeat = False  # the defeat came from a received death
+            else:
+                await ctx.send_death(f"{ctx.player_names[ctx.slot]}'s party was defeated.")
+                self.previous_death_link = ctx.last_death_link

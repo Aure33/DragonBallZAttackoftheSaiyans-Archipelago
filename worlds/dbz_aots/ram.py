@@ -22,6 +22,10 @@ BATTLE_STATE = 0x09B236
 ZENI = 0x0CC370
 """Money, 4 bytes little-endian."""
 
+GAME_RUNNING = 0x0AF1E4
+"""4 bytes: 1 while a game is loaded (field, battle, menus, scenes), 0 on the logos and the title screen. A defeat
+makes the game restart from the logos, which sets it to 0 (research/decisions.md, C37)."""
+
 PARTY = 0x0CC374
 """Party slots, 4 bytes each: 3 fighters then 5 reserve slots, each 0 or the DS address of a character sheet. Read by
 the native AddBtlMember of the game code (research/decisions.md, C33)."""

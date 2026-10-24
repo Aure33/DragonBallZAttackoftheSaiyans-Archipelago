@@ -1,16 +1,18 @@
 import unittest
 
 from .. import ram
-from ..client import (Progress, battle_bonus, flag_is_set, in_game, items_to_give, opened_locations,
+from ..client import (Progress, battle_bonus, flag_is_set, game_over, in_game, items_to_give, opened_locations,
                       original_items_to_take_back, party_defeated, party_hp_addresses, read_progress)
 from ..items import ITEM_NAME_TO_ID
 from ..locations import LOCATION_NAME_TO_ID, ORIGINAL_ITEM_LOCATION_IDS
 
 
 class TestClientLogic(unittest.TestCase):
-    def test_in_game_needs_a_map_code(self) -> None:
-        self.assertTrue(in_game(b"tut01_00"))
-        self.assertFalse(in_game(bytes(8)))  # logos and title screen
+    def test_in_game_needs_a_map_code_and_a_running_game(self) -> None:
+        running, title = (1).to_bytes(4, "little"), bytes(4)
+        self.assertTrue(in_game(b"tut01_00", running))
+        self.assertFalse(in_game(bytes(8), title))  # logos and title screen after power on
+        self.assertFalse(in_game(b"tut02_00", title))  # title screen after a defeat: the map code stays
 
     def test_opened_chest_is_found_from_its_flag(self) -> None:
         flags = bytearray(ram.FLAGS_SIZE)
@@ -117,6 +119,17 @@ class TestDeathLink(unittest.TestCase):
 
     def test_no_defeat_while_one_member_stands(self) -> None:
         self.assertFalse(party_defeated([0, 1, 0]))
+
+    def test_game_over_is_a_restart_after_a_defeat(self) -> None:
+        self.assertTrue(game_over(party_was_defeated=True, still_in_game=False))
+
+    def test_story_battle_lost_on_purpose_is_no_death(self) -> None:
+        # The story goes on: the game never restarts.
+        self.assertFalse(game_over(party_was_defeated=True, still_in_game=True))
+
+    def test_soft_reset_is_no_death(self) -> None:
+        self.assertFalse(game_over(party_was_defeated=False, still_in_game=False))
+        self.assertFalse(game_over(party_was_defeated=None, still_in_game=False))
 
     def test_no_defeat_without_a_party(self) -> None:
         self.assertFalse(party_defeated([]))

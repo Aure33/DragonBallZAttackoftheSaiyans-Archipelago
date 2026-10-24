@@ -23,9 +23,9 @@ sys.path.insert(0, str(ARCHIPELAGO))
 
 from PIL import Image, ImageDraw  # noqa: E402
 
-from worlds.dbz_aots.items import GAS_MASK, ITEM_NAME_TO_ID, KI_BLAST_FRUIT  # noqa: E402
+from worlds.dbz_aots.items import GAS_MASK, ITEM_NAME_TO_ID, KI_BLAST_FRUIT, SNOWFIELD_KEY  # noqa: E402
 from worlds.dbz_aots.location_data import LOCATIONS  # noqa: E402
-from worlds.dbz_aots.locations import LOCATION_NAME_TO_ID, STORY_LOCATIONS  # noqa: E402
+from worlds.dbz_aots.locations import KEY_ITEM_LOCATIONS, LOCATION_NAME_TO_ID, STORY_LOCATIONS  # noqa: E402
 from worlds.dbz_aots.regions import LAST_CHAPTER, chapter_region  # noqa: E402
 
 OUT = REPO / "build/poptracker/dbz_aots"
@@ -33,9 +33,10 @@ WINDOWS_PACKS = Path("/mnt/c/Users/Aurelien/Desktop/archipelago/poptracker/packs
 VERSION = json.loads((REPO / "worlds/dbz_aots/archipelago.json").read_text())["world_version"]
 
 # Tracked items: PopTracker code, name, maximum count, colour of the generated icon.
-TRACKED = {GAS_MASK: ("gasmask", 1, (70, 140, 70)), KI_BLAST_FRUIT: ("kiblast", 2, (220, 120, 30))}
+TRACKED = {GAS_MASK: ("gasmask", 1, (70, 140, 70)), KI_BLAST_FRUIT: ("kiblast", 2, (220, 120, 30)),
+           SNOWFIELD_KEY: ("snowkey", 1, (90, 160, 220))}
 # Same requirements as rules.py (research/decisions.md, D28), as PopTracker rules.
-CHAPTER_RULES = {6: "gasmask", 8: "gasmask,kiblast:1", 13: "gasmask,kiblast:2"}
+CHAPTER_RULES = {6: "gasmask", 8: "gasmask,kiblast:1,snowkey", 13: "gasmask,kiblast:2,snowkey"}
 
 BOX_W, BOX_H, COLUMNS = 240, 150, 4
 
@@ -83,6 +84,8 @@ def build() -> None:
         areas[(data.chapter, data.zone)].append(data.name)
     for name, (chapter, _) in STORY_LOCATIONS.items():
         areas[(chapter, "Story")].append(name)
+    for name, (chapter, _, _) in KEY_ITEM_LOCATIONS.items():
+        areas[(chapter, "Key Items")].append(name)
 
     per_chapter: dict[int, list[str]] = defaultdict(list)
     locations, mapping = [], {}
@@ -164,7 +167,11 @@ function onItem(index, item_id, item_name, player_number)
     if not code then return end
     local item = Tracker:FindObjectForCode(code)
     if not item then return end
-    if item.Type == "consumable" then item.AcquiredCount = item.AcquiredCount + item.Increment else item.Active = true end
+    if item.Type == "consumable" then
+        item.AcquiredCount = item.AcquiredCount + item.Increment
+    else
+        item.Active = true
+    end
 end
 
 function onLocation(location_id, location_name)

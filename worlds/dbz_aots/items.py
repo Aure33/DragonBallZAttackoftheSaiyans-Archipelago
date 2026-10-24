@@ -16,6 +16,8 @@ KI_BLAST_FRUIT = "Ki-Blast Fruit"
 """Raises the size of the Ki-blast meter on the field (ROM description): one per level of breakable rocks."""
 GAS_MASK = "Gas Mask"
 """Makes gas floors safe (ROM description); Spinach Wastes (chapter 6) and later story paths cross them."""
+SNOWFIELD_KEY = "Snowfield Key"
+"""Opens the Holly Plain gate on the story path of chapter 8 (research/decisions.md, C42)."""
 
 
 class ItemData(NamedTuple):
@@ -35,7 +37,11 @@ def item_slot(ap_id: int) -> tuple[ItemCategory, int]:
     return ItemCategory(ap_id // 1000 - 1), ap_id % 1000
 
 
-PROGRESSION = {KI_BLAST_FRUIT, GAS_MASK}
+PROGRESSION = {KI_BLAST_FRUIT, GAS_MASK, SNOWFIELD_KEY}
+
+# Story key items that are shuffled: the client keeps their quantity equal to the number received from the server.
+KEY_ITEMS: dict[str, int] = {SNOWFIELD_KEY: 6}
+"""Name -> number in the key item table (key_item_mes), which is also its inventory slot in the key item category."""
 # Consumables worth more than a heal: permanent stat boosts, the EXP booster and the reusable Dragon Stone.
 USEFUL_USE_ITEMS = {"HP Fruit", "Ki Fruit", "Power Fruit", "Defense Fruit", "Speed Fruit", "Luck Fruit",
                     "Skill Fruit", "Recovery Fruit", "EXP Boost", "Dragon Stone", "Super Senzu Bean"}
@@ -55,6 +61,8 @@ ITEMS: dict[str, ItemData] = {
     name: ItemData(ItemCategory(category), index, classification(name, ItemCategory(category)))
     for name, (category, index) in ITEM_SLOTS.items()
 }
+ITEMS.update({name: ItemData(ItemCategory.KEY_ITEM, index, ItemClassification.progression)
+              for name, index in KEY_ITEMS.items()})
 
 ITEM_NAME_TO_ID: dict[str, int] = {name: item_id(data.category, data.index) for name, data in ITEMS.items()}
 

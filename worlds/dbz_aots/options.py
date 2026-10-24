@@ -27,6 +27,15 @@ class ChapterChecks(DefaultOnToggle):
     display_name = "Chapter Checks"
 
 
+class KeyItems(DefaultOnToggle):
+    """
+    Shuffle the story key items that the game checks in the inventory: the Snowfield Key (chapter 8). The scene
+    that gives it becomes a location, and the gate it opens stays locked until the key is received.
+    """
+
+    display_name = "Key Items"
+
+
 class EastCityRuins(Toggle):
     """
     Include the 6 chests of East City Ruins.
@@ -54,6 +63,7 @@ class DbzAotsOptions(PerGameCommonOptions):
     goal_chapter: GoalChapter
     hidden_items: HiddenItems
     chapter_checks: ChapterChecks
+    key_items: KeyItems
     east_city_ruins: EastCityRuins
     experience_multiplier: ExperienceMultiplier
     death_link: DeathLink

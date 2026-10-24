@@ -21,9 +21,16 @@ STORY_LOCATIONS: dict[str, tuple[int, int]] = {
     f"{chapter_region(chapter)} Cleared": (chapter, CHAPTER_START_FLAGS[chapter]) for chapter in range(LAST_CHAPTER)
 }
 
+# Story scenes that give a shuffled key item: (chapter, story flag of the scene, key item). The client takes the key
+# back when the scene gives it (research/decisions.md, D46).
+KEY_ITEM_LOCATIONS: dict[str, tuple[int, int, str]] = {
+    "Holly Plain - Snowfield Key from Lunch": (8, 511, "Snowfield Key"),  # scene c0804_01
+}
+
 LOCATION_NAME_TO_ID: dict[str, int] = {
     **{data.name: LOCATION_ID_BASE + data.flag for data in LOCATIONS},
     **{name: LOCATION_ID_BASE + flag for name, (_, flag) in STORY_LOCATIONS.items()},
+    **{name: LOCATION_ID_BASE + flag for name, (_, flag, _) in KEY_ITEM_LOCATIONS.items()},
 }
 # Areas the story may close for a while (the Other World between chapters 9 and 13) or for good (Nemuria Ruins: no
 # known way back). A chest left there must never block anyone, so their locations never hold progression items
@@ -35,6 +42,7 @@ LOCATION_NAME_GROUPS: dict[str, set[str]] = {}
 for _data in LOCATIONS:
     LOCATION_NAME_GROUPS.setdefault(_data.zone, set()).add(_data.name)
 LOCATION_NAME_GROUPS["Story"] = set(STORY_LOCATIONS)
+LOCATION_NAME_GROUPS["Key Items"] = set(KEY_ITEM_LOCATIONS)
 
 ORIGINAL_ITEM_LOCATION_IDS = frozenset(LOCATION_ID_BASE + data.flag for data in LOCATIONS)
 """Locations that give an item in the original game, which the client takes back (approach A)."""
@@ -62,6 +70,12 @@ def included_story_locations(world: DbzAotsWorld) -> dict[str, tuple[int, int]]:
     return {name: step for name, step in STORY_LOCATIONS.items() if step[0] < world.options.goal_chapter}
 
 
+def included_key_item_locations(world: DbzAotsWorld) -> dict[str, tuple[int, int, str]]:
+    if not world.options.key_items:
+        return {}
+    return {name: data for name, data in KEY_ITEM_LOCATIONS.items() if data[0] <= world.options.goal_chapter}
+
+
 def goal_flag(goal_chapter: int) -> int:
     """Game flag that tells the client the goal is reached: the start of the next chapter, or the end of the game."""
     return GOAL_FLAG if goal_chapter == LAST_CHAPTER else CHAPTER_START_FLAGS[goal_chapter]
@@ -69,7 +83,8 @@ def goal_flag(goal_chapter: int) -> int:
 
 def original_contents(world: DbzAotsWorld) -> list[str]:
     """Items found at the included locations in the original game: they make up the item pool."""
-    return [data.item for data in included_locations(world)]
+    return ([data.item for data in included_locations(world)]
+            + [item for _, _, item in included_key_item_locations(world).values()])
 
 
 def create_all_locations(world: DbzAotsWorld) -> None:
@@ -79,6 +94,8 @@ def create_all_locations(world: DbzAotsWorld) -> None:
         if data.zone in MISSABLE_ZONES:
             location.progress_type = LocationProgressType.EXCLUDED
         region.locations.append(location)
+    for name, (chapter, _, _) in included_key_item_locations(world).items():
+        world.get_region(chapter_region(chapter)).add_locations({name: LOCATION_NAME_TO_ID[name]}, DbzAotsLocation)
     for name, (chapter, _) in included_story_locations(world).items():
         world.get_region(chapter_region(chapter)).add_locations({name: LOCATION_NAME_TO_ID[name]}, DbzAotsLocation)
     # The end of the goal chapter (for chapter 15, the last battle against Vegeta); the client sees it through the

@@ -10,7 +10,7 @@ import worlds._bizhawk as bizhawk
 from worlds._bizhawk.client import BizHawkClient
 
 from . import ram
-from .items import GAME_NAME, ITEM_NAME_TO_ID, item_slot
+from .items import GAME_NAME, ITEM_NAME_TO_ID, KEY_ITEMS, item_slot
 from .locations import LOCATION_ID_BASE, ORIGINAL_ITEM_LOCATION_IDS
 
 if TYPE_CHECKING:
@@ -68,6 +68,20 @@ def items_to_give(inventory: bytes, received_ids: list[int], already_given: int)
         offset = ram.INVENTORY_OFFSET[category] + index
         quantities[offset] = min(quantities.get(offset, inventory[offset]) + 1, ram.MAX_QUANTITY)
     return quantities
+
+
+def key_item_corrections(inventory: bytes, received_ids: list[int]) -> dict[int, int]:
+    """Inventory offset -> quantity, for the shuffled key items whose quantity differs from the number received.
+
+    A story scene gives the original key item: it must go away until the key arrives from the server (D46).
+    """
+    corrections: dict[int, int] = {}
+    for name, index in KEY_ITEMS.items():
+        wanted = min(received_ids.count(ITEM_NAME_TO_ID[name]), 1)
+        offset = ram.INVENTORY_OFFSET[ram.ItemCategory.KEY_ITEM] + index
+        if inventory[offset] != wanted:
+            corrections[offset] = wanted
+    return corrections
 
 
 class Progress(NamedTuple):
@@ -194,6 +208,7 @@ class DbzAotsClient(BizHawkClient):
 
             if battle != IN_BATTLE:
                 await self.give_items(ctx, map_code, battle, inventory, counter)
+                await self.sync_key_items(ctx, map_code, battle)
             await self.multiply_experience(ctx, map_code, battle, sheets)
             await self.handle_death_link(ctx, map_code, battle, party)
         except bizhawk.RequestFailedError:
@@ -325,3 +340,17 @@ class DbzAotsClient(BizHawkClient):
             else:
                 await ctx.send_death(f"{ctx.player_names[ctx.slot]}'s party was defeated.")
                 self.previous_death_link = ctx.last_death_link
+
+    async def sync_key_items(self, ctx: BizHawkClientContext, map_code: bytes, battle: bytes) -> None:
+        """Keep each shuffled key item at the quantity received from the server (option key_items)."""
+        if not (ctx.slot_data or {}).get("key_items"):
+            return
+        inventory = (await bizhawk.read(ctx.bizhawk_ctx, [(ram.INVENTORY, ram.INVENTORY_SIZE, ram.MAIN_RAM)]))[0]
+        corrections = key_item_corrections(inventory, [item.item for item in ctx.items_received])
+        if corrections:
+            await bizhawk.guarded_write(
+                ctx.bizhawk_ctx,
+                [(ram.INVENTORY + offset, [quantity], ram.MAIN_RAM) for offset, quantity in corrections.items()],
+                [(ram.INVENTORY + offset, [inventory[offset]], ram.MAIN_RAM) for offset in corrections]
+                + [(ram.CURRENT_MAP, map_code, ram.MAIN_RAM), (ram.BATTLE_STATE, battle, ram.MAIN_RAM)],
+            )

@@ -1,8 +1,8 @@
 import unittest
 
 from .. import ram
-from ..client import (Progress, battle_bonus, flag_is_set, game_over, in_game, items_to_give, opened_locations,
-                      original_items_to_take_back, party_defeated, party_hp_addresses, read_progress)
+from ..client import (Progress, battle_bonus, flag_is_set, game_over, in_game, items_to_give, key_item_corrections,
+                      opened_locations, original_items_to_take_back, party_defeated, party_hp_addresses, read_progress)
 from ..items import ITEM_NAME_TO_ID
 from ..locations import LOCATION_NAME_TO_ID, ORIGINAL_ITEM_LOCATION_IDS
 
@@ -133,3 +133,21 @@ class TestDeathLink(unittest.TestCase):
 
     def test_no_defeat_without_a_party(self) -> None:
         self.assertFalse(party_defeated([]))
+
+
+class TestKeyItems(unittest.TestCase):
+    KEY_OFFSET = ram.INVENTORY_OFFSET[ram.ItemCategory.KEY_ITEM] + 6  # Snowfield Key
+
+    def test_key_given_by_the_scene_is_taken_back(self) -> None:
+        inventory = bytearray(ram.INVENTORY_SIZE)
+        inventory[self.KEY_OFFSET] = 1
+        self.assertEqual({self.KEY_OFFSET: 0}, key_item_corrections(bytes(inventory), []))
+
+    def test_received_key_is_given(self) -> None:
+        received = [ITEM_NAME_TO_ID["Snowfield Key"]]
+        self.assertEqual({self.KEY_OFFSET: 1}, key_item_corrections(bytes(ram.INVENTORY_SIZE), received))
+
+    def test_nothing_to_do_when_the_quantity_matches(self) -> None:
+        inventory = bytearray(ram.INVENTORY_SIZE)
+        inventory[self.KEY_OFFSET] = 1
+        self.assertEqual({}, key_item_corrections(bytes(inventory), [ITEM_NAME_TO_ID["Snowfield Key"]]))

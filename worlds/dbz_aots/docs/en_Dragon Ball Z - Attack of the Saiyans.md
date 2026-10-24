@@ -37,9 +37,11 @@ anyone. Location groups are available for hints: one per area (for example "Kiwi
 ## Which items can be found?
 
 The original contents of those chests and hidden spots: healing items, stat fruits, accessories and capsules,
-plus filler for the chapter ends. Three of them matter for progression:
+plus filler for the chapter ends. Four of them matter for progression:
 
 - **Gas Mask** (capsule): equip it to cross the gas floors of the story, from Spinach Wastes (chapter 6) onwards.
+- **Snowfield Key** (key item, with the `key_items` option): opens the Holly Plain gate on the story path of chapter
+  8. Lunch's scene no longer gives it: it comes from the multiworld like any other item.
 - **Ki-Blast Fruit** (2 in the pool): use it from the Items menu to raise your Ki-blast meter. One fruit breaks the
   level 2 rocks that block the story in chapter 8, two fruits break the level 3 doors of chapter 13.
 
@@ -50,6 +52,7 @@ Received items are not used or equipped automatically: use the fruits and equip 
 - `goal_chapter` (1 to 15, default 15): the chapter whose end wins the game.
 - `hidden_items` (default on): include the 14 hidden items.
 - `chapter_checks` (default on): the end of the prologue and of each chapter before the goal sends a check.
+- `key_items` (default on): shuffle the Snowfield Key; Lunch's scene becomes a location.
 - `east_city_ruins`: add the 6 chests of East City Ruins (see above).
 - `experience_multiplier` (1 to 10): multiply the experience and AP earned in battle. The client adds the extra
   after each battle; it never makes a character skip a level at once, the rest is added after the next battles.

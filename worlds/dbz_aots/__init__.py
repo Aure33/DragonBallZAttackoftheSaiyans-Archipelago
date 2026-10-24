@@ -1,4 +1,5 @@
-from typing import Any
+import os
+from typing import Any, ClassVar
 
 from BaseClasses import Tutorial
 from worlds.AutoWorld import WebWorld, World
@@ -6,6 +7,7 @@ from worlds.AutoWorld import WebWorld, World
 from . import client as client  # importing the module registers the BizHawk client
 from . import items, locations, regions, rules
 from .options import DbzAotsOptions, Goal
+from .rom import DbzAotsProcedurePatch, DbzAotsSettings
 
 
 class DbzAotsWebWorld(WebWorld):
@@ -33,6 +35,8 @@ class DbzAotsWorld(World):
     web = DbzAotsWebWorld()
     options_dataclass = DbzAotsOptions
     options: DbzAotsOptions
+    settings_key = "dbz_aots_settings"
+    settings: ClassVar[DbzAotsSettings]
 
     item_name_to_id = items.ITEM_NAME_TO_ID
     location_name_to_id = locations.LOCATION_NAME_TO_ID
@@ -58,6 +62,12 @@ class DbzAotsWorld(World):
 
     def get_filler_item_name(self) -> str:
         return items.FILLER_ITEM
+
+    def generate_output(self, output_directory: str) -> None:
+        # The patch holds no change to the game: opening it lets the BizHawk Client start BizHawk with the ROM.
+        patch = DbzAotsProcedurePatch(player=self.player, player_name=self.player_name)
+        patch.write(os.path.join(output_directory,
+                                 f"{self.multiworld.get_out_file_name_base(self.player)}{patch.patch_file_ending}"))
 
     def fill_slot_data(self) -> dict[str, Any]:
         return {

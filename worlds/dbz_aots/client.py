@@ -12,6 +12,7 @@ from worlds._bizhawk.client import BizHawkClient
 from . import ram
 from .items import GAME_NAME, ITEM_NAME_TO_ID, KEY_ITEMS, item_slot
 from .locations import LOCATION_ID_BASE, ORIGINAL_ITEM_LOCATION_IDS
+from .rom import PATCH_FILE_ENDING
 
 if TYPE_CHECKING:
     from worlds._bizhawk.context import BizHawkClientContext
@@ -143,6 +144,7 @@ def game_over(party_was_defeated: bool | None, still_in_game: bool) -> bool:
 class DbzAotsClient(BizHawkClient):
     game = GAME_NAME
     system = "NDS"
+    patch_suffix = PATCH_FILE_ENDING
 
     def __init__(self) -> None:
         super().__init__()

@@ -10,18 +10,26 @@ This world randomizes the chests of the whole story (see the game page for what 
 
 ## Installation
 
-1. Put `dbz_aots.apworld` in the `custom_worlds` folder of your Archipelago installation.
+1. Install `dbz_aots.apworld`: Archipelago Launcher > "Install APWorld" (or put it in the `custom_worlds`
+   folder of your Archipelago installation).
 2. Generate a game with a YAML file for "Dragon Ball Z - Attack of the Saiyans". To get a template with every
    option and its description, open the Archipelago Launcher and click "Generate Template Options" (after step 1).
    Every player of the multiworld who generates the game needs the `.apworld`; the others do not.
 
 ## Connecting
 
-1. Open your ROM in BizHawk (melonDS core) and load or start a save file.
-2. In BizHawk, open `Tools > Lua Console` and load `data/lua/connector_bizhawk_generic.lua` from your Archipelago
-   installation.
-3. Open the Archipelago Launcher, start the BizHawk Client and connect to the server.
-4. The client asks for your slot name (the `name` of your YAML): type it in the client.
+The game generates a patch file for you, `AP_..._<your name>.apdbzaots` (in the output zip, or sent by the host).
+It does not change the game: it only lets the BizHawk Client start everything for you.
+
+1. Double-click the `.apdbzaots` file (if Windows asks which program to use, pick the Archipelago Launcher), or open
+   the Archipelago Launcher, click "Open Patch" and select it.
+2. The first time, select your ROM when asked (and `EmuHawk.exe` if it is not set yet). The ROM is checked: it must be
+   the European release (game code `BRPP`, revision 0).
+3. BizHawk starts with the ROM and the connector script, and the BizHawk Client opens. Type the server address
+   (`address:port`) at the top and connect, then type your slot name (the `name` of your YAML).
+
+Without the patch file: open the ROM in BizHawk (melonDS core), load `data/lua/connector_bizhawk_generic.lua` from your
+Archipelago installation in `Tools > Lua Console`, then open the BizHawk Client from the Launcher and connect.
 
 Only one BizHawk Client can talk to BizHawk at a time: close any other BizHawk Client window first.
 

@@ -13,6 +13,13 @@ Cahier des charges complet : [research/Prompt_archipelago_dbz.md](research/Promp
 - Quand il doit faire quelque chose (jouer, état de sauvegarde, lire une valeur) : instructions numérotées, puis on attend son retour.
 
 ## État actuel
+- **Dépôt rangé et 1re release (2026-10-25)** : `README.md` (anglais), `CHANGELOG.md`, guides `setup_en.md` / `setup_fr.md`,
+  modèle de bug, GitHub Actions (`tests.yml` : tests + 100 seeds à chaque push ; `release.yml` : sur tag `vX.Y.Z`).
+  Release **v0.12.0** : `dbz_aots.apworld` + `Dragon_Ball_Z_-_Attack_of_the_Saiyans.yaml`. Dépôt toujours **privé**,
+  pas encore de licence (choix de l'utilisateur).
+  - Publier une version : monter `world_version` (`archipelago.json`), écrire sa section dans `CHANGELOG.md`
+    (`## X.Y.Z — titre`), commit + push, puis `git tag -a vX.Y.Z -m "…" && git push origin vX.Y.Z`.
+  - Fichier patch `.apdbzaots` (D51) : à faire essayer par l'utilisateur sous Windows (double-clic → BizHawk + Lua).
 - **Phase 7 — Tests : terminée (2026-10-24).** `tools/mass_seeds.py` (D39) : 1000 seeds variées sur 1000 réussies (1 à 3 joueurs DBZ aux options au hasard + APQuest/ChecksFinder). Prochaine : phase 8 (partie avec les amis), sur feu vert de l'utilisateur.
 - **Phase 6 — Extension : terminée (2026-10-24).** Tableau des phases : cahier des charges, §9.
   - Étape 1 faite : world 0.3.0 = 200 coffres de toute l'histoire (194 + 6 en option `east_city_ruins`), logique par chapitre (Masque à gaz, Ki-Blast Fruit ×2), objectif = drapeau 1050 (après le dernier Vegeta). 32 tests du world, 40 seeds générées sans échec. Décisions D28–D33.

@@ -11,7 +11,9 @@ This world randomizes the chests of the whole story (see the game page for what 
 ## Installation
 
 1. Put `dbz_aots.apworld` in the `custom_worlds` folder of your Archipelago installation.
-2. Generate a game with a YAML file for "Dragon Ball Z - Attack of the Saiyans".
+2. Generate a game with a YAML file for "Dragon Ball Z - Attack of the Saiyans". To get a template with every
+   option and its description, open the Archipelago Launcher and click "Generate Template Options" (after step 1).
+   Every player of the multiworld who generates the game needs the `.apworld`; the others do not.
 
 ## Connecting
 
@@ -29,3 +31,7 @@ Only one BizHawk Client can talk to BizHawk at a time: close any other BizHawk C
   If you take one while the client is not connected, you keep that original item.
 - Received items are added while you are on the field; during a battle they wait until it ends.
 - Received items are only added to your inventory: use the Ki-Blast Fruits and equip the Gas Mask yourself.
+- With `key_items`, the client keeps the Snowfield Key, the Submarine and Bubbles' Thing in your inventory only once
+  they are received: the story scenes that give them in the original game no longer do.
+- Never load an older save or savestate to undo a defeat while DeathLink is on: the client only sends a death when
+  the game restarts after a Game Over.

@@ -27,5 +27,7 @@ CHAPTER_REQUIREMENTS: dict[int, Rule] = {
 
 def set_all_rules(world: DbzAotsWorld) -> None:
     for chapter, rule in CHAPTER_REQUIREMENTS.items():
+        if chapter > world.options.goal_chapter:
+            continue
         world.set_rule(world.get_entrance(chapter_entrance(chapter)), rule)
     world.set_completion_rule(Has(VICTORY))

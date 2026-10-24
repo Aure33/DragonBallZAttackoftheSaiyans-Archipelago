@@ -23,9 +23,11 @@ def chapter_entrance(chapter: int) -> str:
 def create_and_connect_regions(world: DbzAotsWorld) -> None:
     # The story is a straight line of chapters. Areas seen in a chapter stay reachable from the world map later,
     # so each chapter region also holds the chests of earlier areas that were only opened then.
+    # Chapters after the goal are left out.
+    goal = world.options.goal_chapter.value
     menu = Region(MENU, world.player, world.multiworld)
-    chapters = [Region(chapter_region(chapter), world.player, world.multiworld) for chapter in range(LAST_CHAPTER + 1)]
+    chapters = [Region(chapter_region(chapter), world.player, world.multiworld) for chapter in range(goal + 1)]
     world.multiworld.regions += [menu, *chapters]
     menu.connect(chapters[0])
-    for chapter in range(1, LAST_CHAPTER + 1):
+    for chapter in range(1, goal + 1):
         chapters[chapter - 1].connect(chapters[chapter], chapter_entrance(chapter))

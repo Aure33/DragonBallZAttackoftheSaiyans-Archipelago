@@ -179,12 +179,14 @@ def main() -> None:
              '    """0 = prologue, 1-15 = story chapters (15 includes the tour made before the final battle)."""',
              "    bonus: bool",
              '    """Needs the 7 Dragon Balls (East City Ruins), only included by an option."""',
+             "    hidden: bool",
+             '    """An item found by examining a spot (drawer, stall, door...), not a chest."""',
              "",
              "",
              "LOCATIONS: tuple[LocationData, ...] = ("]
     for c in kept:
         lines.append(f"    LocationData({c['name']!r}, {c['zone']!r}, {c['flag']}, {c['item']!r}, {c['chapter']}, "
-                     f"{c['bonus']}),")
+                     f"{c['bonus']}, {c['kind'] != 'chest'}),")
     lines += [")", "", "# Inventory slot of each item found at a location: (category, number in the game's data table).",
               "ITEM_SLOTS: dict[str, tuple[int, int]] = {"]
     for (category, index), item in sorted(slots.items()):

@@ -58,4 +58,5 @@ class DbzAotsWorld(World):
         return {
             "experience_multiplier": self.options.experience_multiplier.value,
             "death_link": self.options.death_link.value,
+            "goal_flag": locations.goal_flag(self.options.goal_chapter.value),
         }

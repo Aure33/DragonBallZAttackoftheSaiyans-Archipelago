@@ -1,7 +1,7 @@
 """Generate many varied seeds and report every one that fails (phase 7).
 
-Each seed mixes 1 to 3 DBZ players with random options and 0 to 2 players of games without a ROM (APQuest,
-ChecksFinder). Generate.py runs in full: it fails when a seed is unbeatable, and logs a warning when a player
+Each seed mixes 1 to 3 DBZ players with random options (goal, included locations, DeathLink...) and 0 to 2
+players of games without a ROM (APQuest, ChecksFinder). Generate.py runs in full: it fails when a seed is unbeatable, and logs a warning when a player
 with full accessibility cannot reach all their locations; both count as failures here.
 
 Usage (any Python 3.10+, from anywhere):
@@ -26,6 +26,10 @@ ACCESSIBILITY_WARNING = "Location Accessibility requirements not fulfilled"
 
 def dbz_yaml(name: str, rng: random.Random) -> str:
     return (f"name: {name}\ngame: {GAME}\n{GAME}:\n"
+            f"  goal_chapter: {rng.choice([15, rng.randint(1, 14)])}\n"
+            f"  hidden_items: {rng.choice(['true', 'false'])}\n"
+            f"  chapter_checks: {rng.choice(['true', 'false'])}\n"
+            f"  death_link: {rng.choice(['true', 'false'])}\n"
             f"  east_city_ruins: {rng.choice(['true', 'false'])}\n"
             f"  experience_multiplier: {rng.randint(1, 10)}\n"
             f"  accessibility: {rng.choice(['full', 'minimal'])}\n"

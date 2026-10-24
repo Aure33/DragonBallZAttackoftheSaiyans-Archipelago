@@ -27,6 +27,9 @@ class TestDefaultWorld(DbzAotsTestBase):
         expected[self.world.get_filler_item_name()] += len(STORY_LOCATIONS)  # story steps hold filler
         self.assertEqual(expected, pool)
 
+    def test_client_watches_the_end_of_the_game(self) -> None:
+        self.assertEqual(ram.GOAL_FLAG, self.world.fill_slot_data()["goal_flag"])
+
     def test_story_steps_follow_the_chapter_requirements(self) -> None:
         self.assertEqual(15, len(STORY_LOCATIONS))
         self.assertTrue(self.can_reach_location("Prologue Cleared"))
@@ -85,6 +88,38 @@ class TestEastCityRuins(DbzAotsTestBase):
         self.assertEqual(len(LOCATIONS) + len(STORY_LOCATIONS),
                          len(addresses_of(self.multiworld.get_locations(self.player))))
         self.assertTrue(self.multiworld.get_location(BONUS_CHEST, self.player).address)
+
+
+class TestShortGoal(DbzAotsTestBase):
+    options = {"goal_chapter": 1}
+
+    def test_only_locations_up_to_the_goal(self) -> None:
+        names = set(addresses_of(self.multiworld.get_locations(self.player)))
+        expected = {data.name for data in LOCATIONS if data.chapter <= 1} | {"Prologue Cleared"}
+        self.assertEqual(expected, names)
+
+    def test_goal_needs_nothing(self) -> None:
+        self.assertTrue(self.can_reach_location(GOAL_EVENT))
+
+    def test_client_watches_the_start_of_chapter_2(self) -> None:
+        self.assertEqual(ram.CHAPTER_START_FLAGS[1], self.world.fill_slot_data()["goal_flag"])
+
+
+class TestGoalAfterTheGasMask(DbzAotsTestBase):
+    options = {"goal_chapter": 6}
+
+    def test_goal_needs_the_gas_mask_only(self) -> None:
+        self.assertFalse(self.can_reach_location(GOAL_EVENT))
+        self.collect_by_name(GAS_MASK)
+        self.assertTrue(self.can_reach_location(GOAL_EVENT))
+
+
+class TestWithoutHiddenItemsAndChapterChecks(DbzAotsTestBase):
+    options = {"hidden_items": False, "chapter_checks": False}
+
+    def test_only_chests_remain(self) -> None:
+        names = set(addresses_of(self.multiworld.get_locations(self.player)))
+        self.assertEqual({data.name for data in LOCATIONS if not data.bonus and not data.hidden}, names)
 
 
 class TestIds(DbzAotsTestBase):

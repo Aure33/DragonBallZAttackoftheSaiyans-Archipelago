@@ -20,9 +20,9 @@ Cahier des charges complet : [Prompt_archipelago_dbz.md](Prompt_archipelago_dbz.
   - Données : `research/chests.md` et `worlds/dbz_aots/location_data.py` sont **générés** (`extract_chests.py` puis `build_world_data.py`) ; ne pas les modifier à la main.
   - Étape 3 faite : zones manquables exclues de la progression (D36), groupes de lieux (D37). 96 tests, 60 seeds sans échec.
   - Étape 4 faite : option `experience_multiplier` (1–10, D38), validée en jeu (exp. et PA triplés, montées de niveau faites par le jeu). World 0.5.0, 103 tests.
-  - À faire (demande de l'utilisateur, 2026-10-24) : enrichir les options du YAML : quoi mélanger (coffres, objets cachés, fins de chapitre…), condition de victoire, DeathLink, etc. Le modèle YAML est généré par Archipelago à partir de `options.py`.
+  - Options du YAML (bloc 3, D43) : `goal_chapter`, `hidden_items`, `chapter_checks`, `east_city_ruins`, `experience_multiplier`, `death_link`. World 0.7.0, 123 tests. Objets clés (bloc 2) : carte des objets dans C34, Clé du champ de neige en premier (D42).
   - DeathLink fait (2026-10-24) : option `death_link`, équipe lue dans les cases de combattants à `0x0CC374` (C33, trouvées dans le code ARM du jeu), essais réels Krillin seul / équipe à 3 réussis (D41). World 0.6.1, 108 tests.
-  - À faire plus tard (phase 9) : pack PopTracker (carte + suivi automatique via Archipelago), demandé par l'utilisateur le 2026-10-24.
+  - PopTracker (bloc 5) : prototype généré par `tools/build_poptracker.py` (`--deploy` = copie dans les packs), validé par les schémas et chargé dans PopTracker 0.35.3 ; suivi automatique encore à essayer (clic sur « AP »). Notes : `research/poptracker.md`.
   - Reste : 23 lieux mis de côté à vérifier, dons à plusieurs drapeaux (carottes, captures…), voir le drapeau 1050 en jeu.
 - **Phase 5 — Test réel : terminée (2026-10-23).** Seed DBZ + APQuest (2e joueur simulé par `/send_location` du serveur), jouée par Claude via la télécommande : checks, objets envoyés et reçus, objectif, `collect`, aucun doublon (`research/decisions.md`, C14).
 - **Phase 4 — Client minimal : terminée (2026-10-23).**
@@ -42,7 +42,7 @@ Cahier des charges complet : [Prompt_archipelago_dbz.md](Prompt_archipelago_dbz.
   - 2 : juste avant d'entrer dans l'Île d'entraînement ;
   - 3 : **manquant** (devait être devant le 1er coffre) → à refaire au début de la phase 2 depuis l'état 2 ;
   - 4 : après Jackie Choun, prologue terminé, sauvegarde en jeu faite (copie de secours dans `dbz_research\backup\`) ;
-  - 7, 8, 9 : réservés à Claude (télécommande) ; 5, 6 : photos manuelles.
+  - 7, 8, 9 : réservés à Claude (télécommande) ; 5, 6 : photos manuelles. Au 2026-10-24 : 7 = ch. 1, Ville est après la boutique (Krillin seul) ; 8 = ch. 1, Ville est, cour du temple ; 9 = île d'entraînement, grotte (Krillin, Tien, Yamcha).
   - ⚠️ Charger un état remet aussi la sauvegarde en jeu de ce moment-là : fermer la ROM peut écraser `SaveRAM` avec une version plus ancienne. Copie de la sauvegarde d'après prologue dans `dbz_research\backup\`.
   - Sauvegarde en jeu : `NDS\SaveRAM\Dragon Ball Z Attack of the Saiyans.SaveRAM` (8 Ko).
 - **Rappel avant la phase 3** : vérifier sur le Discord Archipelago que personne ne travaille déjà sur ce jeu.
@@ -116,7 +116,7 @@ python3 research/scripts/remote.py "read 0CC398 2"  # vérifier la mémoire
 
 ## Feuille de route
 Plan de tout ce qui reste (blocs 0 à 6, ordre, critères de fin) : [research/roadmap.md](research/roadmap.md).
-Outils de test : `tools/go.sh` (ordres + capture), `tools/battle.py walk|fight|defend`, `tools/friend.py listen|kill` (faux 2e joueur DeathLink, à lancer avec le Python du clone d'Archipelago).
+Outils de test : `tools/go.sh` (ordres + capture), `tools/battle.py walk|fight|defend|party`, `tools/advance.py` (faire défiler une scène), `tools/friend.py listen|kill` (faux 2e joueur DeathLink, à lancer avec le Python du clone d'Archipelago).
 
 ## Agents et skills
 Créés au moment où leur phase arrive (cahier des charges §11), dans `.claude/agents/` et `.claude/skills/` :

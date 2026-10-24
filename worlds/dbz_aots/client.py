@@ -147,7 +147,7 @@ class DbzAotsClient(BizHawkClient):
             return False
         ctx.game = self.game
         ctx.items_handling = 0b111  # every item comes from the server, own world included (chests are emptied)
-        ctx.want_slot_data = True  # the experience multiplier and DeathLink
+        ctx.want_slot_data = True  # goal, experience multiplier and DeathLink
         ctx.watcher_timeout = 0.5
         return True
 
@@ -178,7 +178,8 @@ class DbzAotsClient(BizHawkClient):
 
             inventory = await self.take_back_original_items(ctx, map_code, flags, inventory)
 
-            if not ctx.finished_game and flag_is_set(flags, ram.GOAL_FLAG):
+            goal_flag = (ctx.slot_data or {}).get("goal_flag", ram.GOAL_FLAG)
+            if not ctx.finished_game and flag_is_set(flags, goal_flag):
                 await ctx.send_msgs([{"cmd": "StatusUpdate", "status": ClientStatus.CLIENT_GOAL}])
                 ctx.finished_game = True
 

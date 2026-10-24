@@ -13,8 +13,11 @@ received from other players are added directly to your inventory.
 
 ## What is the goal?
 
-Defeat Vegeta in the last battle of the game (end of chapter 15). The goal is sent when the scene that follows
-this battle starts. There is no save after the final battle, so do everything else before it.
+By default, defeat Vegeta in the last battle of the game (end of chapter 15). The goal is sent when the scene that
+follows this battle starts. There is no save after the final battle, so do everything else before it.
+
+With the `goal_chapter` option, the game can end earlier: the goal is sent when the next chapter starts, and only the
+locations up to that chapter are included.
 
 ## Which locations are randomized?
 
@@ -44,12 +47,15 @@ Received items are not used or equipped automatically: use the fruits and equip 
 
 ## Options
 
+- `goal_chapter` (1 to 15, default 15): the chapter whose end wins the game.
+- `hidden_items` (default on): include the 14 hidden items.
+- `chapter_checks` (default on): the end of the prologue and of each chapter before the goal sends a check.
 - `east_city_ruins`: add the 6 chests of East City Ruins (see above).
 - `experience_multiplier` (1 to 10): multiply the experience and AP earned in battle. The client adds the extra
   after each battle; it never makes a character skip a level at once, the rest is added after the next battles.
-- `death_link`: when your whole party falls in battle, everyone linked dies too. When someone else dies, the HP of
-  your party drop to 0 at the start of your next battle, which ends it in a defeat (back to the title screen: you
-  continue from your last save).
+- `death_link`: when every fighter of your party falls in battle, everyone linked dies too. When someone else
+  dies, the HP of your fighters drop to 0 at the start of your next battle, which ends it in a defeat (back to the
+  title screen: you continue from your last save).
 
 ## Supported version
 

@@ -114,6 +114,10 @@ python3 research/scripts/remote.py "read 0CC398 2"  # vérifier la mémoire
 - Projets tiers sans licence (randomizer, traductions) : lire pour apprendre, ne pas copier de code, revérifier les données.
 - À chaque fin de phase : mettre à jour ce fichier, `ram_map.md`, `game_data.md`, `decisions.md`.
 
+## Feuille de route
+Plan de tout ce qui reste (blocs 0 à 6, ordre, critères de fin) : [research/roadmap.md](research/roadmap.md).
+Outils de test : `tools/go.sh` (ordres + capture), `tools/battle.py walk|fight|defend`, `tools/friend.py listen|kill` (faux 2e joueur DeathLink, à lancer avec le Python du clone d'Archipelago).
+
 ## Agents et skills
 Créés au moment où leur phase arrive (cahier des charges §11), dans `.claude/agents/` et `.claude/skills/` :
 - Recherche : agents `game-data-researcher`, `ram-researcher` ; skill `ram-diff`.

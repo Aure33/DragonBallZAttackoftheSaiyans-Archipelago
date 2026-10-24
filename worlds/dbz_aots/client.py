@@ -104,14 +104,14 @@ def battle_bonus(before: Progress, after: Progress, multiplier: int, reserve: in
     return experience, ap, wanted - experience
 
 
-PARTY_SLICE_SIZE = ram.CURRENT_HP_OFFSET + 4 - ram.PARTY_MARKER_OFFSET
-"""Bytes read before each character sheet: from the party marker to the end of the current HP."""
-
-
-def party_hp(party_slices: list[bytes]) -> list[int]:
-    """Current HP of the characters of the party, from the bytes read at each sheet + ram.PARTY_MARKER_OFFSET."""
-    hp_start = ram.CURRENT_HP_OFFSET - ram.PARTY_MARKER_OFFSET
-    return [int.from_bytes(data[hp_start:hp_start + 4], "little") for data in party_slices if data[0] != 0]
+def party_hp_addresses(slots: bytes) -> list[int]:
+    """Main RAM address of the current HP of each character in the party slots read at ram.PARTY."""
+    addresses = []
+    for slot in range(ram.PARTY_SLOT_COUNT):
+        sheet = int.from_bytes(slots[slot * 4:slot * 4 + 4], "little")
+        if ram.DS_MAIN_RAM_START <= sheet < ram.DS_MAIN_RAM_START + 0x400000:
+            addresses.append(sheet - ram.DS_MAIN_RAM_START + ram.SHEET_ADDRESS_TO_CURRENT_HP)
+    return addresses
 
 
 def party_defeated(hp: list[int]) -> bool:
@@ -155,15 +155,14 @@ class DbzAotsClient(BizHawkClient):
         if ctx.server is None or ctx.server.socket.closed or ctx.slot is None:
             return
         try:
-            map_code, battle, flags, inventory, counter, sheets, *party = await bizhawk.read(ctx.bizhawk_ctx, [
+            map_code, battle, flags, inventory, counter, sheets, party = await bizhawk.read(ctx.bizhawk_ctx, [
                 (ram.CURRENT_MAP, ram.MAP_CODE_LENGTH, ram.MAIN_RAM),
                 (ram.BATTLE_STATE, len(IN_BATTLE), ram.MAIN_RAM),
                 (ram.FLAGS, ram.FLAGS_SIZE, ram.MAIN_RAM),
                 (ram.INVENTORY, ram.INVENTORY_SIZE, ram.MAIN_RAM),
                 (ram.RECEIVED_ITEMS_COUNTER, 4, ram.MAIN_RAM),
                 (ram.CHARACTER_SHEETS, ram.CHARACTER_SHEETS_SIZE, ram.MAIN_RAM),
-                *[(ram.CHARACTER_SHEETS + character * ram.CHARACTER_SHEET_SIZE + ram.PARTY_MARKER_OFFSET,
-                   PARTY_SLICE_SIZE, ram.MAIN_RAM) for character in range(ram.CHARACTER_COUNT)],
+                (ram.PARTY, ram.PARTY_SLOT_COUNT * 4, ram.MAIN_RAM),
             ])
             if not in_game(map_code):
                 self.previous_map = self.previous_flags = self.previous_inventory = None
@@ -277,7 +276,7 @@ class DbzAotsClient(BizHawkClient):
             await bizhawk.display_message(ctx.bizhawk_ctx, f"Received {ITEM_NAMES.get(ap_id, ap_id)}")
 
     async def handle_death_link(
-        self, ctx: BizHawkClientContext, map_code: bytes, battle: bytes, party: list[bytes]
+        self, ctx: BizHawkClientContext, map_code: bytes, battle: bytes, party: bytes
     ) -> None:
         """Send a death when the whole party falls; a received death sets the party's HP to 0 at the next battle."""
         if not (ctx.slot_data or {}).get("death_link"):
@@ -289,7 +288,10 @@ class DbzAotsClient(BizHawkClient):
             self.previous_death_link = ctx.last_death_link
             self.death_pending = True
 
-        hp = party_hp(party)
+        addresses = party_hp_addresses(party)
+        hp = [int.from_bytes(value, "little") for value in await bizhawk.read(
+            ctx.bizhawk_ctx, [(address, 4, ram.MAIN_RAM) for address in addresses]
+        )] if addresses else []
         defeated = party_defeated(hp)
         if defeated and self.party_was_defeated is False:
             if self.ignore_next_defeat:
@@ -300,13 +302,12 @@ class DbzAotsClient(BizHawkClient):
         self.party_was_defeated = defeated
 
         # The game only checks for a defeat during a battle, at the end of an action (research/decisions.md, C32).
-        if self.death_pending and battle == IN_BATTLE and not defeated:
-            writes, guards = [], [(ram.CURRENT_MAP, map_code, ram.MAIN_RAM), (ram.BATTLE_STATE, battle, ram.MAIN_RAM)]
-            for character, data in enumerate(party):
-                if data[0] != 0:
-                    address = ram.CHARACTER_SHEETS + character * ram.CHARACTER_SHEET_SIZE + ram.CURRENT_HP_OFFSET
-                    writes.append((address, (0).to_bytes(4, "little"), ram.MAIN_RAM))
-                    guards.append((address + ram.PARTY_MARKER_OFFSET - ram.CURRENT_HP_OFFSET, data[:1], ram.MAIN_RAM))
-            if writes and await bizhawk.guarded_write(ctx.bizhawk_ctx, writes, guards):
+        if self.death_pending and battle == IN_BATTLE and not defeated and addresses:
+            if await bizhawk.guarded_write(
+                ctx.bizhawk_ctx,
+                [(address, (0).to_bytes(4, "little"), ram.MAIN_RAM) for address in addresses],
+                [(ram.CURRENT_MAP, map_code, ram.MAIN_RAM), (ram.BATTLE_STATE, battle, ram.MAIN_RAM),
+                 (ram.PARTY, party, ram.MAIN_RAM)],
+            ):
                 self.death_pending = False
                 self.ignore_next_defeat = True

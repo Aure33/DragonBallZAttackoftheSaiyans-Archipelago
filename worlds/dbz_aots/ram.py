@@ -22,6 +22,15 @@ BATTLE_STATE = 0x09B236
 ZENI = 0x0CC370
 """Money, 4 bytes little-endian."""
 
+PARTY = 0x0CC374
+"""Party slots, 4 bytes each: 3 fighters then 5 reserve slots, each 0 or the DS address of a character sheet. Read by
+the native AddBtlMember of the game code (research/decisions.md, C33)."""
+PARTY_SLOT_COUNT = 8
+SHEET_ADDRESS_TO_CURRENT_HP = 0xA0
+"""A party slot points 0xA0 bytes before the current HP of the character (0x8 before its max HP)."""
+DS_MAIN_RAM_START = 0x02000000
+"""Party slots hold DS bus addresses; Main RAM addresses in this file are relative to this one."""
+
 INVENTORY = 0x0CC398
 """Owned quantity of every item, one byte each, grouped by category (see INVENTORY_OFFSET)."""
 
@@ -50,10 +59,6 @@ CHARACTER_SHEETS = 0x0CD308
 relative to a sheet's max HP (research/ram_map.md, section 2)."""
 CHARACTER_SHEET_SIZE = 0x24C
 CHARACTER_COUNT = 6
-CURRENT_HP_OFFSET = -8  # 4 bytes; battles read and write it directly
-PARTY_MARKER_OFFSET = -0xF
-"""1 byte, 0x0C for the characters of the party and 0 for the others; the game sets it back if it is changed
-(research/decisions.md, C32)."""
 LEVEL_OFFSET = 0x60  # 1 byte
 EXPERIENCE_OFFSET = 0x194  # 4 bytes, total experience (shown in the menu, not used to level up)
 EXPERIENCE_TO_NEXT_OFFSET = 0x198  # 4 bytes; the game levels up when a battle brings it below 0

@@ -1,8 +1,8 @@
 import unittest
 
 from .. import ram
-from ..client import (PARTY_SLICE_SIZE, Progress, battle_bonus, flag_is_set, in_game, items_to_give, opened_locations,
-                      original_items_to_take_back, party_defeated, party_hp, read_progress)
+from ..client import (Progress, battle_bonus, flag_is_set, in_game, items_to_give, opened_locations,
+                      original_items_to_take_back, party_defeated, party_hp_addresses, read_progress)
 from ..items import ITEM_NAME_TO_ID
 from ..locations import LOCATION_NAME_TO_ID, ORIGINAL_ITEM_LOCATION_IDS
 
@@ -97,29 +97,26 @@ class TestExperienceMultiplier(unittest.TestCase):
         self.assertEqual(Progress(4, 597, 294, 98), read_progress(bytes(sheets))[4])
 
 
-def party_slice(member: bool, hp: int) -> bytes:
-    """Bytes the client reads before a character sheet: party marker, then current HP at the end."""
-    data = bytearray(PARTY_SLICE_SIZE)
-    data[0] = 0x0C if member else 0
-    data[-4:] = hp.to_bytes(4, "little")
-    return bytes(data)
-
 
 class TestDeathLink(unittest.TestCase):
-    # Seen in game (state 9 of Claude): Goku, Gohan and Piccolo are not in the party but have full HP.
-    OUTSIDERS = [party_slice(False, 445), party_slice(False, 290), party_slice(False, 660)]
+    # Party slots read in game (research/decisions.md, C33): Krillin, Tien and Yamcha on Training Island, then
+    # Krillin alone in the middle slot in East City.
+    TRIO = bytes.fromhex("44D90C02" "90DB0C02" "DCDD0C02") + bytes(20)
+    KRILLIN_ALONE = bytes(4) + bytes.fromhex("44D90C02") + bytes(24)
 
-    def test_only_the_party_counts(self) -> None:
-        party = self.OUTSIDERS + [party_slice(True, 150), party_slice(True, 392), party_slice(True, 147)]
-        self.assertEqual([150, 392, 147], party_hp(party))
+    def test_slots_give_the_current_hp_of_each_member(self) -> None:
+        self.assertEqual([0x0CD9E4, 0x0CDC30, 0x0CDE7C], party_hp_addresses(self.TRIO))
+
+    def test_empty_slots_are_skipped(self) -> None:
+        self.assertEqual([0x0CD9E4], party_hp_addresses(self.KRILLIN_ALONE))
+        self.assertEqual([], party_hp_addresses(bytes(ram.PARTY_SLOT_COUNT * 4)))
 
     def test_defeat_when_every_member_is_down(self) -> None:
-        party = self.OUTSIDERS + [party_slice(True, 0), party_slice(True, 0), party_slice(True, 0)]
-        self.assertTrue(party_defeated(party_hp(party)))
+        self.assertTrue(party_defeated([0, 0, 0]))
+        self.assertTrue(party_defeated([0]))
 
     def test_no_defeat_while_one_member_stands(self) -> None:
-        party = self.OUTSIDERS + [party_slice(True, 0), party_slice(True, 1), party_slice(True, 0)]
-        self.assertFalse(party_defeated(party_hp(party)))
+        self.assertFalse(party_defeated([0, 1, 0]))
 
     def test_no_defeat_without_a_party(self) -> None:
-        self.assertFalse(party_defeated(party_hp([party_slice(False, 0)] * 6)))
+        self.assertFalse(party_defeated([]))

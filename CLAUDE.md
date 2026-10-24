@@ -21,7 +21,7 @@ Cahier des charges complet : [Prompt_archipelago_dbz.md](Prompt_archipelago_dbz.
   - Étape 3 faite : zones manquables exclues de la progression (D36), groupes de lieux (D37). 96 tests, 60 seeds sans échec.
   - Étape 4 faite : option `experience_multiplier` (1–10, D38), validée en jeu (exp. et PA triplés, montées de niveau faites par le jeu). World 0.5.0, 103 tests.
   - À faire (demande de l'utilisateur, 2026-10-24) : enrichir les options du YAML : quoi mélanger (coffres, objets cachés, fins de chapitre…), condition de victoire, DeathLink, etc. Le modèle YAML est généré par Archipelago à partir de `options.py`.
-  - DeathLink fait (2026-10-24) : option `death_link`, repère d'équipe trouvé (C32), essai réel envoi + réception réussi (D40). World 0.6.0, 107 tests.
+  - DeathLink fait (2026-10-24) : option `death_link`, équipe lue dans les cases de combattants à `0x0CC374` (C33, trouvées dans le code ARM du jeu), essais réels Krillin seul / équipe à 3 réussis (D41). World 0.6.1, 108 tests.
   - À faire plus tard (phase 9) : pack PopTracker (carte + suivi automatique via Archipelago), demandé par l'utilisateur le 2026-10-24.
   - Reste : 23 lieux mis de côté à vérifier, dons à plusieurs drapeaux (carottes, captures…), voir le drapeau 1050 en jeu.
 - **Phase 5 — Test réel : terminée (2026-10-23).** Seed DBZ + APQuest (2e joueur simulé par `/send_location` du serveur), jouée par Claude via la télécommande : checks, objets envoyés et reçus, objectif, `collect`, aucun doublon (`research/decisions.md`, C14).

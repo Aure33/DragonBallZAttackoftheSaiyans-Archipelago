@@ -50,7 +50,7 @@ jobs:
           python -c "from Options import generate_yaml_templates; generate_yaml_templates('templates', False)"
           mkdir -p "$GITHUB_WORKSPACE/dist"
           cp build/apworlds/dbz_aots.apworld "$GITHUB_WORKSPACE/dist/"
-          cp "templates/Dragon Ball Z - Attack of the Saiyans.yaml" "$GITHUB_WORKSPACE/dist/"
+          cp "templates/Dragon Ball Z - Attack of the Saiyans.yaml" "$GITHUB_WORKSPACE/dist/Dragon_Ball_Z_-_Attack_of_the_Saiyans.yaml"
       - name: Publish the release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -60,7 +60,7 @@ jobs:
 
           ### Install
           1. Download `dbz_aots.apworld` and install it (Archipelago Launcher > "Install APWorld").
-          2. Fill in `Dragon Ball Z - Attack of the Saiyans.yaml` and generate your multiworld.
+          2. Fill in `Dragon_Ball_Z_-_Attack_of_the_Saiyans.yaml` and generate your multiworld.
           3. Follow the [setup guide](https://github.com/${{ github.repository }}/blob/main/worlds/dbz_aots/docs/setup_en.md).
           NOTES
           gh release create "$GITHUB_REF_NAME" dist/* --repo "$GITHUB_REPOSITORY" --title "v$VERSION" --notes-file notes.md

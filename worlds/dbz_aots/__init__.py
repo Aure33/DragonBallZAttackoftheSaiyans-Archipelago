@@ -21,7 +21,15 @@ class DbzAotsWebWorld(WebWorld):
             "setup_en.md",
             "setup/en",
             ["Aure33"],
-        )
+        ),
+        Tutorial(
+            "Multiworld Setup Guide",
+            "Un guide pour installer Dragon Ball Z - Attack of the Saiyans pour Archipelago.",
+            "Français",
+            "setup_fr.md",
+            "setup/fr",
+            ["Aure33"],
+        ),
     ]
 
 

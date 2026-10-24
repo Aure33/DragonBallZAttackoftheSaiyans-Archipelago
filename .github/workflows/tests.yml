@@ -1,0 +1,44 @@
+# Tests of the world and seed generation, against the Archipelago version the world targets.
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6.0.2
+        with:
+          path: world
+      - uses: actions/checkout@v6.0.2
+        with:
+          repository: ArchipelagoMW/Archipelago
+          ref: "0.6.8"
+          path: Archipelago
+      - uses: actions/setup-python@v6.2.0
+        with:
+          python-version: "3.12"
+      - name: Install Archipelago
+        working-directory: Archipelago
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ci-requirements.txt
+          python ModuleUpdate.py --yes --force
+          python Launcher.py --update_settings
+      - name: Add the world
+        run: ln -s "$GITHUB_WORKSPACE/world/worlds/dbz_aots" Archipelago/worlds/dbz_aots
+      - name: Tests of the world
+        working-directory: Archipelago
+        env:
+          AP_TEST_WORLDS: dbz_aots
+        run: pytest -n auto -q
+      - name: Generate 100 seeds with random options
+        env:
+          ARCHIPELAGO: ${{ github.workspace }}/Archipelago
+          ARCHIPELAGO_PYTHON: python
+        run: python world/tools/mass_seeds.py --count 100 --jobs 4

@@ -1,0 +1,24 @@
+name: Bug report
+description: Something does not work in the game, the client or the generation.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you did, what you expected, what happened instead. Where in the game (chapter, area)?
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: World version (in the .apworld's archipelago.json or the release name), Archipelago, BizHawk.
+      placeholder: "world 0.12.0, Archipelago 0.6.8, BizHawk 2.11.1"
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs and files
+      description: The BizHawk Client log (Archipelago's logs folder), your YAML, and the spoiler log if you have it.

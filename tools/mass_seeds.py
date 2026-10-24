@@ -20,6 +20,8 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 ARCHIPELAGO = Path(os.environ.get("ARCHIPELAGO", Path.home() / "Coding/ArchipelagoRom/Archipelago"))
+# Python that runs Archipelago: its venv locally, or the one given by $ARCHIPELAGO_PYTHON (GitHub Actions).
+PYTHON = os.environ.get("ARCHIPELAGO_PYTHON", str(ARCHIPELAGO / ".venv/bin/python"))
 GAME = "Dragon Ball Z - Attack of the Saiyans"
 OTHER_GAMES = ("APQuest", "ChecksFinder")
 ACCESSIBILITY_WARNING = "Location Accessibility requirements not fulfilled"
@@ -60,7 +62,7 @@ def run_seed(seed: int) -> tuple[int, str, str | None]:
         yamls.mkdir()
         players = write_players(seed, yamls)
         result = subprocess.run(
-            [str(ARCHIPELAGO / ".venv/bin/python"), "Generate.py", "--player_files_path", str(yamls),
+            [PYTHON, "Generate.py", "--player_files_path", str(yamls),
              "--outputpath", str(output), "--seed", str(seed), "--spoiler", "2"],
             cwd=ARCHIPELAGO, capture_output=True, text=True,
         )

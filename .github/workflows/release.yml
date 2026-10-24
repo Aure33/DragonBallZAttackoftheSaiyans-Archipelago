@@ -1,0 +1,66 @@
+# Push a tag vX.Y.Z (equal to world_version in worlds/dbz_aots/archipelago.json) to test, build and publish a
+# release with the .apworld and the YAML template. The release notes are the CHANGELOG.md section of that version.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6.0.2
+        with:
+          path: world
+      - uses: actions/checkout@v6.0.2
+        with:
+          repository: ArchipelagoMW/Archipelago
+          ref: "0.6.8"
+          path: Archipelago
+      - uses: actions/setup-python@v6.2.0
+        with:
+          python-version: "3.12"
+      - name: Check the tag against world_version
+        run: |
+          version=$(python -c "import json; print(json.load(open('world/worlds/dbz_aots/archipelago.json'))['world_version'])")
+          test "v$version" = "$GITHUB_REF_NAME" || { echo "Tag $GITHUB_REF_NAME != world_version $version"; exit 1; }
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+      - name: Install Archipelago
+        working-directory: Archipelago
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ci-requirements.txt
+          python ModuleUpdate.py --yes --force
+          python Launcher.py --update_settings
+      - name: Add the world
+        run: ln -s "$GITHUB_WORKSPACE/world/worlds/dbz_aots" Archipelago/worlds/dbz_aots
+      - name: Tests of the world
+        working-directory: Archipelago
+        env:
+          AP_TEST_WORLDS: dbz_aots
+        run: pytest -n auto -q
+      - name: Build the apworld and the YAML template
+        working-directory: Archipelago
+        run: |
+          python Launcher.py "Build APWorlds" -- "Dragon Ball Z - Attack of the Saiyans" --skip_open_folder
+          python -c "from Options import generate_yaml_templates; generate_yaml_templates('templates', False)"
+          mkdir -p "$GITHUB_WORKSPACE/dist"
+          cp build/apworlds/dbz_aots.apworld "$GITHUB_WORKSPACE/dist/"
+          cp "templates/Dragon Ball Z - Attack of the Saiyans.yaml" "$GITHUB_WORKSPACE/dist/"
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          awk -v v="$VERSION" '/^## /{p = index($0, "## " v) == 1; next} p' world/CHANGELOG.md > notes.md
+          cat >> notes.md <<'NOTES'
+
+          ### Install
+          1. Download `dbz_aots.apworld` and install it (Archipelago Launcher > "Install APWorld").
+          2. Fill in `Dragon Ball Z - Attack of the Saiyans.yaml` and generate your multiworld.
+          3. Follow the [setup guide](https://github.com/${{ github.repository }}/blob/main/worlds/dbz_aots/docs/setup_en.md).
+          NOTES
+          gh release create "$GITHUB_REF_NAME" dist/* --repo "$GITHUB_REPOSITORY" --title "v$VERSION" --notes-file notes.md

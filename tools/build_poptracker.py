@@ -15,13 +15,14 @@ chapters after the goal).
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import sys
 from collections import defaultdict
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-ARCHIPELAGO = Path.home() / "Coding/ArchipelagoRom/Archipelago"
+ARCHIPELAGO = Path(os.environ.get("ARCHIPELAGO", Path.home() / "Coding/ArchipelagoRom/Archipelago"))
 sys.path.insert(0, str(ARCHIPELAGO))
 
 from PIL import Image, ImageDraw, ImageFont  # noqa: E402

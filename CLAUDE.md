@@ -3,7 +3,7 @@
 ## But
 Ajouter *Dragon Ball Z: Attack of the Saiyans* (Nintendo DS, 2009) à Archipelago, avec le client BizHawk générique.
 Usage personnel d'abord (dépôt privé), mais code propre pour une publication possible.
-Cahier des charges complet : [Prompt_archipelago_dbz.md](Prompt_archipelago_dbz.md). Décisions : [research/decisions.md](research/decisions.md).
+Cahier des charges complet : [research/Prompt_archipelago_dbz.md](research/Prompt_archipelago_dbz.md). Décisions : [research/decisions.md](research/decisions.md).
 
 ## Utilisateur
 - Développeur Python à l'aise (Git, tests, CI) ; **débutant** sur Archipelago, la rétro-ingénierie, la mémoire DS, le Lua.

@@ -33,6 +33,20 @@ Archipelago installation in `Tools > Lua Console`, then open the BizHawk Client 
 
 Only one BizHawk Client can talk to BizHawk at a time: close any other BizHawk Client window first.
 
+## Your save file
+
+The ROM made from the patch file (`AP_..._<your name>.nds`, next to the patch file) has its own save in BizHawk, so
+your other saves of the game are not touched. Start a new game in it, and open the same patch file every time you
+play this multiworld.
+
+Loading your last save (after a Game Over, for example) is safe: chests you open again are not sent twice, and the
+client gives you back the items received since that save.
+
+## Tracker
+
+A PopTracker pack with the maps of the game can be built from your own ROM: see the README of the world's
+repository.
+
 ## Known limitations
 
 - Chests and hidden spots still show their original item; the client removes it from your inventory right away.

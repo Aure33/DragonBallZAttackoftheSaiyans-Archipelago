@@ -19,6 +19,12 @@ follows this battle starts. There is no save after the final battle, so do every
 With the `goal_chapter` option, the game can end earlier: the goal is sent when the next chapter starts, and only the
 locations up to that chapter are included.
 
+With `goal: broly`, defeat Broly, the secret boss, instead. After Nappa and before the last battle against Vegeta,
+Mr. Popo makes the Dragon Balls again: collect them, pick Shenron's wish "To fight the ultimate enemy", then enter the
+portal at the top of East Mt. Paozu (Dragon Rock). The goal is sent when the scene after the victory starts (you also
+receive Broly's Necklace). Broly is level 95 with 85,000 HP: be well prepared. Do it before the final battle, since
+there is no save after it.
+
 ## Which locations are randomized?
 
 224 locations:
@@ -53,7 +59,8 @@ Received items are not used or equipped automatically: use the fruits and equip 
 
 ## Options
 
-- `goal_chapter` (1 to 15, default 15): the chapter whose end wins the game.
+- `goal` (`chapter` or `broly`, default `chapter`): what wins the game (see above).
+- `goal_chapter` (1 to 15, default 15): with `goal: chapter`, the chapter whose end wins the game.
 - `hidden_items` (default on): include the 14 hidden items.
 - `chapter_checks` (default on): the end of the prologue and of each chapter before the goal sends a check.
 - `key_items` (default on): shuffle the Snowfield Key, the Submarine and Bubbles' Thing; the three story scenes

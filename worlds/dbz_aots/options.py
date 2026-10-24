@@ -1,11 +1,26 @@
 from dataclasses import dataclass
 
-from Options import DeathLink, DefaultOnToggle, PerGameCommonOptions, Range, Toggle
+from Options import Choice, DeathLink, DefaultOnToggle, PerGameCommonOptions, Range, Toggle
+
+
+class Goal(Choice):
+    """
+    chapter: the end of the chapter chosen in Goal Chapter wins the game.
+    broly: defeat Broly, the secret boss. He can be fought after Nappa and before the last battle against Vegeta:
+    collect the Dragon Balls that Mr. Popo makes again, then pick Shenron's wish "To fight the ultimate enemy" and
+    enter the portal on East Mt. Paozu. The whole story is included (Goal Chapter is not used).
+    """
+
+    display_name = "Goal"
+    option_chapter = 0
+    option_broly = 1
+    default = 0
 
 
 class GoalChapter(Range):
     """
-    The chapter whose end wins the game. 15 is the whole story: defeat Vegeta in the last battle.
+    The chapter whose end wins the game, when Goal is "chapter". 15 is the whole story: defeat Vegeta in the last
+    battle.
     A lower chapter makes a shorter game: only the locations up to that chapter are included.
     """
 
@@ -29,8 +44,9 @@ class ChapterChecks(DefaultOnToggle):
 
 class KeyItems(DefaultOnToggle):
     """
-    Shuffle the story key items that the game checks in the inventory: the Snowfield Key (chapter 8). The scene
-    that gives it becomes a location, and the gate it opens stays locked until the key is received.
+    Shuffle the story key items that the game checks in the inventory: the Snowfield Key (chapter 8), the Submarine
+    (chapter 10) and Bubbles' Thing (chapter 13). The scenes that give them become locations, and the way they open
+    stays closed until the item is received.
     """
 
     display_name = "Key Items"
@@ -60,6 +76,7 @@ class ExperienceMultiplier(Range):
 
 @dataclass
 class DbzAotsOptions(PerGameCommonOptions):
+    goal: Goal
     goal_chapter: GoalChapter
     hidden_items: HiddenItems
     chapter_checks: ChapterChecks

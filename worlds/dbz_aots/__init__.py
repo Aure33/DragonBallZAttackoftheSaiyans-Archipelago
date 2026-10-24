@@ -5,7 +5,7 @@ from worlds.AutoWorld import WebWorld, World
 
 from . import client as client  # importing the module registers the BizHawk client
 from . import items, locations, regions, rules
-from .options import DbzAotsOptions
+from .options import DbzAotsOptions, Goal
 
 
 class DbzAotsWebWorld(WebWorld):
@@ -38,6 +38,11 @@ class DbzAotsWorld(World):
     location_name_to_id = locations.LOCATION_NAME_TO_ID
     location_name_groups = locations.LOCATION_NAME_GROUPS
 
+    def generate_early(self) -> None:
+        # Broly is fought at the end of the story (chapter 15), so that goal needs every chapter.
+        if self.options.goal == Goal.option_broly:
+            self.options.goal_chapter.value = regions.LAST_CHAPTER
+
     def create_regions(self) -> None:
         regions.create_and_connect_regions(self)
         locations.create_all_locations(self)
@@ -58,6 +63,7 @@ class DbzAotsWorld(World):
         return {
             "experience_multiplier": self.options.experience_multiplier.value,
             "death_link": self.options.death_link.value,
-            "goal_flag": locations.goal_flag(self.options.goal_chapter.value),
+            "goal_flag": locations.goal_flag(self.options.goal_chapter.value,
+                                             self.options.goal == Goal.option_broly),
             "key_items": self.options.key_items.value,
         }

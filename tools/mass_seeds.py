@@ -27,6 +27,7 @@ ACCESSIBILITY_WARNING = "Location Accessibility requirements not fulfilled"
 
 def dbz_yaml(name: str, rng: random.Random) -> str:
     return (f"name: {name}\ngame: {GAME}\n{GAME}:\n"
+            f"  goal: {rng.choice(['chapter', 'broly'])}\n"
             f"  goal_chapter: {rng.choice([15, rng.randint(1, 14)])}\n"
             f"  hidden_items: {rng.choice(['true', 'false'])}\n"
             f"  chapter_checks: {rng.choice(['true', 'false'])}\n"

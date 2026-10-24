@@ -82,6 +82,10 @@ GOAL_FLAG = 1050
 """Story flag set when scene c1505_00 starts, right after the last battle of the game (Vegeta, battle LAS_EB05 of
 scene c1504_01): research/ram_map.md, section 4."""
 
+BROLY_DEFEATED_FLAG = 2672
+"""Set by scene c1410_04, which only plays after Broly is beaten (a defeat restarts the game): seen in game, along with
+Broly's Necklace (research/decisions.md, C47)."""
+
 RECEIVED_ITEMS_COUNTER = 0x09FB44
 """4 bytes at the end of the flag block, never used by the game so far: provisional (research/decisions.md, D20)."""
 

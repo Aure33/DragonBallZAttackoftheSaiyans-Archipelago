@@ -23,9 +23,10 @@ Cahier des charges complet : [Prompt_archipelago_dbz.md](Prompt_archipelago_dbz.
   - Options du YAML (bloc 3, D43) : `goal_chapter`, `hidden_items`, `chapter_checks`, `east_city_ruins`, `experience_multiplier`, `death_link`. World 0.7.0, 123 tests. Objets clés (bloc 2) : carte des objets dans C34, Clé du champ de neige en premier (D42).
   - DeathLink fait (2026-10-24) : option `death_link`, mort envoyée au **Game Over** (redémarrage du jeu, `0x0AF1E4` 1 → 0, avec tous les combattants à terre juste avant : D44), cases de combattants à `0x0CC374` (C33). World 0.7.1, 126 tests.
   - PopTracker (bloc 5) : prototype généré par `tools/build_poptracker.py` (`--deploy` = copie dans les packs), validé par les schémas et chargé dans PopTracker 0.35.3 ; suivi automatique encore à essayer (clic sur « AP »). Notes : `research/poptracker.md`.
-  - But « battre Broly » demandé (2026-10-24) : drapeaux trouvés (C38), condition de victoire à voir en jeu (D45).
+  - But « battre Broly » fait (C47, D48) : option `goal: broly`, victoire = drapeau 2672 (scène d'après-combat). Broly battu en jeu par Claude, essai réel « completed their goal ». World 0.10.0, 152 tests.
   - Objets clés (D46) : option `key_items`, Clé du champ de neige mélangée, essai réel réussi. World 0.8.0, 138 tests.
   - Sous-marin et Truc de Bubbles mélangés aussi (C46, D47), vérifiés en jeu et en essai réel. Clé des égouts facultative, laissée en place (C45). World 0.9.0, 146 tests.
+  - Stats d'un personnage (C47) : 6 stats à +0x44 et niveau à +0x68 depuis les PV actuels. État 8 de Claude = devant le portail de Broly, stats au maximum.
   - Raccourcis mémoire (C39, `tools/warp.py`) : téléportation, saut de scène, drapeaux d'histoire ; Raditz sans fausse mort (C40) ; porte du champ de neige pas encore ouverte (C41).
   - Reste : 23 lieux mis de côté à vérifier, dons à plusieurs drapeaux (carottes, captures…), voir le drapeau 1050 en jeu.
 - **Phase 5 — Test réel : terminée (2026-10-23).** Seed DBZ + APQuest (2e joueur simulé par `/send_location` du serveur), jouée par Claude via la télécommande : checks, objets envoyés et reçus, objectif, `collect`, aucun doublon (`research/decisions.md`, C14).
@@ -46,7 +47,7 @@ Cahier des charges complet : [Prompt_archipelago_dbz.md](Prompt_archipelago_dbz.
   - 2 : juste avant d'entrer dans l'Île d'entraînement ;
   - 3 : **manquant** (devait être devant le 1er coffre) → à refaire au début de la phase 2 depuis l'état 2 ;
   - 4 : après Jackie Choun, prologue terminé, sauvegarde en jeu faite (copie de secours dans `dbz_research\backup\`) ;
-  - 7, 8, 9 : réservés à Claude (télécommande) ; 5, 6 : photos manuelles. Au 2026-10-24 : 7 = ch. 1, Ville est après la boutique (Krillin seul) ; 8 = ch. 1, Ville est, cour du temple ; 9 = île d'entraînement, grotte (Krillin, Tien, Yamcha).
+  - 7, 8, 9 : réservés à Claude (télécommande) ; 5, 6 : photos manuelles. Au 2026-10-24 : 7 = modifié par les essais (histoire et objets fabriqués) ; 8 = devant le portail de Broly (`pao06`, drapeau 2671, stats au maximum, Tien/Yamcha/Krillin) ; 9 = île d'entraînement, grotte (Krillin, Tien, Yamcha).
   - ⚠️ Charger un état remet aussi la sauvegarde en jeu de ce moment-là : fermer la ROM peut écraser `SaveRAM` avec une version plus ancienne. Copie de la sauvegarde d'après prologue dans `dbz_research\backup\`.
   - Sauvegarde en jeu : `NDS\SaveRAM\Dragon Ball Z Attack of the Saiyans.SaveRAM` (8 Ko).
 - **Rappel avant la phase 3** : vérifier sur le Discord Archipelago que personne ne travaille déjà sur ce jeu.

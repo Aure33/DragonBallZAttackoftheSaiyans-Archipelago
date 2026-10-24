@@ -6,7 +6,7 @@ from BaseClasses import Location, LocationProgressType
 
 from .items import GAME_NAME, DbzAotsItem
 from .location_data import LOCATIONS, LocationData
-from .ram import CHAPTER_START_FLAGS, GOAL_FLAG
+from .ram import BROLY_DEFEATED_FLAG, CHAPTER_START_FLAGS, GOAL_FLAG
 from .regions import LAST_CHAPTER, chapter_region
 
 if TYPE_CHECKING:
@@ -78,8 +78,11 @@ def included_key_item_locations(world: DbzAotsWorld) -> dict[str, tuple[int, int
     return {name: data for name, data in KEY_ITEM_LOCATIONS.items() if data[0] <= world.options.goal_chapter}
 
 
-def goal_flag(goal_chapter: int) -> int:
-    """Game flag that tells the client the goal is reached: the start of the next chapter, or the end of the game."""
+def goal_flag(goal_chapter: int, broly: bool = False) -> int:
+    """Game flag that tells the client the goal is reached: Broly beaten, the start of the next chapter, or the end of
+    the game."""
+    if broly:
+        return BROLY_DEFEATED_FLAG
     return GOAL_FLAG if goal_chapter == LAST_CHAPTER else CHAPTER_START_FLAGS[goal_chapter]
 
 

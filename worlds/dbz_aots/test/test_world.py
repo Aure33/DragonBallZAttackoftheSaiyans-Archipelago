@@ -108,6 +108,24 @@ class TestShortGoal(DbzAotsTestBase):
         self.assertEqual(ram.CHAPTER_START_FLAGS[1], self.world.fill_slot_data()["goal_flag"])
 
 
+class TestBrolyGoal(DbzAotsTestBase):
+    options = {"goal": "broly", "goal_chapter": 3}
+
+    def test_whole_story_is_included(self) -> None:
+        self.assertEqual(15, self.world.options.goal_chapter.value)
+        self.assertIn("Chapter 14 Cleared", addresses_of(self.multiworld.get_locations(self.player)))
+
+    def test_client_watches_the_broly_flag(self) -> None:
+        self.assertEqual(ram.BROLY_DEFEATED_FLAG, self.world.fill_slot_data()["goal_flag"])
+
+    def test_goal_needs_the_whole_story(self) -> None:
+        self.assertFalse(self.can_reach_location(GOAL_EVENT))
+        self.collect_all_but(BUBBLES_THING)
+        self.assertFalse(self.can_reach_location(GOAL_EVENT))
+        self.collect_by_name(BUBBLES_THING)
+        self.assertTrue(self.can_reach_location(GOAL_EVENT))
+
+
 class TestGoalAfterTheGasMask(DbzAotsTestBase):
     options = {"goal_chapter": 6}
 

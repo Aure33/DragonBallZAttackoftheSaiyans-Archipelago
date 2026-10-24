@@ -31,7 +31,7 @@ class GoalChapter(Range):
 
 
 class HiddenItems(DefaultOnToggle):
-    """Include the 14 items found by examining a drawer, a stall, a door... and not in a chest."""
+    """Include the 17 items found by examining a drawer, a stall, a door... and not in a chest."""
 
     display_name = "Hidden Items"
 
@@ -56,7 +56,7 @@ class EastCityRuins(Toggle):
     """
     Include the 6 chests of East City Ruins.
     Getting there needs the 7 Dragon Balls and Shenron's wish "To Go Somewhere New", which takes a long time.
-    Only used when the goal is chapter 15.
+    Only used when the whole story is included (goal chapter 15 or Broly).
     """
 
     display_name = "East City Ruins"

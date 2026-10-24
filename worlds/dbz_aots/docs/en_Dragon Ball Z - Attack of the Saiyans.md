@@ -2,9 +2,10 @@
 
 ## Status
 
-This world is a work in progress. It covers the whole story: 201 of the 219 chests of the game, 14 hidden items
-and the end of each chapter. The other chests and hidden items are left untouched until their access is checked
-in game.
+This world covers the whole story: 215 of the 219 chests of the game (6 of them with the `east_city_ruins`
+option), 17 of the 19 hidden items, the end of each chapter and the three story scenes that give a key item. The
+others are left untouched: the two Sewer chests (behind the optional Sewer Key, 1000 carrots) and four spots whose
+access could not be confirmed in game.
 
 ## What does randomization do to this game?
 
@@ -66,7 +67,7 @@ Received items are not used or equipped automatically: use the fruits and equip 
 
 - `goal` (`chapter` or `broly`, default `chapter`): what wins the game (see above).
 - `goal_chapter` (1 to 15, default 15): with `goal: chapter`, the chapter whose end wins the game.
-- `hidden_items` (default on): include the 14 hidden items.
+- `hidden_items` (default on): include the 17 hidden items.
 - `chapter_checks` (default on): the end of the prologue and of each chapter before the goal sends a check.
 - `key_items` (default on): shuffle the Snowfield Key, the Submarine and Bubbles' Thing; the three story scenes
   that give them become locations.

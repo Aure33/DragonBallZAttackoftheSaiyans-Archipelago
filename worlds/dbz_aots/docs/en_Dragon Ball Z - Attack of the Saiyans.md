@@ -47,6 +47,9 @@ Received items are not used or equipped automatically: use the fruits and equip 
 - `east_city_ruins`: add the 6 chests of East City Ruins (see above).
 - `experience_multiplier` (1 to 10): multiply the experience and AP earned in battle. The client adds the extra
   after each battle; it never makes a character skip a level at once, the rest is added after the next battles.
+- `death_link`: when your whole party falls in battle, everyone linked dies too. When someone else dies, the HP of
+  your party drop to 0 at the start of your next battle, which ends it in a defeat (back to the title screen: you
+  continue from your last save).
 
 ## Supported version
 

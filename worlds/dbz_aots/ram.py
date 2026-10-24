@@ -50,6 +50,10 @@ CHARACTER_SHEETS = 0x0CD308
 relative to a sheet's max HP (research/ram_map.md, section 2)."""
 CHARACTER_SHEET_SIZE = 0x24C
 CHARACTER_COUNT = 6
+CURRENT_HP_OFFSET = -8  # 4 bytes; battles read and write it directly
+PARTY_MARKER_OFFSET = -0xF
+"""1 byte, 0x0C for the characters of the party and 0 for the others; the game sets it back if it is changed
+(research/decisions.md, C32)."""
 LEVEL_OFFSET = 0x60  # 1 byte
 EXPERIENCE_OFFSET = 0x194  # 4 bytes, total experience (shown in the menu, not used to level up)
 EXPERIENCE_TO_NEXT_OFFSET = 0x198  # 4 bytes; the game levels up when a battle brings it below 0

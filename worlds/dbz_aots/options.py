@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from Options import PerGameCommonOptions, Range, Toggle
+from Options import DeathLink, PerGameCommonOptions, Range, Toggle
 
 
 class EastCityRuins(Toggle):
@@ -28,3 +28,4 @@ class ExperienceMultiplier(Range):
 class DbzAotsOptions(PerGameCommonOptions):
     east_city_ruins: EastCityRuins
     experience_multiplier: ExperienceMultiplier
+    death_link: DeathLink

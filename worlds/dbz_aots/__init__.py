@@ -55,4 +55,7 @@ class DbzAotsWorld(World):
         return items.FILLER_ITEM
 
     def fill_slot_data(self) -> dict[str, Any]:
-        return {"experience_multiplier": self.options.experience_multiplier.value}
+        return {
+            "experience_multiplier": self.options.experience_multiplier.value,
+            "death_link": self.options.death_link.value,
+        }

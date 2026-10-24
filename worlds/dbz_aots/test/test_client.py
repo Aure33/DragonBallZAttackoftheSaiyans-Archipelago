@@ -1,8 +1,8 @@
 import unittest
 
 from .. import ram
-from ..client import (Progress, battle_bonus, flag_is_set, in_game, items_to_give, opened_locations,
-                      original_items_to_take_back, read_progress)
+from ..client import (PARTY_SLICE_SIZE, Progress, battle_bonus, flag_is_set, in_game, items_to_give, opened_locations,
+                      original_items_to_take_back, party_defeated, party_hp, read_progress)
 from ..items import ITEM_NAME_TO_ID
 from ..locations import LOCATION_NAME_TO_ID, ORIGINAL_ITEM_LOCATION_IDS
 
@@ -95,3 +95,31 @@ class TestExperienceMultiplier(unittest.TestCase):
         sheets[tien + ram.LEVEL_OFFSET] = 4
         sheets[tien + ram.EXPERIENCE_OFFSET:tien + ram.EXPERIENCE_OFFSET + 12] = bytes.fromhex("55020000 26010000 62000000")
         self.assertEqual(Progress(4, 597, 294, 98), read_progress(bytes(sheets))[4])
+
+
+def party_slice(member: bool, hp: int) -> bytes:
+    """Bytes the client reads before a character sheet: party marker, then current HP at the end."""
+    data = bytearray(PARTY_SLICE_SIZE)
+    data[0] = 0x0C if member else 0
+    data[-4:] = hp.to_bytes(4, "little")
+    return bytes(data)
+
+
+class TestDeathLink(unittest.TestCase):
+    # Seen in game (state 9 of Claude): Goku, Gohan and Piccolo are not in the party but have full HP.
+    OUTSIDERS = [party_slice(False, 445), party_slice(False, 290), party_slice(False, 660)]
+
+    def test_only_the_party_counts(self) -> None:
+        party = self.OUTSIDERS + [party_slice(True, 150), party_slice(True, 392), party_slice(True, 147)]
+        self.assertEqual([150, 392, 147], party_hp(party))
+
+    def test_defeat_when_every_member_is_down(self) -> None:
+        party = self.OUTSIDERS + [party_slice(True, 0), party_slice(True, 0), party_slice(True, 0)]
+        self.assertTrue(party_defeated(party_hp(party)))
+
+    def test_no_defeat_while_one_member_stands(self) -> None:
+        party = self.OUTSIDERS + [party_slice(True, 0), party_slice(True, 1), party_slice(True, 0)]
+        self.assertFalse(party_defeated(party_hp(party)))
+
+    def test_no_defeat_without_a_party(self) -> None:
+        self.assertFalse(party_defeated(party_hp([party_slice(False, 0)] * 6)))

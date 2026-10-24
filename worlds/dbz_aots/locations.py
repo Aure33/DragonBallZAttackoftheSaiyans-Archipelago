@@ -25,6 +25,8 @@ STORY_LOCATIONS: dict[str, tuple[int, int]] = {
 # back when the scene gives it (research/decisions.md, D46).
 KEY_ITEM_LOCATIONS: dict[str, tuple[int, int, str]] = {
     "Holly Plain - Snowfield Key from Lunch": (8, 511, "Snowfield Key"),  # scene c0804_01
+    "West City - Submarine": (10, 681, "Submarine"),  # scene c1006_01, Capsule Corp.
+    "King Kai's Planet - Bubbles' Thing": (13, 870, "Bubbles' Thing"),  # scene c1301_00
 }
 
 LOCATION_NAME_TO_ID: dict[str, int] = {

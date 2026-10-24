@@ -151,3 +151,11 @@ class TestKeyItems(unittest.TestCase):
         inventory = bytearray(ram.INVENTORY_SIZE)
         inventory[self.KEY_OFFSET] = 1
         self.assertEqual({}, key_item_corrections(bytes(inventory), [ITEM_NAME_TO_ID["Snowfield Key"]]))
+
+    def test_each_key_item_follows_its_own_count(self) -> None:
+        submarine = ram.INVENTORY_OFFSET[ram.ItemCategory.KEY_ITEM] + 9
+        bubbles_thing = ram.INVENTORY_OFFSET[ram.ItemCategory.KEY_ITEM] + 22
+        inventory = bytearray(ram.INVENTORY_SIZE)
+        inventory[submarine] = 1
+        received = [ITEM_NAME_TO_ID["Bubbles' Thing"]]
+        self.assertEqual({submarine: 0, bubbles_thing: 1}, key_item_corrections(bytes(inventory), received))

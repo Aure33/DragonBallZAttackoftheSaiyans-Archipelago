@@ -4,7 +4,7 @@ from BaseClasses import LocationProgressType
 
 from .bases import DbzAotsTestBase
 from .. import ram
-from ..items import GAS_MASK, ITEM_NAME_TO_ID, ITEMS, KI_BLAST_FRUIT, SNOWFIELD_KEY
+from ..items import BUBBLES_THING, GAS_MASK, ITEM_NAME_TO_ID, ITEMS, KI_BLAST_FRUIT, SNOWFIELD_KEY, SUBMARINE
 from ..location_data import LOCATIONS
 from ..locations import (GOAL_EVENT, KEY_ITEM_LOCATIONS, LOCATION_ID_BASE, LOCATION_NAME_TO_ID, MISSABLE_ZONES,
                          STORY_LOCATIONS)
@@ -59,7 +59,7 @@ class TestDefaultWorld(DbzAotsTestBase):
         self.assertTrue(self.can_reach_location("Mt. Paozu 3 - Sleep Knuckle Chest"))
 
     def test_chapter_13_and_the_goal_need_two_ki_blast_fruits(self) -> None:
-        self.collect_by_name([GAS_MASK, SNOWFIELD_KEY])
+        self.collect_by_name([GAS_MASK, SNOWFIELD_KEY, SUBMARINE, BUBBLES_THING])
         self.collect(self.get_item_by_name(KI_BLAST_FRUIT))
         for name in ("Yemma Forest 2 - Demon Seal Chest", GOAL_EVENT):
             with self.subTest(name):
@@ -137,6 +137,29 @@ class TestSnowfieldKey(DbzAotsTestBase):
         self.assertEqual(LOCATION_ID_BASE + 511, LOCATION_NAME_TO_ID["Holly Plain - Snowfield Key from Lunch"])
 
 
+class TestSubmarineAndBubblesThing(DbzAotsTestBase):
+    def test_chapter_10_needs_the_submarine(self) -> None:
+        self.collect_by_name([GAS_MASK, KI_BLAST_FRUIT, SNOWFIELD_KEY])
+        self.assertTrue(self.can_reach_location("Chapter 9 Cleared"))
+        self.assertFalse(self.can_reach_location("Chapter 10 Cleared"))
+        self.collect_by_name(SUBMARINE)
+        self.assertTrue(self.can_reach_location("Chapter 10 Cleared"))
+
+    def test_chapter_13_needs_bubbles_thing(self) -> None:
+        self.collect_by_name([GAS_MASK, KI_BLAST_FRUIT, SNOWFIELD_KEY, SUBMARINE])
+        self.assertFalse(self.can_reach_location("Chapter 13 Cleared"))
+        self.collect_by_name(BUBBLES_THING)
+        self.assertTrue(self.can_reach_location("Chapter 13 Cleared"))
+
+    def test_scene_locations_are_their_story_flags(self) -> None:
+        self.assertEqual(LOCATION_ID_BASE + 681, LOCATION_NAME_TO_ID["West City - Submarine"])
+        self.assertEqual(LOCATION_ID_BASE + 870, LOCATION_NAME_TO_ID["King Kai's Planet - Bubbles' Thing"])
+
+    def test_items_are_key_items_9_and_22(self) -> None:
+        self.assertEqual(4009, ITEM_NAME_TO_ID[SUBMARINE])
+        self.assertEqual(4022, ITEM_NAME_TO_ID[BUBBLES_THING])
+
+
 class TestKeyItemsOff(DbzAotsTestBase):
     options = {"key_items": False}
 
@@ -144,6 +167,8 @@ class TestKeyItemsOff(DbzAotsTestBase):
         names = addresses_of(self.multiworld.get_locations(self.player))
         self.assertNotIn("Holly Plain - Snowfield Key from Lunch", names)
         self.assertEqual([], self.get_items_by_name(SNOWFIELD_KEY))
+        self.assertEqual([], self.get_items_by_name(SUBMARINE))
+        self.assertEqual([], self.get_items_by_name(BUBBLES_THING))
 
 
 class TestIds(DbzAotsTestBase):

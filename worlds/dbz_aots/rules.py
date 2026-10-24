@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from rule_builder.rules import Has, Rule
 
-from .items import GAS_MASK, KI_BLAST_FRUIT, SNOWFIELD_KEY
+from .items import BUBBLES_THING, GAS_MASK, KI_BLAST_FRUIT, SNOWFIELD_KEY, SUBMARINE
 from .locations import VICTORY
 from .regions import chapter_entrance
 
@@ -25,10 +25,17 @@ CHAPTER_REQUIREMENTS: dict[int, Rule] = {
 }
 
 
-# Holly Plain gate: the story of chapter 8 goes on behind it, and it only opens with the Snowfield Key in the
-# inventory (research/decisions.md, C42). The logic asks for the key from the start of chapter 8, which is stricter
-# than the game (the key is only needed after Lunch is found) and therefore safe.
-KEY_ITEM_REQUIREMENTS: dict[int, Rule] = {8: Has(SNOWFIELD_KEY)}
+# Story key items, checked in the inventory on the story path (research/decisions.md, C42 and C46). The logic asks for
+# each one from the start of its chapter, which is stricter than the game (it is only needed after the scene that
+# gives it) and therefore safe.
+KEY_ITEM_REQUIREMENTS: dict[int, Rule] = {
+    # Holly Plain gate: the story of chapter 8 goes on behind it.
+    8: Has(SNOWFIELD_KEY),
+    # Pirate Cave: "We can't get across without a submarine" (chapter 10).
+    10: Has(SUBMARINE),
+    # Yemma Forest: the five stumps to repair before the story goes on (chapter 13).
+    13: Has(BUBBLES_THING),
+}
 
 
 def set_all_rules(world: DbzAotsWorld) -> None:
@@ -38,5 +45,7 @@ def set_all_rules(world: DbzAotsWorld) -> None:
         rule = CHAPTER_REQUIREMENTS.get(chapter)
         if world.options.key_items and chapter in KEY_ITEM_REQUIREMENTS:
             rule = KEY_ITEM_REQUIREMENTS[chapter] if rule is None else rule & KEY_ITEM_REQUIREMENTS[chapter]
+        if rule is None:
+            continue
         world.set_rule(world.get_entrance(chapter_entrance(chapter)), rule)
     world.set_completion_rule(Has(VICTORY))

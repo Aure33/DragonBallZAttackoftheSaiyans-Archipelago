@@ -23,7 +23,8 @@ sys.path.insert(0, str(ARCHIPELAGO))
 
 from PIL import Image, ImageDraw  # noqa: E402
 
-from worlds.dbz_aots.items import GAS_MASK, ITEM_NAME_TO_ID, KI_BLAST_FRUIT, SNOWFIELD_KEY  # noqa: E402
+from worlds.dbz_aots.items import (BUBBLES_THING, GAS_MASK, ITEM_NAME_TO_ID, KI_BLAST_FRUIT, SNOWFIELD_KEY,  # noqa: E402
+                                    SUBMARINE)
 from worlds.dbz_aots.location_data import LOCATIONS  # noqa: E402
 from worlds.dbz_aots.locations import KEY_ITEM_LOCATIONS, LOCATION_NAME_TO_ID, STORY_LOCATIONS  # noqa: E402
 from worlds.dbz_aots.regions import LAST_CHAPTER, chapter_region  # noqa: E402
@@ -34,9 +35,11 @@ VERSION = json.loads((REPO / "worlds/dbz_aots/archipelago.json").read_text())["w
 
 # Tracked items: PopTracker code, name, maximum count, colour of the generated icon.
 TRACKED = {GAS_MASK: ("gasmask", 1, (70, 140, 70)), KI_BLAST_FRUIT: ("kiblast", 2, (220, 120, 30)),
-           SNOWFIELD_KEY: ("snowkey", 1, (90, 160, 220))}
+           SNOWFIELD_KEY: ("snowkey", 1, (90, 160, 220)), SUBMARINE: ("submarine", 1, (230, 200, 40)),
+           BUBBLES_THING: ("bubbles", 1, (200, 90, 200))}
 # Same requirements as rules.py (research/decisions.md, D28), as PopTracker rules.
-CHAPTER_RULES = {6: "gasmask", 8: "gasmask,kiblast:1,snowkey", 13: "gasmask,kiblast:2,snowkey"}
+CHAPTER_RULES = {6: "gasmask", 8: "gasmask,kiblast:1,snowkey", 10: "gasmask,kiblast:1,snowkey,submarine",
+                 13: "gasmask,kiblast:2,snowkey,submarine,bubbles"}
 
 BOX_W, BOX_H, COLUMNS = 240, 150, 4
 

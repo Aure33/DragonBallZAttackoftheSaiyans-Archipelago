@@ -25,6 +25,7 @@ Cahier des charges complet : [Prompt_archipelago_dbz.md](Prompt_archipelago_dbz.
   - PopTracker (bloc 5) : prototype généré par `tools/build_poptracker.py` (`--deploy` = copie dans les packs), validé par les schémas et chargé dans PopTracker 0.35.3 ; suivi automatique encore à essayer (clic sur « AP »). Notes : `research/poptracker.md`.
   - But « battre Broly » demandé (2026-10-24) : drapeaux trouvés (C38), condition de victoire à voir en jeu (D45).
   - Objets clés (D46) : option `key_items`, Clé du champ de neige mélangée, essai réel réussi. World 0.8.0, 138 tests.
+  - Sous-marin et Truc de Bubbles mélangés aussi (C46, D47), vérifiés en jeu et en essai réel. Clé des égouts facultative, laissée en place (C45). World 0.9.0, 146 tests.
   - Raccourcis mémoire (C39, `tools/warp.py`) : téléportation, saut de scène, drapeaux d'histoire ; Raditz sans fausse mort (C40) ; porte du champ de neige pas encore ouverte (C41).
   - Reste : 23 lieux mis de côté à vérifier, dons à plusieurs drapeaux (carottes, captures…), voir le drapeau 1050 en jeu.
 - **Phase 5 — Test réel : terminée (2026-10-23).** Seed DBZ + APQuest (2e joueur simulé par `/send_location` du serveur), jouée par Claude via la télécommande : checks, objets envoyés et reçus, objectif, `collect`, aucun doublon (`research/decisions.md`, C14).

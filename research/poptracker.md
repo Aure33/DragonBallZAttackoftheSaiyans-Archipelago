@@ -27,6 +27,10 @@ Contenu :
 - un onglet par zone (35), rangés par partie de l'histoire (« Prologue - Ch. 4 », « Ch. 5 - 8 »…) ; dans chaque
   onglet, tous les écrans de la zone avec leur nom, et un point par coffre / objet à examiner, à sa place exacte ;
 - un onglet « Story » : fins de chapitre et scènes qui donnent un objet clé ;
+- suivi de la carte (D52) : le client écrit la carte en cours dans le stockage de données du serveur
+  (`dbz_aots_map_<équipe>_<slot>`) ; le pack la lit (`SetNotify` + `Get`) et ouvre le groupe puis la zone
+  (`Tracker:UiHint("ActivateTab")`, table `MAP_TABS` générée : code de carte, sinon préfixe de 3 lettres).
+  Bouton « Map » pour le couper. PopTracker 0.25.4 au moins (`initial_active_state`) ;
 - en haut : Masque à gaz, Ki-Blast Fruit (×3), Clé du champ de neige, Sous-marin, Truc de Bubbles ;
 - `slot_data` (`hidden_items`, `chapter_checks`, `key_items`, `east_city_ruins`, `goal_chapter`) cache ce que la
   partie ne mélange pas ; `key_items` coupé = les trois objets clés comptent comme acquis (l'histoire les donne).

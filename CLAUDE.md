@@ -13,6 +13,7 @@ Cahier des charges complet : [research/Prompt_archipelago_dbz.md](research/Promp
 - Quand il doit faire quelque chose (jouer, état de sauvegarde, lire une valeur) : instructions numérotées, puis on attend son retour.
 
 ## État actuel
+- **World 0.13.0 (2026-10-25, pas encore publié par tag)** : coffres et objets à examiner montrent leur vrai objet (le nôtre, ou « Objet Archipelago » = objet 103 nommé en mémoire), réécrits en mémoire par le client (C55, D52) ; PopTracker ouvre l'onglet de la zone en cours. Vérifié en jeu et dans PopTracker. Pour BizHawk + télécommande + connecteur ensemble : `EmuHawk.exe --lua=…\dbz_research\test_session.luases <ROM>` (session des deux scripts).
 - **Dépôt rangé et 1re release (2026-10-25)** : `README.md` (anglais), `CHANGELOG.md`, guides `setup_en.md` / `setup_fr.md`,
   modèle de bug, GitHub Actions (`tests.yml` : tests + 100 seeds à chaque push ; `release.yml` : sur tag `vX.Y.Z`).
   Release **v0.12.0** : `dbz_aots.apworld` + `Dragon_Ball_Z_-_Attack_of_the_Saiyans.yaml`. Dépôt toujours **privé**,

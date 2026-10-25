@@ -3,6 +3,17 @@
 All notable changes to the world. Versions follow `world_version` in
 [`worlds/dbz_aots/archipelago.json`](worlds/dbz_aots/archipelago.json).
 
+## 0.13.0 — chests show what they hold, tracker follows you
+
+### Added
+- Chests and hidden items show and give the item they hold in the multiworld: your own item by its name, another
+  player's as "Archipelago Item" (named in the language of the game). BizHawk also says who got it.
+- The PopTracker pack opens the tab of the area you are in (button "Map" to turn it off). Needs PopTracker 0.25.4.
+
+### Fixed
+- Taking a hidden item also let you keep its original item: the game sets its flag only when its message closes,
+  after giving the item, so the client did not recognise it.
+
 ## 0.12.0 — first release
 
 Requires Archipelago 0.6.8 or newer, BizHawk 2.10 or newer, and the European ROM (`BRPP`, revision 0).

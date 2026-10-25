@@ -86,8 +86,42 @@ BROLY_DEFEATED_FLAG = 2672
 """Set by scene c1410_04, which only plays after Broly is beaten (a defeat restarts the game): seen in game, along with
 Broly's Necklace (research/decisions.md, C47)."""
 
+OBJECT_POOL = 0x0D23DC
+"""Objects of the current field map, OBJECT_SIZE bytes each, kept after a map change until their slot is reused. A
+chest made by the script call CreateBox keeps there what it gives: item code at +0x30, state at +0x34 (0 closed,
+2 opened) and game flag at +0x3C, 4 bytes each. Writing the item code before the chest is opened changes the item
+the game shows and gives (research/decisions.md, C55)."""
+OBJECT_SIZE = 0xEC
+OBJECT_SLOTS = 48
+"""Slots read by the client: a map makes at most 21 chests, and slots past 31 were empty on every map looked at."""
+CHEST_FIELDS_OFFSET = 0x30
+CHEST_FIELDS_SIZE = 0x10
+
+MAP_SCRIPT = 0x282000
+"""Copy of the script of the current map (script/<language>/cf0/<area>/<map>.sb), the same bytes as the file but for
+its header: a hidden item's code can be rewritten there before it is examined (research/decisions.md, C55)."""
+PUSH_BYTE = 0x14
+"""Script opcode that pushes the next byte (signed): hidden items use it for their item code."""
+HIGHEST_HIDDEN_ITEM_CODE = 0x7F
+
+TEXT_TABLES = 0x200000
+"""Copy of btl/bdat/<language>/bdat.bin, loaded at boot: u32 table count, u32 size, then u32 table offsets; each
+table starts with "BDAT", u16 name offset at +6 and u16 row offset at +0xA, rows of u32 text offsets."""
+ITEM_TEXT_TABLE = b"use_item_mes"
+"""Names and descriptions of the use items: rows 2n and 2n + 1 for text n."""
+GENERIC_ITEM_CODE = 103
+"""Use item 102 (table Use_Item), unused by the game: its name and description point to empty strings at the end of
+use_item_mes, where the client writes "Archipelago Item" in the language of the game (research/decisions.md, C55)."""
+GENERIC_ITEM_NAME_ROW = 208
+"""Row of its name in use_item_mes (text 104, from the first field of its Use_Item row); the description follows."""
+
 RECEIVED_ITEMS_COUNTER = 0x09FB44
 """4 bytes at the end of the flag block, never used by the game so far: provisional (research/decisions.md, D20)."""
+
+
+def item_code(category: ItemCategory, index: int) -> int:
+    """Code of an item in the game scripts (chests, GetItem): its inventory position plus 1."""
+    return INVENTORY_OFFSET[category] + index + 1
 
 
 def inventory_address(category: ItemCategory, index: int) -> int:

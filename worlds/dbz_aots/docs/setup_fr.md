@@ -43,15 +43,27 @@ fichier patch à chaque fois que vous jouez à ce multiworld.
 Recharger votre dernière sauvegarde (après un Game Over, par exemple) ne pose pas de problème : les coffres rouverts
 ne sont pas envoyés deux fois, et le client vous rend les objets reçus depuis cette sauvegarde.
 
+## Ce que montre un coffre
+
+Quand le client est connecté, chaque coffre et chaque objet caché donne ce qu'il contient vraiment :
+
+- votre objet : le jeu affiche son nom (« Obtenu : Bracelet absorbant ! ») ; le client le remplace par celui que le
+  serveur vous envoie, vous ne l'avez donc qu'une fois ;
+- l'objet d'un autre joueur : le jeu affiche « Objet Archipelago », que le client retire aussitôt. BizHawk indique
+  à qui il est parti (« Sent Sword to Ami »).
+
+Les objets cachés ne peuvent montrer que des objets utilisables (haricots, fruits…) : un autre type d'objet à vous
+y apparaît comme « Objet Archipelago ».
+
 ## Tracker
 
 Un pack PopTracker avec les cartes du jeu peut être construit à partir de votre propre ROM : voir le README du dépôt
-du world.
+du world. Une fois connecté, il ouvre l'onglet de la zone où vous êtes (bouton « Map » pour couper ce suivi).
 
 ## Limites connues
 
-- Les coffres et les objets cachés affichent toujours leur objet d'origine ; le client le retire aussitôt de votre
-  inventaire. Si vous en prenez un pendant que le client n'est pas connecté, vous gardez cet objet d'origine.
+- Un coffre ou un objet caché pris pendant que le client n'est pas connecté donne son objet d'origine, que vous
+  gardez.
 - Les objets reçus arrivent quand vous êtes sur le terrain ; pendant un combat, ils attendent la fin du combat.
 - Les objets reçus sont seulement ajoutés à l'inventaire : utilisez vous-même les Ki-Blast Fruits et équipez le
   Masque à gaz.

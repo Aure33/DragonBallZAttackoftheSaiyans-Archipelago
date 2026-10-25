@@ -156,7 +156,8 @@ def main() -> None:
             source = "OBS 2026-10-24 (ouvert en jeu au ch. 15, C50)"
         kept.append({"kind": chest["kind"], "flag": chest["flag"], "map": map_code, "zone": zone, "item": chest["EN"], "fr": chest["FR"],
                      "category": chest["category"], "index": chest["index"], "chapter": chapter,
-                     "bonus": zone in BONUS_ZONES, "source": source})
+                     "bonus": zone in BONUS_ZONES, "source": source,
+                     "item_offsets": chest.get("item_offsets", [])})
 
     # Noms de lieux : « <zone> <écran> - <objet d'origine> Chest » (coffre) ou « … - Hidden <objet> » (objet à
     # examiner), numérotés si répétés sur le même écran.
@@ -203,6 +204,13 @@ def main() -> None:
               "ITEM_SLOTS: dict[str, tuple[int, int]] = {"]
     for (category, index), item in sorted(slots.items()):
         lines.append(f"    {item!r}: ({category}, {index}),")
+    lines.append("}")
+    lines += ["", "# Hidden items: map code and positions of the item byte in its map script (pushed by opcode 0x14, so a code",
+              "# of at most 127). The client rewrites them in the copy of the script loaded in memory (decisions.md, C55).",
+              "HIDDEN_ITEM_SCRIPTS: dict[int, tuple[str, tuple[int, ...]]] = {"]
+    for c in kept:
+        if c["kind"] != "chest" and c["item_offsets"]:
+            lines.append(f"    {c['flag']}: ({c['map']!r}, ({', '.join(map(str, c['item_offsets']))},)),")
     lines.append("}")
     WORLD_DATA.write_text("\n".join(lines) + "\n", encoding="utf-8")
 

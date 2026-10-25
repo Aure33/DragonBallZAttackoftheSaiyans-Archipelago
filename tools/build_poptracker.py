@@ -10,7 +10,8 @@ packs of the Windows PopTracker.
 
 Autotracking uses the Archipelago connection of PopTracker: received items and checked locations come from the
 server, and slot_data hides what the slot does not shuffle (hidden items, chapter ends, key items, East City Ruins,
-chapters after the goal).
+chapters after the goal). The client stores the current map in the server's data storage, and the pack opens the tab
+of that area (switch "Map" in the item grid).
 """
 from __future__ import annotations
 
@@ -18,7 +19,7 @@ import json
 import os
 import shutil
 import sys
-from collections import defaultdict
+from collections import Counter, defaultdict
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
@@ -51,6 +52,7 @@ CHAPTER_RULES = {6: "gasmask", 8: "gasmask,kiblast:1,snowkey", 10: "gasmask,kibl
 # Options read from slot_data (consumables used as switches, on by default when the pack is used by hand).
 OPTIONS = {"opt_hidden": "hidden_items", "opt_chapters": "chapter_checks", "opt_keys": "key_items",
            "opt_ruins": "east_city_ruins"}
+MAP_KEY_PREFIX = "dbz_aots_map_"  # client.map_key()
 GROUPS = ((0, 4, "Prologue - Ch. 4"), (5, 8, "Ch. 5 - 8"), (9, 12, "Ch. 9 - 12"), (13, 15, "Ch. 13 - 15"))
 
 ROW_WIDTH, LABEL, GAP = 1600, 34, 12
@@ -127,11 +129,15 @@ def story_board() -> Image.Image:
     return image
 
 
-def item_icon(colour: tuple[int, int, int], label: str) -> Image.Image:
+def map_id(zone: str) -> str:
+    return "zone_" + "".join(c if c.isalnum() else "_" for c in zone.lower())
+
+
+def item_icon(colour: tuple[int, int, int], label: str, size: int = 26) -> Image.Image:
     image = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
     draw = ImageDraw.Draw(image)
     draw.rounded_rectangle((3, 3, 61, 61), radius=12, fill=colour, outline=(255, 255, 255), width=3)
-    draw.text((32, 33), label, font=font(26), fill=(255, 255, 255), anchor="mm")
+    draw.text((32, 33), label, font=font(size), fill=(255, 255, 255), anchor="mm")
     return image
 
 
@@ -152,13 +158,12 @@ def build() -> None:
     for zone, entries in by_zone.items():
         zone_chapter[zone] = min(data.chapter for data in entries)
         screens = sorted({positions[d.flag][0] for d in entries if d.flag in positions})
-        map_id = "zone_" + "".join(c if c.isalnum() else "_" for c in zone.lower())
         origins = {}
         if screens:
             canvas, origins = area_map(zone, screens)
-            canvas.save(OUT / f"images/maps/{map_id}.png")
-            maps.append({"name": map_id, "location_size": 22, "location_border_thickness": 3,
-                         "img": f"images/maps/{map_id}.png"})
+            canvas.save(OUT / f"images/maps/{map_id(zone)}.png")
+            maps.append({"name": map_id(zone), "location_size": 22, "location_border_thickness": 3,
+                         "img": f"images/maps/{map_id(zone)}.png"})
         for data in entries:
             switches = (["opt_hidden"] if data.hidden else []) + (["opt_ruins"] if data.bonus else [])
             location = {"name": data.name, "access_rules": chapter_rule(data.chapter),
@@ -167,7 +172,7 @@ def build() -> None:
             place = positions.get(data.flag)
             if place and place[0] in origins:
                 x0, y0 = origins[place[0]]
-                location["map_locations"] = [{"map": map_id, "x": x0 + place[1], "y": y0 + place[2]}]
+                location["map_locations"] = [{"map": map_id(zone), "x": x0 + place[1], "y": y0 + place[2]}]
             else:
                 unplaced.append(data.name)
             locations.append(location)
@@ -200,15 +205,27 @@ def build() -> None:
     items.append({"name": "Goal chapter", "type": "consumable", "codes": "goalch", "img": "images/items/switch.png",
                   "max_quantity": LAST_CHAPTER, "initial_quantity": LAST_CHAPTER})
 
+    item_icon((90, 90, 100), "Map", 20).save(OUT / "images/items/followmap.png")
+    items.append({"name": "Map (open the tab of the area you are in)", "type": "toggle", "codes": "followmap",
+                  "img": "images/items/followmap.png", "initial_active_state": True})
+
     tabs = [{"title": "Story", "content": {"type": "map", "maps": ["story"]}}]
+    zone_tabs: dict[str, tuple[str, str]] = {}
     for first, last, title in GROUPS:
-        zones = sorted((z for z in by_zone if first <= zone_chapter[z] <= last and any(
-            m["name"] == "zone_" + "".join(c if c.isalnum() else "_" for c in z.lower()) for m in maps)),
-            key=lambda z: (zone_chapter[z], z))
+        zones = sorted((z for z in by_zone if first <= zone_chapter[z] <= last
+                        and any(m["name"] == map_id(z) for m in maps)), key=lambda z: (zone_chapter[z], z))
+        zone_tabs.update({zone: (title, zone) for zone in zones})
         tabs.append({"title": title, "content": {"type": "tabbed", "tabs": [
-            {"title": zone, "content": {"type": "map", "maps": [
-                "zone_" + "".join(c if c.isalnum() else "_" for c in zone.lower())]}} for zone in zones]}})
-    grid = [[code for code, _, _, _ in TRACKED.values()]]
+            {"title": zone, "content": {"type": "map", "maps": [map_id(zone)]}} for zone in zones]}})
+    # Tabs to open for a map code: the area of the screen, or the most common area of its 3-letter prefix for the
+    # screens without a location.
+    screen_zone = {positions[d.flag][0]: d.zone for d in LOCATIONS if d.flag in positions and d.zone in zone_tabs}
+    prefix_zones: dict[str, Counter[str]] = defaultdict(Counter)
+    for code, zone in screen_zone.items():
+        prefix_zones[code[:3]][zone] += 1
+    map_tabs = {code: zone_tabs[zone] for code, zone in screen_zone.items()}
+    map_tabs |= {prefix: zone_tabs[zones.most_common(1)[0][0]] for prefix, zones in prefix_zones.items()}
+    grid = [[code for code, _, _, _ in TRACKED.values()] + ["followmap"]]
     files = {
         "manifest.json": {
             "name": "Dragon Ball Z - Attack of the Saiyans Archipelago",
@@ -217,7 +234,7 @@ def build() -> None:
             "package_version": VERSION,
             "platform": "nds",
             "author": "Aure33",
-            "min_poptracker_version": "0.25.2",
+            "min_poptracker_version": "0.25.4",
             "variants": {"standard": {"display_name": "Maps", "flags": ["ap"]}},
         },
         "items/items.json": items,
@@ -238,6 +255,8 @@ def build() -> None:
     item_lines = [f"    [{ITEM_NAME_TO_ID[name]}] = \"{code}\"," for name, (code, _, _, _) in TRACKED.items()]
     location_lines = [f"    [{ap_id}] = {json.dumps(path)}," for ap_id, path in sorted(mapping.items())]
     option_lines = [f"    {code} = \"{key}\"," for code, key in OPTIONS.items()]
+    map_lines = [f"    [{json.dumps(code)}] = {{{json.dumps(group)}, {json.dumps(zone)}}},"
+                 for code, (group, zone) in sorted(map_tabs.items())]
     scripts = {
         "scripts/init.lua": """Tracker:AddItems("items/items.json")
 Tracker:AddMaps("maps/maps.json")
@@ -248,8 +267,11 @@ ScriptHost:LoadScript("scripts/autotracking.lua")
         "scripts/mapping.lua": "-- Generated by tools/build_poptracker.py: do not edit by hand.\nITEM_MAPPING = {\n"
                               + "\n".join(item_lines) + "\n}\nLOCATION_MAPPING = {\n" + "\n".join(location_lines)
                               + "\n}\nOPTION_MAPPING = {\n" + "\n".join(option_lines) + "\n}\nKEY_ITEM_CODES = {"
-                              + ", ".join(f'"{code}"' for code in KEY_ITEM_CODES) + "}\n",
+                              + ", ".join(f'"{code}"' for code in KEY_ITEM_CODES) + "}\nMAP_TABS = {\n"
+                              + "\n".join(map_lines) + f"\n}}\nMAP_KEY_PREFIX = \"{MAP_KEY_PREFIX}\"\n",
         "scripts/autotracking.lua": """ScriptHost:LoadScript("scripts/mapping.lua")
+
+local map_key = nil
 
 local function set_count(code, count)
     local item = Tracker:FindObjectForCode(code)
@@ -279,6 +301,19 @@ function onClear(slot_data)
             if item then item.Active = true end
         end
     end
+    -- Current map, stored by the client: follow it to open the tab of the area.
+    map_key = MAP_KEY_PREFIX .. Archipelago.TeamNumber .. "_" .. Archipelago.PlayerNumber
+    Archipelago:SetNotify({map_key})
+    Archipelago:Get({map_key})
+end
+
+function onMap(key, value)
+    if key ~= map_key or type(value) ~= "string" then return end
+    local follow = Tracker:FindObjectForCode("followmap")
+    if follow and not follow.Active then return end
+    local tabs = MAP_TABS[value] or MAP_TABS[string.sub(value, 1, 3)]
+    if not tabs then return end
+    for _, tab in ipairs(tabs) do Tracker:UiHint("ActivateTab", tab) end
 end
 
 function onItem(index, item_id, item_name, player_number)
@@ -303,6 +338,8 @@ end
 Archipelago:AddClearHandler("clear handler", onClear)
 Archipelago:AddItemHandler("item handler", onItem)
 Archipelago:AddLocationHandler("location handler", onLocation)
+Archipelago:AddSetReplyHandler("map handler", function(key, value, old_value) onMap(key, value) end)
+Archipelago:AddRetrievedHandler("map retrieved handler", onMap)
 """,
     }
     (OUT / "scripts").mkdir()

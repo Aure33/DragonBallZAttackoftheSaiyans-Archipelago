@@ -29,7 +29,9 @@ client reads and writes the game's memory while you play.
 - **Goals**: the end of any chapter (`goal_chapter`, 1 to 15), or defeating **Broly**, the secret boss (`goal: broly`).
 - **DeathLink**: a Game Over sends a death; a received death ends your next battle.
 - **Experience multiplier** (1 to 10) to keep up with a multiworld.
-- **PopTracker pack** with the real maps of the game (built from your own ROM, see below).
+- **Chests show what they really hold**: your item's name, or "Archipelago Item" for another player's.
+- **PopTracker pack** with the real maps of the game, which follows you from area to area (built from your own ROM,
+  see below).
 
 ## Requirements
 
@@ -51,7 +53,8 @@ The [setup guide](worlds/dbz_aots/docs/setup_en.md) has every step and the known
 ## PopTracker pack
 
 A [PopTracker](https://github.com/black-sliver/PopTracker) pack shows every area of the game with a pin on each
-chest, follows your items and checks through Archipelago, and hides what your options do not shuffle. Its maps are
+chest, follows your items and checks through Archipelago, opens the tab of the area you are in, and hides what your
+options do not shuffle. Its maps are
 pictures of the game, so they are **not** distributed: you build the pack from your own ROM (Python 3.12 needed):
 
 ```bash

@@ -399,3 +399,25 @@ ITEM_SLOTS: dict[str, tuple[int, int]] = {
     'Freezing Card': (2, 40),
     'Empty Capsule': (3, 25),
 }
+
+# Hidden items: map code and positions of the item byte in its map script (pushed by opcode 0x14, so a code
+# of at most 127). The client rewrites them in the copy of the script loaded in memory (decisions.md, C55).
+HIDDEN_ITEM_SCRIPTS: dict[int, tuple[str, tuple[int, ...]]] = {
+    3200: ('kam03_00', (4589,)),
+    3201: ('est01_00', (4275,)),
+    3202: ('est03_00', (3534,)),
+    3203: ('pao04_00', (3987, 4037,)),
+    3204: ('bud03_01', (2547,)),
+    3205: ('bud04_00', (4898,)),
+    3207: ('wst04_00', (5191,)),
+    3209: ('ura03_00', (7879,)),
+    3211: ('gok02_00', (3102,)),
+    3214: ('jin03_00', (3708,)),
+    3218: ('skr06_00', (2603,)),
+    3220: ('kar01_00', (3332,)),
+    3221: ('sen04_00', (13242,)),
+    3223: ('sna06_00', (3224,)),
+    3225: ('kos04_00', (2859,)),
+    3232: ('pir07_00', (3144,)),
+    3233: ('pir10_00', (12366,)),
+}

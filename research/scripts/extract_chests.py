@@ -20,6 +20,9 @@ GetItem(objet, quantité, 2) et SetFlag(drapeau, 1, 2), avec un seul drapeau. Le
 Objet : code - 1 = position dans l'inventaire en mémoire (ram_map.md §2) : objets à +0x000, accessoires à +0x080,
 capsules à +0x100, objets clés à +0x130.
 Les fichiers de cf2/_kz (cartes de test, contenus parfois différents) sont ignorés.
+Objet à examiner : « item_offsets » = positions, dans le fichier du script, de l'octet de l'objet empilé par 0x14 (le
+client le réécrit dans la copie du script chargée en mémoire, research/decisions.md C55). Les scripts traduits
+(script/<langue>/cf0/...) ont le même code aux mêmes positions (vérifié pour les 18 objets, 2026-10-25).
 """
 from __future__ import annotations
 
@@ -97,8 +100,15 @@ def item_names(rom: ndspy.rom.NintendoDSRom) -> dict[int, dict[str, str | int]]:
     return items
 
 
-def examine_spots(natives: list[str], functions: list[tuple[int, str]], code: bytes) -> list[tuple[int, int, str]]:
-    """(drapeau, code d'objet, fonction) des objets à examiner d'un script."""
+def code_start(data: bytes) -> int:
+    """Position du code (section 0, après son en-tête) dans le fichier du script."""
+    section = struct.unpack_from("<I", data, 8)[0]
+    return section + struct.unpack_from("<I", data, section)[0]
+
+
+def examine_spots(natives: list[str], functions: list[tuple[int, str]],
+                  code: bytes) -> list[tuple[int, int, str, int]]:
+    """(drapeau, code d'objet, fonction, position de l'empilement de l'objet dans le code) des objets à examiner."""
     if not {"GetItem", "GetFlag", "SetFlag"} <= set(natives):
         return []
     get_item, get_flag, set_flag = (natives.index(name) for name in ("GetItem", "GetFlag", "SetFlag"))
@@ -112,7 +122,8 @@ def examine_spots(natives: list[str], functions: list[tuple[int, str]], code: by
         get_flags = {push_value(m.group(1))
                      for m in re.finditer(rb"(\x15..)\x18" + re.escape(bytes([0x4A, get_flag])), body, re.S)}
         if len(set_flags) == 1 and set_flags == get_flags:
-            spots.append((set_flags.pop(), push_value(match.group(1)), function_at(functions, match.start())))
+            spots.append((set_flags.pop(), push_value(match.group(1)), function_at(functions, match.start()),
+                          match.start()))
     return spots
 
 
@@ -136,13 +147,17 @@ def main() -> None:
                 found.append({"kind": "chest", "flag": flag, "item_code": item,
                               "map": function_at(functions, match.start()).removeprefix("TreasureSet_")})
         map_code = path.rsplit("/", 1)[1].removesuffix(".sb")
-        for flag, item, function in examine_spots(natives, functions, code):
-            found.append({"kind": "examine", "flag": flag, "item_code": item, "map": map_code, "function": function})
+        for flag, item, function, position in examine_spots(natives, functions, code):
+            offsets = [code_start(data) + position + 1] if code[position] == 0x14 else []
+            found.append({"kind": "examine", "flag": flag, "item_code": item, "map": map_code, "function": function,
+                          "item_offsets": offsets})
         for entry in found:
             entry.update(items.get(entry["item_code"], {"EN": f"? code {entry['item_code']}"}))
             known = locations.setdefault(entry["flag"], entry)
             if (known["kind"], known["map"], known["item_code"]) != (entry["kind"], entry["map"], entry["item_code"]):
                 print(f"Attention : drapeau {entry['flag']} différent dans {path}", file=sys.stderr)
+            elif known is not entry and "item_offsets" in entry:
+                known["item_offsets"] = sorted(set(known["item_offsets"]) | set(entry["item_offsets"]))
             files[entry["flag"]].add(path)
     for flag, entry in locations.items():
         entry["files"] = sorted(files[flag])

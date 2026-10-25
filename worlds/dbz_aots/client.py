@@ -2,15 +2,17 @@ from __future__ import annotations
 
 import logging
 import re
+import struct
 from collections.abc import Collection
 from typing import TYPE_CHECKING, NamedTuple
 
-from NetUtils import ClientStatus
+from NetUtils import ClientStatus, NetworkItem
 import worlds._bizhawk as bizhawk
 from worlds._bizhawk.client import BizHawkClient
 
 from . import ram
 from .items import GAME_NAME, ITEM_NAME_TO_ID, KEY_ITEMS, item_slot
+from .location_data import HIDDEN_ITEM_SCRIPTS, ITEM_SLOTS, LOCATIONS
 from .locations import LOCATION_ID_BASE, ORIGINAL_ITEM_LOCATION_IDS
 from .rom import PATCH_FILE_ENDING
 
@@ -22,12 +24,80 @@ logger = logging.getLogger("Client")
 MAP_CODE = re.compile(rb"[a-z]{3}\d\d_\d\d")
 IN_BATTLE = b"\xff\xff"
 ITEM_NAMES = {ap_id: name for name, ap_id in ITEM_NAME_TO_ID.items()}
+ORIGINAL_ITEM_CODES = {data.flag: ram.item_code(ram.ItemCategory(ITEM_SLOTS[data.item][0]), ITEM_SLOTS[data.item][1])
+                       for data in LOCATIONS}
+"""Game flag of a chest or hidden item -> code of the item it holds in the original game."""
+GENERIC_ITEM_NAMES = {b"Petit haricot": b"Objet Archipelago", b"Kleine Bohne": b"Archipelago-Gegenstand",
+                      b"Senzu piccolo": b"Oggetto Archipelago", b"Semilla peque": b"Objeto Archipelago"}
+"""Name of the first use item in each language of the release -> name given to the generic item."""
+GENERIC_ITEM_NAME = b"Archipelago Item"
+RECENT_PICKUPS = 8
+"""Pick-ups kept while waiting for a location flag (a hidden item's flag is set when its message closes)."""
+GENERIC_NAME_SPACE = 32
+"""Bytes after the generic item's empty name that must be free (zero) before the client writes it there."""
 
 
 def in_game(map_code: bytes, running: bytes) -> bool:
     """A save is loaded and the player is on a map. After a defeat the game restarts from the logos: the map code
     stays in memory, only ram.GAME_RUNNING tells the title screen apart."""
     return int.from_bytes(running, "little") == 1 and MAP_CODE.fullmatch(map_code) is not None
+
+
+def map_key(team: int, slot: int) -> str:
+    """Data storage key holding the code of the player's current map, read by the PopTracker pack to open its tab."""
+    return f"dbz_aots_map_{team}_{slot}"
+
+
+def shown_item_code(item: NetworkItem, own_slot: int, generic: int | None, highest: int = 0xFFFF) -> int | None:
+    """Code of the game item a location should give: the real item when it is one of ours and the location can hold its
+    code, otherwise the generic item (None when it has no name in this game)."""
+    if item.player == own_slot:
+        try:
+            category, index = item_slot(item.item)
+        except ValueError:
+            return generic
+        code = ram.item_code(category, index)
+        if code <= highest:
+            return code
+    return generic
+
+
+def chest_rewrites(records: list[bytes], wanted: dict[int, int]) -> dict[int, tuple[int, int]]:
+    """Object slot -> (item code, new code), for each closed chest whose flag is in `wanted` (flag -> code) and which
+    still holds its original item. `records` are the chest fields of the object slots (ram.CHEST_FIELDS_OFFSET)."""
+    rewrites: dict[int, tuple[int, int]] = {}
+    for slot, record in enumerate(records):
+        item, state, _, flag = struct.unpack("<4I", record)
+        if flag in wanted and state == 0 and item == ORIGINAL_ITEM_CODES[flag] and item != wanted[flag]:
+            rewrites[slot] = (item, wanted[flag])
+    return rewrites
+
+
+def hidden_item_rewrites(map_code: bytes, wanted: dict[int, int]) -> list[tuple[int, int, int]]:
+    """(position in the map script, original code, new code) of the hidden items of the current map to rewrite."""
+    rewrites = []
+    for flag, (spot_map, positions) in HIDDEN_ITEM_SCRIPTS.items():
+        if spot_map.encode() == map_code and flag in wanted and wanted[flag] != ORIGINAL_ITEM_CODES[flag]:
+            rewrites += [(position, ORIGINAL_ITEM_CODES[flag], wanted[flag]) for position in positions]
+    return rewrites
+
+
+def find_text_table(heads: list[bytes], name: bytes) -> int | None:
+    """Index of the table called `name`, from the first bytes of every table of ram.TEXT_TABLES."""
+    for index, head in enumerate(heads):
+        if head[:4] == b"BDAT":
+            name_offset = int.from_bytes(head[6:8], "little")
+            if head[name_offset:name_offset + len(name) + 1] == name + b"\0":
+                return index
+    return None
+
+
+def generic_item_name(first_item_name: bytes) -> bytes:
+    """Name of the generic item in the language of the game, told by the name of its first use item."""
+    for known, generic in GENERIC_ITEM_NAMES.items():
+        if first_item_name.startswith(known):
+            return generic
+    return GENERIC_ITEM_NAME
 
 
 def flag_is_set(flags: bytes, flag: int) -> bool:
@@ -43,18 +113,30 @@ def opened_locations(flags: bytes, location_ids: Collection[int]) -> set[int]:
     return opened
 
 
-def original_items_to_take_back(before: bytes, after: bytes, chests_opened: int) -> dict[int, int]:
-    """Inventory offset -> quantity to restore, after `chests_opened` chests gave their original item.
+def picked_up_items(before: bytes, after: bytes) -> list[int]:
+    """Inventory offsets of the items picked up between two readings: every change is a gain of exactly 1.
 
-    Only acts when exactly one item went up by exactly 1 per opened chest. Anything else (a state was loaded, a
-    battle ended at the same moment...) is left alone rather than guessed.
+    Anything else (a state was loaded, a battle ended at the same moment...) gives nothing rather than a guess.
     """
     changed = [offset for offset in range(len(after)) if after[offset] != before[offset]]
-    if chests_opened == 0 or len(changed) != chests_opened:
-        return {}
     if any(after[offset] != before[offset] + 1 for offset in changed):
-        return {}
-    return {offset: before[offset] for offset in changed}
+        return []
+    return changed
+
+
+def items_to_take_back(expected: list[set[int]], pickups: list[int]) -> list[int]:
+    """One inventory offset per opened location whose item is among the recent `pickups` (most recent first).
+
+    `expected` holds, for each opened location, the offsets its item may be at (original item, or the one the client
+    put there). A hidden item is given before its flag is set, when its message closes: hence the recent pick-ups.
+    """
+    left, chosen = list(pickups), []
+    for offsets in expected:
+        match = next((offset for offset in left if offset in offsets), None)
+        if match is not None:
+            left.remove(match)
+            chosen.append(match)
+    return chosen
 
 
 def items_to_give(inventory: bytes, received_ids: list[int], already_given: int) -> dict[int, int]:
@@ -151,6 +233,10 @@ class DbzAotsClient(BizHawkClient):
         self.previous_map: bytes | None = None
         self.previous_flags: bytes | None = None
         self.previous_inventory: bytes | None = None
+        self.recent_pickups: list[int] = []
+        """Items picked up on this map and not matched to a location yet, most recent first."""
+        self.shown_codes: dict[int, int] = {}
+        """Game flag -> item code put in that location by show_real_items."""
         self.was_in_battle = False
         self.progress_before_battle: list[Progress] | None = None
         self.experience_reserve = [0] * ram.CHARACTER_COUNT
@@ -158,6 +244,11 @@ class DbzAotsClient(BizHawkClient):
         self.previous_death_link = 0.0
         self.death_pending = False
         self.ignore_next_defeat = False
+        self.sent_map: bytes | None = None
+        self.scouted = False
+        self.generic_name: tuple[int, bytes] | None = None
+        """Address and name of the generic item, once written in the text tables of the game."""
+        self.generic_name_failed = False
 
     async def validate_rom(self, ctx: BizHawkClientContext) -> bool:
         try:
@@ -173,6 +264,12 @@ class DbzAotsClient(BizHawkClient):
         ctx.want_slot_data = True  # goal, experience multiplier and DeathLink
         ctx.watcher_timeout = 0.5
         return True
+
+    def on_package(self, ctx: BizHawkClientContext, cmd: str, args: dict) -> None:
+        if cmd == "Connected":
+            self.sent_map = None  # send the current map again to the server just connected to
+            self.scouted = False
+            self.generic_name_failed = False
 
     async def game_watcher(self, ctx: BizHawkClientContext) -> None:
         if ctx.server is None or ctx.server.socket.closed or ctx.slot is None:
@@ -195,11 +292,13 @@ class DbzAotsClient(BizHawkClient):
                 self.party_was_defeated = None
                 return
 
+            await self.send_map(ctx, map_code)
             opened = opened_locations(flags, ctx.server_locations)
             new_checks = opened - ctx.locations_checked
             if new_checks:
                 ctx.locations_checked |= new_checks
                 await ctx.check_locations(new_checks)
+                await self.tell_found_items(ctx, new_checks)
 
             inventory = await self.take_back_original_items(ctx, map_code, flags, inventory)
 
@@ -209,6 +308,7 @@ class DbzAotsClient(BizHawkClient):
                 ctx.finished_game = True
 
             if battle != IN_BATTLE:
+                await self.show_real_items(ctx, map_code, battle)
                 await self.give_items(ctx, map_code, battle, inventory, counter)
                 await self.sync_key_items(ctx, map_code, battle)
             await self.multiply_experience(ctx, map_code, battle, sheets)
@@ -216,19 +316,146 @@ class DbzAotsClient(BizHawkClient):
         except bizhawk.RequestFailedError:
             pass
 
+    async def send_map(self, ctx: BizHawkClientContext, map_code: bytes) -> None:
+        """Store the current map in the server's data storage when it changes, for the PopTracker pack."""
+        if map_code == self.sent_map:
+            return
+        await ctx.send_msgs([{"cmd": "Set", "key": map_key(ctx.team, ctx.slot), "default": "", "want_reply": False,
+                              "operations": [{"operation": "replace", "value": map_code.decode("ascii")}]}])
+        self.sent_map = map_code
+
+    async def show_real_items(self, ctx: BizHawkClientContext, map_code: bytes, battle: bytes) -> None:
+        """Put in the chests and hidden items of the map the item they hold in the multiworld: ours, or the generic
+        item for another player's. The game shows and gives it, take_back_original_items removes it, and the server
+        sends ours back as for any received item (research/decisions.md, C55)."""
+        if not self.scouted:
+            await ctx.send_msgs([{"cmd": "LocationScouts", "locations": sorted(ctx.server_locations),
+                                  "create_as_hint": 0}])
+            self.scouted = True
+        if not ctx.locations_info:
+            return
+        generic = ram.GENERIC_ITEM_CODE if await self.name_generic_item(ctx) else None
+        chests: dict[int, int] = {}
+        spots: dict[int, int] = {}
+        for location_id, item in ctx.locations_info.items():
+            flag = location_id - LOCATION_ID_BASE
+            if flag in HIDDEN_ITEM_SCRIPTS:
+                code = shown_item_code(item, ctx.slot, generic, ram.HIGHEST_HIDDEN_ITEM_CODE)
+                if code is not None:
+                    spots[flag] = code
+            elif flag in ORIGINAL_ITEM_CODES:
+                code = shown_item_code(item, ctx.slot, generic)
+                if code is not None:
+                    chests[flag] = code
+        self.shown_codes = chests | spots
+
+        slots = [ram.OBJECT_POOL + slot * ram.OBJECT_SIZE + ram.CHEST_FIELDS_OFFSET for slot in range(ram.OBJECT_SLOTS)]
+        records = await bizhawk.read(ctx.bizhawk_ctx, [(address, ram.CHEST_FIELDS_SIZE, ram.MAIN_RAM)
+                                                       for address in slots])
+        writes, guards = [], [(ram.CURRENT_MAP, map_code, ram.MAIN_RAM), (ram.BATTLE_STATE, battle, ram.MAIN_RAM)]
+        for slot, (_, code) in chest_rewrites(records, chests).items():
+            writes.append((slots[slot], code.to_bytes(4, "little"), ram.MAIN_RAM))
+            guards.append((slots[slot], records[slot], ram.MAIN_RAM))
+        for position, original, code in hidden_item_rewrites(map_code, spots):
+            writes.append((ram.MAP_SCRIPT + position, [code], ram.MAIN_RAM))
+            guards.append((ram.MAP_SCRIPT + position - 1, [ram.PUSH_BYTE, original], ram.MAIN_RAM))
+        if writes:
+            await bizhawk.guarded_write(ctx.bizhawk_ctx, writes, guards)
+
+    async def name_generic_item(self, ctx: BizHawkClientContext) -> bool:
+        """Give the generic item its name in the text tables of the game, if they have room for it."""
+        if self.generic_name_failed:
+            return False
+        if self.generic_name is not None:
+            address, name = self.generic_name
+            current = (await bizhawk.read(ctx.bizhawk_ctx, [(address, len(name) + 1, ram.MAIN_RAM)]))[0]
+            if current == name + b"\0":
+                return True
+            self.generic_name = None  # the game loaded its tables again: find them anew
+        place = await self.find_generic_name_place(ctx)
+        if place is None:
+            self.generic_name_failed = True  # unknown tables or no room: chests keep their original item
+            return False
+        table, rows, name_offset, name, free = place
+        # Name, then the description row points at the name's final zero: an empty description.
+        if await bizhawk.guarded_write(
+            ctx.bizhawk_ctx,
+            [(table + name_offset, name + b"\0", ram.MAIN_RAM),
+             (rows + (ram.GENERIC_ITEM_NAME_ROW + 1) * 4, (name_offset + len(name)).to_bytes(4, "little"),
+              ram.MAIN_RAM)],
+            [(table + name_offset, free, ram.MAIN_RAM)],
+        ):
+            self.generic_name = (table + name_offset, name)
+            return True
+        return False
+
+    @staticmethod
+    async def find_generic_name_place(ctx: BizHawkClientContext) -> tuple[int, int, int, bytes, bytes] | None:
+        """(table address, rows address, offset of the generic item's name, its name, current bytes there) in the
+        item texts of ram.TEXT_TABLES, or None if the tables are not as expected or the name has no room."""
+        header = (await bizhawk.read(ctx.bizhawk_ctx, [(ram.TEXT_TABLES, 8, ram.MAIN_RAM)]))[0]
+        count = int.from_bytes(header[:4], "little")
+        if not 0 < count <= 64:
+            return None
+        starts_block = (await bizhawk.read(ctx.bizhawk_ctx, [(ram.TEXT_TABLES + 8, 4 * count, ram.MAIN_RAM)]))[0]
+        starts = [int.from_bytes(starts_block[i:i + 4], "little") for i in range(0, 4 * count, 4)]
+        if any(start >= 0x40000 for start in starts):
+            return None
+        heads = await bizhawk.read(ctx.bizhawk_ctx, [(ram.TEXT_TABLES + start, 0x40, ram.MAIN_RAM) for start in starts])
+        index = find_text_table(heads, ram.ITEM_TEXT_TABLE)
+        if index is None:
+            return None
+        table = ram.TEXT_TABLES + starts[index]
+        rows = table + int.from_bytes(heads[index][0xA:0xC], "little")
+        pointers = await bizhawk.read(ctx.bizhawk_ctx, [(rows, 4, ram.MAIN_RAM),
+                                                       (rows + ram.GENERIC_ITEM_NAME_ROW * 4, 4, ram.MAIN_RAM)])
+        first_name, name_offset = (int.from_bytes(pointer, "little") for pointer in pointers)
+        if max(first_name, name_offset) >= 0x10000:
+            return None
+        first, free = await bizhawk.read(ctx.bizhawk_ctx, [(table + first_name, 16, ram.MAIN_RAM),
+                                                           (table + name_offset, GENERIC_NAME_SPACE, ram.MAIN_RAM)])
+        name = generic_item_name(first)
+        if not (free == bytes(GENERIC_NAME_SPACE) or free.startswith(name + b"\0")):
+            return None
+        return table, rows, name_offset, name, free
+
+    async def tell_found_items(self, ctx: BizHawkClientContext, location_ids: set[int]) -> None:
+        """Say in BizHawk what each new check held and for whom: the game itself only shows an item name."""
+        for location_id in sorted(location_ids):
+            item = ctx.locations_info.get(location_id)
+            if item is None:
+                continue
+            name = ctx.item_names.lookup_in_slot(item.item, item.player)
+            if item.player == ctx.slot:
+                await bizhawk.display_message(ctx.bizhawk_ctx, f"Found your {name}")
+            else:
+                await bizhawk.display_message(ctx.bizhawk_ctx, f"Sent {name} to {ctx.player_names[item.player]}")
+
     async def take_back_original_items(
         self, ctx: BizHawkClientContext, map_code: bytes, flags: bytes, inventory: bytes
     ) -> bytes:
-        """Approach A of the design: a location still gives its original item, the client removes it right after.
+        """Approach A of the design: a location still gives an item (its original one, or the one show_real_items put
+        in it), the client removes it right after.
 
         Story steps are left out: they give no item of their own, but a scene may give a key item at that moment.
         """
-        if self.previous_flags is not None and self.previous_inventory is not None and self.previous_map == map_code:
+        if self.previous_flags is None or self.previous_inventory is None or self.previous_map != map_code:
+            self.recent_pickups = []
+        else:
+            pickups = picked_up_items(self.previous_inventory, inventory) + self.recent_pickups
             newly_opened = (opened_locations(flags, ORIGINAL_ITEM_LOCATION_IDS)
                             - opened_locations(self.previous_flags, ORIGINAL_ITEM_LOCATION_IDS))
-            restore = original_items_to_take_back(self.previous_inventory, inventory, len(newly_opened))
-            if newly_opened and not restore:
-                logger.info("A chest was opened but its original item could not be identified; it was kept")
+            expected = []
+            for location_id in sorted(newly_opened):
+                flag = location_id - LOCATION_ID_BASE
+                expected.append({ORIGINAL_ITEM_CODES[flag] - 1, self.shown_codes.get(flag, 0) - 1})
+            chosen = items_to_take_back(expected, pickups)
+            if len(chosen) < len(expected):
+                logger.info("A chest was opened but the item it gave could not be identified; it was kept")
+            restore: dict[int, int] = {}
+            for offset in chosen:
+                restore[offset] = restore.get(offset, inventory[offset]) - 1
+            restore = {offset: quantity for offset, quantity in restore.items() if quantity >= 0}
             if restore and await bizhawk.guarded_write(
                 ctx.bizhawk_ctx,
                 [(ram.INVENTORY + offset, [quantity], ram.MAIN_RAM) for offset, quantity in restore.items()],
@@ -239,6 +466,9 @@ class DbzAotsClient(BizHawkClient):
                 for offset, quantity in restore.items():
                     updated[offset] = quantity
                 inventory = bytes(updated)
+                for offset in chosen:
+                    pickups.remove(offset)
+            self.recent_pickups = pickups[:RECENT_PICKUPS]
         self.previous_map, self.previous_flags, self.previous_inventory = map_code, flags, inventory
         return inventory
 

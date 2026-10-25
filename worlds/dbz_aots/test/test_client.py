@@ -1,8 +1,13 @@
+import struct
 import unittest
 
+from NetUtils import NetworkItem
+
 from .. import ram
-from ..client import (Progress, battle_bonus, flag_is_set, game_over, in_game, items_to_give, key_item_corrections,
-                      opened_locations, original_items_to_take_back, party_defeated, party_hp_addresses, read_progress)
+from ..client import (ORIGINAL_ITEM_CODES, Progress, battle_bonus, chest_rewrites, find_text_table, flag_is_set,
+                      game_over, generic_item_name, hidden_item_rewrites, in_game, items_to_give, key_item_corrections,
+                      items_to_take_back, map_key, opened_locations, party_defeated, party_hp_addresses,
+                      picked_up_items, read_progress, shown_item_code)
 from ..items import ITEM_NAME_TO_ID
 from ..locations import LOCATION_NAME_TO_ID, ORIGINAL_ITEM_LOCATION_IDS
 
@@ -13,6 +18,9 @@ class TestClientLogic(unittest.TestCase):
         self.assertTrue(in_game(b"tut01_00", running))
         self.assertFalse(in_game(bytes(8), title))  # logos and title screen after power on
         self.assertFalse(in_game(b"tut02_00", title))  # title screen after a defeat: the map code stays
+
+    def test_map_key_matches_the_poptracker_pack(self) -> None:
+        self.assertEqual(map_key(0, 2), "dbz_aots_map_0_2")  # tools/build_poptracker.py: MAP_KEY_PREFIX
 
     def test_opened_chest_is_found_from_its_flag(self) -> None:
         flags = bytearray(ram.FLAGS_SIZE)
@@ -30,21 +38,26 @@ class TestClientLogic(unittest.TestCase):
         flags[ram.GOAL_FLAG // 8] |= 1 << (ram.GOAL_FLAG % 8)
         self.assertTrue(flag_is_set(bytes(flags), ram.GOAL_FLAG))
 
-    def test_original_item_is_taken_back(self) -> None:
+    def test_picked_up_item(self) -> None:
         before = bytes(ram.INVENTORY_SIZE)
         after = bytearray(before)
         after[29] = 1  # the Phoenix Feather chest was opened
-        self.assertEqual({29: 0}, original_items_to_take_back(before, bytes(after), 1))
+        self.assertEqual([29], picked_up_items(before, bytes(after)))
 
-    def test_ambiguous_changes_are_left_alone(self) -> None:
+    def test_ambiguous_changes_are_no_pickup(self) -> None:
         before = bytes(ram.INVENTORY_SIZE)
-        two_items = bytearray(before)
-        two_items[0] = two_items[29] = 1
-        self.assertEqual({}, original_items_to_take_back(before, bytes(two_items), 1))
         plus_two = bytearray(before)
         plus_two[0] = 2
-        self.assertEqual({}, original_items_to_take_back(before, bytes(plus_two), 1))
-        self.assertEqual({}, original_items_to_take_back(before, bytes(plus_two), 0))
+        self.assertEqual([], picked_up_items(before, bytes(plus_two)))
+        minus_one = bytearray(before)
+        minus_one[29], minus_one[0] = 1, 0xFF  # a state was loaded
+        self.assertEqual([], picked_up_items(before, bytes(minus_one)))
+
+    def test_item_taken_back_is_the_one_the_location_gave(self) -> None:
+        self.assertEqual([29], items_to_take_back([{29}], [0, 29]))  # two pick-ups, one chest
+        self.assertEqual([], items_to_take_back([{29}], [0]))  # not the expected item: kept
+        self.assertEqual([2, 29], items_to_take_back([{2, 102}, {29}], [29, 2, 2]))
+        self.assertEqual([2, 2], items_to_take_back([{2}, {2}], [2, 2]))  # two chests with the same item
 
     def test_only_new_items_are_given(self) -> None:
         inventory = bytearray(ram.INVENTORY_SIZE)
@@ -159,3 +172,54 @@ class TestKeyItems(unittest.TestCase):
         inventory[submarine] = 1
         received = [ITEM_NAME_TO_ID["Bubbles' Thing"]]
         self.assertEqual({submarine: 0, bubbles_thing: 1}, key_item_corrections(bytes(inventory), received))
+
+
+class TestRealItems(unittest.TestCase):
+    OWN_SLOT, OTHER_SLOT = 1, 2
+
+    @staticmethod
+    def chest(item: int, state: int, flag: int) -> bytes:
+        return struct.pack("<4I", item, state, 0, flag)
+
+    def test_original_codes_come_from_the_rom_data(self) -> None:
+        self.assertEqual(1, ORIGINAL_ITEM_CODES[1405])  # Small Bean (research/chests.md)
+        self.assertEqual(30, ORIGINAL_ITEM_CODES[1402])  # Phoenix Feather
+        self.assertEqual(83, ORIGINAL_ITEM_CODES[3201])  # hidden item of East City
+
+    def test_own_item_is_shown_and_others_are_generic(self) -> None:
+        own = NetworkItem(ITEM_NAME_TO_ID["Phoenix Feather"], 0, self.OWN_SLOT, 0)
+        other = NetworkItem(ITEM_NAME_TO_ID["Phoenix Feather"], 0, self.OTHER_SLOT, 0)
+        self.assertEqual(30, shown_item_code(own, self.OWN_SLOT, ram.GENERIC_ITEM_CODE))
+        self.assertEqual(ram.GENERIC_ITEM_CODE, shown_item_code(other, self.OWN_SLOT, ram.GENERIC_ITEM_CODE))
+        self.assertIsNone(shown_item_code(other, self.OWN_SLOT, None))
+
+    def test_code_too_big_for_a_hidden_item_is_generic(self) -> None:
+        gas_mask = NetworkItem(ITEM_NAME_TO_ID["Gas Mask"], 0, self.OWN_SLOT, 0)
+        self.assertEqual(ram.GENERIC_ITEM_CODE, shown_item_code(
+            gas_mask, self.OWN_SLOT, ram.GENERIC_ITEM_CODE, ram.HIGHEST_HIDDEN_ITEM_CODE))
+        self.assertGreater(shown_item_code(gas_mask, self.OWN_SLOT, ram.GENERIC_ITEM_CODE), 0x7F)
+
+    def test_only_closed_chests_with_their_original_item_are_rewritten(self) -> None:
+        records = [self.chest(1, 0, 1405),  # closed, original item: rewritten
+                   self.chest(2, 2, 1404),  # already opened
+                   self.chest(ram.GENERIC_ITEM_CODE, 0, 1406),  # already rewritten
+                   self.chest(1, 0, 1583),  # not in the wanted list
+                   bytes(16)]
+        wanted = {1405: 30, 1404: 30, 1406: ram.GENERIC_ITEM_CODE}
+        self.assertEqual({0: (1, 30)}, chest_rewrites(records, wanted))
+
+    def test_hidden_items_of_the_current_map_only(self) -> None:
+        self.assertEqual([(4275, 83, ram.GENERIC_ITEM_CODE)],
+                         hidden_item_rewrites(b"est01_00", {3201: ram.GENERIC_ITEM_CODE, 3202: 1}))
+        self.assertEqual([], hidden_item_rewrites(b"est01_00", {3201: 83}))  # same item: nothing to do
+        self.assertEqual(2, len(hidden_item_rewrites(b"pao04_00", {3203: 1})))  # two GetItem calls in its script
+
+    def test_text_table_is_found_by_name(self) -> None:
+        head = b"BDAT" + bytes(2) + (0x24).to_bytes(2, "little") + bytes(0x1C) + b"use_item_mes\0"
+        other = b"BDAT" + bytes(2) + (0x24).to_bytes(2, "little") + bytes(0x1C) + b"btl_acc_mes\0"
+        self.assertEqual(1, find_text_table([other.ljust(0x40, b"\0"), head.ljust(0x40, b"\0")], b"use_item_mes"))
+        self.assertIsNone(find_text_table([other.ljust(0x40, b"\0")], b"use_item_mes"))
+
+    def test_generic_name_follows_the_language(self) -> None:
+        self.assertEqual(b"Objet Archipelago", generic_item_name(b"Petit haricot\0Redonne"))
+        self.assertEqual(b"Archipelago Item", generic_item_name(b"Small Bean\0"))

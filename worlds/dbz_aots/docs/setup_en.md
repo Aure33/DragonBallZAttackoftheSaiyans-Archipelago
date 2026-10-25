@@ -42,15 +42,26 @@ play this multiworld.
 Loading your last save (after a Game Over, for example) is safe: chests you open again are not sent twice, and the
 client gives you back the items received since that save.
 
+## What a chest shows
+
+While the client is connected, each chest and hidden item gives what it really holds:
+
+- your own item: the game shows its name ("Obtained: Absorb Bracelet!"); the client swaps it for the one the server
+  sends you, so you get it once;
+- another player's item: the game shows "Archipelago Item" (in the language of your game), which the client removes
+  right away. BizHawk shows who got it ("Sent Sword to Ami").
+
+Hidden items can only show use items (beans, fruits...): another kind of item of yours shows as "Archipelago Item"
+there.
+
 ## Tracker
 
 A PopTracker pack with the maps of the game can be built from your own ROM: see the README of the world's
-repository.
+repository. Once connected, it opens the tab of the area you are in (button "Map" to turn this off).
 
 ## Known limitations
 
-- Chests and hidden spots still show their original item; the client removes it from your inventory right away.
-  If you take one while the client is not connected, you keep that original item.
+- A chest or hidden item taken while the client is not connected gives its original item, which you keep.
 - Received items are added while you are on the field; during a battle they wait until it ends.
 - Received items are only added to your inventory: use the Ki-Blast Fruits and equip the Gas Mask yourself.
 - With `key_items`, the client keeps the Snowfield Key, the Submarine and Bubbles' Thing in your inventory only once

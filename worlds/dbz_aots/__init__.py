@@ -101,6 +101,7 @@ class DbzAotsWorld(World):
             # Read by the PopTracker pack only, to show what this slot shuffles.
             "goal_chapter": self.options.goal_chapter.value,
             "hidden_items": self.options.hidden_items.value,
+            "carrot_rewards": self.options.carrot_rewards.value,
             "chapter_checks": self.options.chapter_checks.value,
             "east_city_ruins": self.options.east_city_ruins.value,
         }

@@ -485,3 +485,13 @@ Les S-Combos (combos à plusieurs) s'apprennent via des **« S-Combo memo »** t
 | Égouts 2, coffre 1450 | Griffe Sheron (Shenron's Nail) | étage 1 | OBS ✅ |
 | Égouts 2, faux coffre (drapeau 2663) | Cape Dieu (Kami's Cape), après un combat | objet 1 de `ges02_00`, (116, 207) | OBS ✅ |
 
+
+## Derniers lieux et homme aux carottes (vérifié en jeu, 2026-11-13, decisions.md C59)
+| Lieu | Contenu | Source |
+|---|---|---|
+| Terrain de Mutaito 5, creux (coffre 1455) | Secret du maître (Master's Secret) | OBS ✅ |
+| Maison de Princesse Serpent 3, niche (coffre 1550) | Grand haricot | OBS ✅ |
+| Maison de Princesse Serpent 3, faux coffre (2582) | Poing lien (Bind Knuckle), après un combat | OBS ✅ |
+| Ville ouest 1, arrière de la voiture rouge (3206) | Haricot finisseur (Finisher Bean) | OBS ✅ |
+| Enfer 2, fantôme (2590) | Capsule double Z | OBS ✅ |
+| Ville ouest 3, homme aux carottes : 1 / 100 / 500 / 1000 carottes | Haricot moyen / Issue de secours / Pluie de zénis / Clé des égouts | OBS ✅ |

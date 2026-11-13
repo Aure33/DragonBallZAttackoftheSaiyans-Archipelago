@@ -29,9 +29,7 @@ class TestDefaultWorld(DbzAotsTestBase):
         expected = Counter(data.item for data in LOCATIONS if not data.bonus)
         expected[self.world.get_filler_item_name()] += len(STORY_LOCATIONS)  # story steps hold filler
         expected.update(item for _, _, item in KEY_ITEM_LOCATIONS.values())
-        expected[FILLER_ITEM] -= 1  # the Sewer Key takes the place of a filler item
-        expected[SEWER_KEY] += 1
-        self.assertEqual(expected, pool)
+        self.assertEqual(expected, pool)  # the Sewer Key comes from its 1000-carrot reward
 
     def test_client_watches_the_end_of_the_game(self) -> None:
         self.assertEqual(ram.GOAL_FLAG, self.world.fill_slot_data()["goal_flag"])
@@ -82,13 +80,13 @@ class TestDefaultWorld(DbzAotsTestBase):
             with self.subTest(name):
                 self.assertTrue(self.can_reach_location(name))
 
-    def test_missable_areas_hold_no_progression(self) -> None:
+    def test_missable_areas_and_carrot_rewards_hold_no_progression(self) -> None:
         for data in LOCATIONS:
             if data.bonus:
                 continue
             location = self.multiworld.get_location(data.name, self.player)
             with self.subTest(data.name):
-                expected = data.zone in MISSABLE_ZONES
+                expected = data.zone in MISSABLE_ZONES or data.carrots > 0
                 self.assertEqual(expected, location.progress_type == LocationProgressType.EXCLUDED)
                 if expected and location.item:
                     self.assertFalse(location.item.advancement)
@@ -234,6 +232,29 @@ class TestSewers(DbzAotsTestBase):
                          [LOCATION_NAME_TO_ID[name] for name in self.SEWERS])
 
 
+class TestCarrotRewards(DbzAotsTestBase):
+    REWARDS = {2684: "West City 3 - Medium Bean for 1 Carrot", 2627: "West City 3 - Escape Path for 100 Carrots",
+               2628: "West City 3 - Zeni Rush for 500 Carrots", 2629: "West City 3 - Sewer Key for 1000 Carrots"}
+
+    def test_rewards_are_their_flags_and_hold_filler(self) -> None:
+        for flag, name in self.REWARDS.items():
+            self.assertEqual(LOCATION_ID_BASE + flag, LOCATION_NAME_TO_ID[name])
+            location = self.multiworld.get_location(name, self.player)
+            self.assertEqual(LocationProgressType.EXCLUDED, location.progress_type)
+        self.assertEqual(1, self.world.fill_slot_data()["carrot_rewards"])
+
+
+class TestCarrotRewardsOff(DbzAotsTestBase):
+    options = {"carrot_rewards": False}
+
+    def test_no_reward_and_the_sewer_key_replaces_a_filler(self) -> None:
+        names = addresses_of(self.multiworld.get_locations(self.player))
+        self.assertFalse([name for name in names if "Carrot" in name])
+        self.assertEqual(1, len(self.get_items_by_name(SEWER_KEY)))
+        pool = Counter(item.name for item in self.multiworld.itempool if item.player == self.player)
+        self.assertEqual(len(names), sum(pool.values()))  # one item per location
+
+
 class TestSewersWithShortGoal(DbzAotsTestBase):
     options = {"goal_chapter": 14}
 
@@ -241,6 +262,8 @@ class TestSewersWithShortGoal(DbzAotsTestBase):
         names = addresses_of(self.multiworld.get_locations(self.player))
         self.assertFalse([name for name in names if name.startswith("Sewer")])
         self.assertEqual([], self.get_items_by_name(SEWER_KEY))
+        self.assertNotIn("West City 3 - Sewer Key for 1000 Carrots", names)
+        self.assertIn("West City 3 - Zeni Rush for 500 Carrots", names)
         self.assertEqual(0, self.world.fill_slot_data()["sewer_key"])
 
 

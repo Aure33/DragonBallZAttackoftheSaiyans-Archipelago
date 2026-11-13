@@ -53,6 +53,5 @@ dans une petite grille sur sa zone ; l'Autre monde dans un panneau à droite. Po
 `slot_data["sewer_key"]` (absent = seed d'avant 0.15.0 = pas d'égouts), Clé des égouts dans la grille.
 
 ## Ce qui reste
-1. Vraies icônes d'objets (dossier `menu/icon` de la ROM, format à décoder).
-2. Distribution aux amis : chacun peut générer le pack avec sa ROM (Python + ndspy + Pillow), ou recevoir le pack
+1. Distribution aux amis : chacun peut générer le pack avec sa ROM (Python + ndspy + Pillow), ou recevoir le pack
    en privé ; ne pas publier les images du jeu.

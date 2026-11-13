@@ -34,6 +34,7 @@ def dbz_yaml(name: str, rng: random.Random) -> str:
             f"  hidden_items: {rng.choice(['true', 'false'])}\n"
             f"  chapter_checks: {rng.choice(['true', 'false'])}\n"
             f"  key_items: {rng.choice(['true', 'false'])}\n"
+            f"  carrot_rewards: {rng.choice(['true', 'false'])}\n"
             f"  death_link: {rng.choice(['true', 'false'])}\n"
             f"  east_city_ruins: {rng.choice(['true', 'false'])}\n"
             f"  experience_multiplier: {rng.randint(1, 10)}\n"

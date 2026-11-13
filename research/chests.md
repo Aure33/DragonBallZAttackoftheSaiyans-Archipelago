@@ -4,7 +4,7 @@ Généré par [scripts/build_world_data.py](scripts/build_world_data.py) à part
 [scripts/extract_chests.py](scripts/extract_chests.py) (appels `CreateBox` et `GetItem` des scripts) et des
 lignes du guide DSR de [game_data.md](game_data.md). Ne pas modifier à la main.
 
-**219 coffres et 19 objets à examiner** dans la ROM : 235 retenus pour le world (dont 6 en option « bonus »), 4 mis de côté.
+**219 coffres et 19 objets à examiner** dans la ROM : 244 retenus pour le world (dont 6 en option « bonus »), 0 mis de côté.
 
 ## Lieux retenus
 
@@ -61,6 +61,7 @@ lignes du guide DSR de [game_data.md](game_data.md). Ne pas modifier à la main.
 | 1452 | `mut01_00` | Mutaito Training Grounds 1 - Ki-Blast Fruit Chest | Fruit Kikoha | 12 |  | DSR n° 194 (Ch. 12, Mutaito's Grounds) |
 | 1453 | `mut03_00` | Mutaito Training Grounds 3 - Power Necklace Chest | Collier puissance | 12 |  | DSR n° 196 (Ch. 12, Mutaito's Grounds) |
 | 1454 | `mut04_00` | Mutaito Training Grounds 4 - Senzu Bean Chest | Haricot senzu | 12 |  | DSR n° 197 (Ch. 12, Mutaito's Grounds) |
+| 1455 | `mut05_00` | Mutaito Training Grounds 5 - Master's Secret Chest | Secret maître | 15 |  | OBS 2026-11-13 (C59) |
 | 1456 | `mut06_00` | Mutaito Training Grounds 6 - Healing Bracelet Chest | Bracelet soin | 12 |  | DSR n° 199 (Ch. 12, Mutaito's Grounds) |
 | 1457 | `mut07_00` | Mutaito Training Grounds 7 - Item Rush Chest | Pluie d'objets | 12 |  | DSR n° 198 (Ch. 12, Mutaito's Grounds) |
 | 1458 | `sen01_00` | Hermit Spring 1 - Hermit Spring Water Chest | Eau de l'ermite | 8 |  | DSR n° 91 (Ch. 8, Hermit Spring) |
@@ -155,6 +156,7 @@ lignes du guide DSR de [game_data.md](game_data.md). Ne pas modifier à la main.
 | 1547 | `skr05_00` | Sacred Land of Korin 5 - CHA-LA Chest | Chara | 8 |  | DSR n° 86 (Ch. 8, Sacred Land of Korin) |
 | 1548 | `sna02_00` | Princess Snake's House 2 - Large Bean Chest | Grand haricot | 9 |  | DSR n° 106 (Ch. 9, Princess Snake's Mansion) |
 | 1549 | `sna02_00` | Princess Snake's House 2 - Ki Drink Z Chest | Boisson Z ki | 9 |  | DSR n° 104 (Ch. 9, Princess Snake's Mansion) |
+| 1550 | `sna03_00` | Princess Snake's House 3 - Large Bean Chest | Grand haricot | 15 |  | OBS 2026-11-13 (C59) |
 | 1551 | `sna06_00` | Princess Snake's House 6 - Counter Bracelet Chest | Bracelet contre | 15 |  | OBS 2026-10-24 (ouvert en jeu au ch. 15, C50) |
 | 1552 | `nem01_00` | Nemuria Ruins 1 - MAX Bean Chest | Maxi haricot | 11 |  | DSR n° 179 (Ch. 11, Nemuria Ruins) |
 | 1553 | `nem01_00` | Nemuria Ruins 1 - Spirit Light Chest | Lumière spirituelle | 11 |  | DSR n° 180 (Ch. 11, Nemuria Ruins) |
@@ -227,13 +229,20 @@ lignes du guide DSR de [game_data.md](game_data.md). Ne pas modifier à la main.
 | 1621 | `for04_00` | Yemma Forest 4 - Sleep Bracelet Chest | Bracelet dodo | 9 |  | DSR n° 117 (Ch. 9, Yemma Forest) |
 | 1622 | `for04_00` | Yemma Forest 4 - Super Sacred Water Chest | Eau super sacrée | 13 |  | DSR n° 201 (Ch. 13, Yemma Forest) |
 | 1623 | `for04_00` | Yemma Forest 4 - Guard Sense Chest | Sens parade | 13 |  | DSR n° 202 (Ch. 13, Yemma Forest) |
+| 2582 | `sna03_00` | Princess Snake's House 3 - Bind Knuckle Trap Chest | Poing lien | 15 |  | OBS 2026-11-13 (C59) |
+| 2590 | `hel02_00` | Underworld 2 - Hidden Double Capsule Z | Capsule double Z | 9 |  | OBS 2026-11-13 (C59) |
+| 2627 | `wst03_00` | West City 3 - Escape Path for 100 Carrots | Issue de secours | 8 |  | OBS 2026-11-13 (carottes données en jeu, C59) |
+| 2628 | `wst03_00` | West City 3 - Zeni Rush for 500 Carrots | Pluie de zénis | 8 |  | OBS 2026-11-13 (carottes données en jeu, C59) |
+| 2629 | `wst03_00` | West City 3 - Sewer Key for 1000 Carrots | Clé des égouts | 8 |  | OBS 2026-11-13 (carottes données en jeu, C59) |
 | 2663 | `ges02_00` | Sewer 2 - Kami's Cape Trap Chest | Cape Dieu | 15 |  | SCRIPT ges02_00 Trap01 + LP Update 50 (C57) |
+| 2684 | `wst03_00` | West City 3 - Medium Bean for 1 Carrot | Haricot moyen | 8 |  | OBS 2026-11-13 (carottes données en jeu, C59) |
 | 3200 | `kam03_00` | Kame House 3 - Hidden Luck Fruit | Fruit chance | 0 |  | DSR n° 1 (Prologue, Kame House) |
 | 3201 | `est01_00` | East City 1 - Hidden Skill Fruit | Fruit technique | 1 |  | DSR n° 7 (Ch. 1, East City) |
 | 3202 | `est03_00` | East City 3 - Hidden Speed Fruit | Fruit vitesse | 1 |  | DSR n° 8 (Ch. 1, East City) |
 | 3203 | `pao04_00` | Mt. Paozu 4 - Hidden HP Fruit | Fruit PV | 15 |  | OBS 2026-10-24 (ouvert en jeu au ch. 15, C50) |
 | 3204 | `bud03_01` | Martial Arts Temple 3-1 - Hidden Speed Fruit | Fruit vitesse | 4 |  | DSR n° 18 (Ch. 4, Martial Arts Temple) |
 | 3205 | `bud04_00` | Martial Arts Temple 4 - Hidden Ki Fruit | Fruit ki | 4 |  | DSR n° 19 (Ch. 4, Martial Arts Temple) |
+| 3206 | `wst01_00` | West City 1 - Hidden Finisher Bean | Haricot finisseur | 15 |  | OBS 2026-11-13 (C59) |
 | 3207 | `wst04_00` | West City 4 - Hidden Defense Fruit | Fruit défense | 8 |  | DSR n° 53 (Ch. 8, West City) |
 | 3209 | `ura03_00` | Baba's Palace 3 - Hidden Power Fruit | Fruit puissance | 5 |  | DSR n° 21 (Ch. 5, Baba's Palace) |
 | 3211 | `gok02_00` | Goku's House 2 - Hidden Recovery Fruit | Fruit récupération | 8 |  | DSR n° 69 (Ch. 8, East Mt. Paozu) |
@@ -250,7 +259,3 @@ lignes du guide DSR de [game_data.md](game_data.md). Ne pas modifier à la main.
 
 | Drapeau | Type | Carte | Zone | Objet EN | Objet FR |
 |---|---|---|---|---|---|
-| 1455 | coffre | `mut05_00` | Mutaito Training Grounds | Master's Secret | Secret maître |
-| 1550 | coffre | `sna03_00` | Princess Snake's House | Large Bean | Grand haricot |
-| 2590 | à examiner | `hel02_00` | Underworld | Double Capsule Z | Capsule double Z |
-| 3206 | à examiner | `wst01_00` | West City | Finisher Bean | Haricot finisseur |

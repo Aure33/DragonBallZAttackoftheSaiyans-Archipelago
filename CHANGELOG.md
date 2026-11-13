@@ -3,6 +3,20 @@
 All notable changes to the world. Versions follow `world_version` in
 [`worlds/dbz_aots/archipelago.json`](worlds/dbz_aots/archipelago.json).
 
+## 0.16.0 — every chest of the game, carrot rewards
+
+### Added
+- The last locations left aside, checked in game: Mutaito Training Grounds 5 (chest in the hollow), Princess Snake's
+  House 3 (chest in the niche, and a trap chest that starts a battle), the back of the red car in West City, and the
+  ghost of the Underworld. Every chest and hidden item of the game is now a location: 256 by default.
+- Option `carrot_rewards` (default on): the rewards of the carrot man of West City for 1, 100, 500 and 1000 carrots
+  are locations. They only ever hold filler. The 1000-carrot one is where the Sewer Key comes from.
+- PopTracker pack: the real Gas Mask icon from the game; the Underworld in the Other World panel.
+
+### Fixed
+- The client took back the original item of a location that is not in your seed (an option turned off, or a location
+  added by a later version): you now keep it.
+
 ## 0.15.0 — the Sewer, a world map in the tracker
 
 ### Added

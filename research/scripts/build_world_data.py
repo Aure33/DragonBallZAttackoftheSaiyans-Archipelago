@@ -75,6 +75,11 @@ KNOWN_WITHOUT_DSR = {1583: "Prologue", 1584: "Prologue"}
 # chasse aux boules y ramène dans ces zones, et toute la progression est alors acquise.
 VERIFIED_IN_GAME = {flag: "Fin de jeu" for flag in (1426, 1431, 1432, 1433, 1445, 1446, 1447, 1448, 1505, 1506, 1526,
                                                      1551, 1588, 1608, 3203, 3223, 3233)}
+# Derniers lieux sans ligne DSR, vérifiés en jeu le 2026-11-13 (C59) : 1455 (creux de `mut05`, étage 1, rejoint à pied
+# depuis la sortie de l'écran), 1550 (niche de `sna03`, à pied depuis l'entrée de gauche), 3206 (arrière de la voiture
+# rouge de `wst01`) ; 2590 (fantôme de l'Enfer `hel02`, sur un rebord du lac de sang que l'on rejoint en barque : objet
+# obtenu en lui parlant, chemin non refait à pied ; zone de l'Autre monde, donc sans progression, D36).
+VERIFIED_IN_GAME |= {1455: "Fin de jeu", 1550: "Fin de jeu", 3206: "Fin de jeu", 2590: "Ch. 9"}
 # Égouts (`ges`, C57) : la plaque du temple des Arts martiaux (`bud01`) ne s'ouvre qu'avec la Clé des égouts (objet
 # clé 26), récompense des 1000 carottes. Plaque ouverte et coffres 1449 / 1450 ouverts en jeu par Claude au ch. 15 ; à
 # l'intérieur, seules deux échelles par écran se cassent, au tir de Ki niveau 1. Ces lieux demandent la clé.
@@ -83,7 +88,19 @@ NEEDS_SEWER_KEY = {1449: "Fin de jeu", 1450: "Fin de jeu", 2663: "Fin de jeu"}
 # Lieux qu'extract_chests.py ne voit pas : le faux coffre des égouts (`ges02_00`, fonction Trap01) lance un combat,
 # puis SetFlag(2663) et GetItem(221) = Cape Dieu (Btl_Acc n° 92). Le Let's Play (LP Update 50) l'ouvre.
 EXTRA_LOCATIONS = [{"kind": "trap", "flag": 2663, "item_code": 221, "map": "ges02_00", "category": 1, "index": 92,
-                    "EN": "Kami's Cape", "US": "Kami's Cape", "FR": "Cape Dieu"}]
+                    "EN": "Kami's Cape", "US": "Kami's Cape", "FR": "Cape Dieu"},
+                   # Même faux coffre dans la maison de Princesse Serpent (`sna03_00`, Trap01) : combat, SetFlag(2582),
+                   # GetItem(206) = Poing lien (Btl_Acc n° 77) ; ouvert en jeu (C59).
+                   {"kind": "trap", "flag": 2582, "item_code": 206, "map": "sna03_00", "category": 1, "index": 77,
+                    "EN": "Bind Knuckle", "US": "Bind Knuckle", "FR": "Poing lien"}]
+VERIFIED_IN_GAME[2582] = "Fin de jeu"
+# Récompenses de l'homme aux carottes (`wst03_00`, Ninjin, PNJ n° 6) : chaque palier de carottes données (compteur des
+# drapeaux 3850–3853) donne un objet et allume un drapeau ; les quatre vues en jeu (C59). Nombre de carottes du palier.
+CARROT_REWARDS = {2684: (1, 0, 1, "Medium Bean", "Haricot moyen"), 2627: (100, 2, 25, "Escape Path", "Issue de secours"),
+                  2628: (500, 2, 27, "Zeni Rush", "Pluie de zénis"), 2629: (1000, 3, 26, "Sewer Key", "Clé des égouts")}
+EXTRA_LOCATIONS += [{"kind": "carrots", "flag": flag, "map": "wst03_00", "category": category, "index": index,
+                     "EN": en, "US": en, "FR": fr, "carrots": carrots}
+                    for flag, (carrots, category, index, en, fr) in CARROT_REWARDS.items()]
 # Fautes ou variantes d'écriture du guide.
 DSR_SPELLING = {"recovery capsule": "recover capsule", "invigoration": "invigorate", "judgement": "judgment",
                 "ninja boots": "ninja sandals", "max bean": "max bean"}
@@ -151,10 +168,15 @@ def main() -> None:
         map_code = chest["map"]
         zone = zone_of(map_code)[0]
         row = matches[chest["flag"]]
-        if row is None and chest["flag"] not in KNOWN_WITHOUT_DSR | VERIFIED_IN_GAME.keys() | NEEDS_SEWER_KEY.keys():
+        if chest["kind"] == "carrots":
+            row = None  # chapitre 8 : arrivée en Ville ouest (guide DSR) ; carottes : Gant carotte, voir locations.py
+        elif row is None and chest["flag"] not in KNOWN_WITHOUT_DSR | VERIFIED_IN_GAME.keys() | NEEDS_SEWER_KEY.keys():
             set_aside.append((chest, map_code, zone))
             continue
-        if row:
+        if chest["kind"] == "carrots":
+            chapter = 8
+            source = "OBS 2026-11-13 (carottes données en jeu, C59)"
+        elif row:
             chapter = chapter_number(row["chapter"])
             source = f"DSR n° {row['n']} ({row['chapter']}, {row['zone']})"
         elif chest["flag"] in KNOWN_WITHOUT_DSR:
@@ -162,7 +184,8 @@ def main() -> None:
             source = "OBS 2026-10-23 (DSR Prologue, texte)"
         elif chest["flag"] in VERIFIED_IN_GAME:
             chapter = chapter_number(VERIFIED_IN_GAME[chest["flag"]])
-            source = "OBS 2026-10-24 (ouvert en jeu au ch. 15, C50)"
+            source = ("OBS 2026-11-13 (C59)" if chest["flag"] in (1455, 1550, 3206, 2590, 2582)
+                      else "OBS 2026-10-24 (ouvert en jeu au ch. 15, C50)")
         else:
             chapter = chapter_number(NEEDS_SEWER_KEY[chest["flag"]])
             source = ("SCRIPT ges02_00 Trap01 + LP Update 50 (C57)" if chest["kind"] == "trap"
@@ -171,13 +194,15 @@ def main() -> None:
                      "category": chest["category"], "index": chest["index"], "chapter": chapter,
                      "bonus": zone in BONUS_ZONES, "source": source,
                      "key_item": SEWER_KEY if chest["flag"] in NEEDS_SEWER_KEY else "",
+                     "carrots": chest.get("carrots", 0),
                      "item_offsets": chest.get("item_offsets", [])})
 
     # Noms de lieux : « <zone> <écran> - <objet d'origine> Chest » (coffre) ou « … - Hidden <objet> » (objet à
     # examiner), numérotés si répétés sur le même écran.
     seen: Counter[str] = Counter()
     for chest in kept:
-        what = {"chest": f"{chest['item']} Chest", "trap": f"{chest['item']} Trap Chest"}.get(
+        what = {"chest": f"{chest['item']} Chest", "trap": f"{chest['item']} Trap Chest",
+                "carrots": f"{chest['item']} for {chest['carrots']} Carrot{'s' if chest['carrots'] > 1 else ''}"}.get(
             chest["kind"], f"Hidden {chest['item']}")
         base = f"{chest['zone']} {screen(chest['map'])} - {what}"
         seen[base] += 1
@@ -190,8 +215,8 @@ def main() -> None:
     lines = ['"""Locations of the game, generated by research/scripts/build_world_data.py: do not edit by hand.',
              "",
              "Chests come from CreateBox calls in the ROM map scripts, hidden items from flagged GetItem calls",
-             "(research/chests.md), plus the trap chest of the sewers. The chapter is the one where the DSR guide got the",
-             "item (story progress and Ki Blast level known to be enough).",
+             "(research/chests.md), plus two trap chests and the carrot rewards of West City. The chapter is the one",
+             "where the DSR guide got the item (story progress and Ki Blast level known to be enough).",
              '"""',
              "from typing import NamedTuple",
              "",
@@ -211,12 +236,16 @@ def main() -> None:
              '    """An item found by examining a spot (drawer, stall, door...), not a chest."""',
              '    key_item: str = ""',
              '    """Key item needed besides the chapter (the Sewer Key opens the sewers), if any."""',
+             '    carrots: int = 0',
+             '    """Carrots to give to the carrot man of West City for this reward (0: not a carrot reward)."""',
              "",
              "",
              "LOCATIONS: tuple[LocationData, ...] = ("]
     for c in kept:
         lines.append(f"    LocationData({c['name']!r}, {c['zone']!r}, {c['flag']}, {c['item']!r}, {c['chapter']}, "
-                     f"{c['bonus']}, {c['kind'] == 'examine'}" + (f", {c['key_item']!r}" if c["key_item"] else "") + "),")
+                     f"{c['bonus']}, {c['kind'] == 'examine'}"
+                     + (f", {c['key_item']!r}" if c["key_item"] or c["carrots"] else "")
+                     + (f", {c['carrots']}" if c["carrots"] else "") + "),")
     lines += [")", "", "# Inventory slot of each item found at a location: (category, number in the game's data table).",
               "ITEM_SLOTS: dict[str, tuple[int, int]] = {"]
     for (category, index), item in sorted(slots.items()):

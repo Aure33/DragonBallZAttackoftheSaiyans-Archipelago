@@ -20,8 +20,8 @@ client reads and writes the game's memory while you play.
 
 ## Features
 
-- **247 locations** by default: 211 chests and the trap chest of the Sewer, 17 hidden items, the end of each
-  chapter, and the three story scenes that give a key item.
+- **256 locations** by default: every chest (213) and trap chest (2) of the story, all 19 hidden items, the four
+  carrot rewards, the end of each chapter, and the three story scenes that give a key item.
 - **Key items** shuffled (`key_items`): the Snowfield Key, the Submarine, Bubbles' Thing and the Sewer Key only
   appear in your inventory once you receive them from the multiworld.
 - **Logic that follows the story**: Gas Mask, Ki-Blast Fruits and key items are required where the game needs them;

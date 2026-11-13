@@ -2,9 +2,9 @@
 
 ## Status
 
-This world covers the whole story: 217 of the 219 chests of the game (6 of them with the `east_city_ruins`
-option), the trap chest of the Sewer, 17 of the 19 hidden items, the end of each chapter and the three story scenes
-that give a key item. Four spots whose access could not be confirmed in game are left untouched.
+This world covers the whole story: all 219 chests of the game (6 of them with the `east_city_ruins` option), its two
+trap chests, all 19 hidden items, the four rewards of the carrot man, the end of each chapter and the three story
+scenes that give a key item.
 
 ## What does randomization do to this game?
 
@@ -27,24 +27,26 @@ there is no save after it.
 
 ## Which locations are randomized?
 
-247 locations:
+256 locations:
 
-- the chests of every area of the story, from Training Island to Gizard Wasteland (209);
-- the optional Sewer under the Martial Arts Temple, with the `key_items` option: two chests and a trap chest that
-  starts a battle (3);
-- the hidden items you get by examining a drawer, a stall, a door... (17);
+- the chests of every area of the story, from Training Island to Gizard Wasteland (211), and the trap chest of
+  Princess Snake's House, which starts a battle (1);
+- the optional Sewer under the Martial Arts Temple, with the `key_items` option: two chests and a trap chest (3);
+- the hidden items you get by examining a drawer, a stall, the back of a car, a ghost... (19);
+- the rewards of the carrot man of West City for 1, 100, 500 and 1000 carrots, with the `carrot_rewards` option (4,
+  the last one only with `key_items`). They never hold anything important: collecting 1000 carrots takes long;
 - the end of the prologue and of chapters 1 to 14 (15);
 - the three story scenes that give a key item, with the `key_items` option (3).
 
-17 of those chests and hidden items are off the story path (some under a rock to break with a Ki blast). The logic
+20 of those chests and hidden items are off the story path (some under a rock to break with a Ki blast). The logic
 expects them during the tour before the final battle (chapter 15), when the Dragon Ball hunt brings you back to
 every area.
 
 The 6 chests of East City Ruins are added with the `east_city_ruins` option; reaching them needs the 7 Dragon
 Balls and Shenron's wish "To Go Somewhere New".
 
-The story closes some areas for a while: the Other World after chapter 9 (until chapter 13) and maybe Nemuria
-Ruins after chapter 11. Their locations never hold progression items, so a chest left behind there never blocks
+The story closes some areas for a while: the Other World (including the Underworld) after chapter 9 (until chapter
+13) and maybe Nemuria Ruins after chapter 11. Their locations never hold progression items, so a chest left behind there never blocks
 anyone. Location groups are available for hints: one per area (for example "Kiwi Volcano") and "Story".
 
 ## Which items can be found?
@@ -62,8 +64,8 @@ plus filler for the chapter ends. Seven of them matter for progression:
 - **Bubbles' Thing** (key item, with the `key_items` option): repairs the five stumps of Yemma Forest in chapter 13.
   The scene on King Kai's Planet no longer gives it.
 - **Sewer Key** (key item, with the `key_items` option): opens the manhole of the Martial Arts Temple, the only way
-  into the Sewer. The game gives it for 1000 carrots; shuffled, it takes the place of a filler item, and the logic
-  expects the Sewer during the tour before the final battle (chapter 15). The carrot man no longer gives it.
+  into the Sewer. The game gives it for 1000 carrots; the logic expects the Sewer during the tour before the final
+  battle (chapter 15). The carrot man no longer gives it: his 1000-carrot reward is a location instead.
 - **Ki-Blast Fruit** (4 in the pool, 2 needed): use it from the Items menu to raise your Ki-blast meter. One fruit breaks the
   level 2 rocks that block the story in chapter 8, two fruits break the level 3 doors of chapter 13.
 
@@ -73,10 +75,11 @@ Received items are not used or equipped automatically: use the fruits and equip 
 
 - `goal` (`chapter` or `broly`, default `chapter`): what wins the game (see above).
 - `goal_chapter` (1 to 15, default 15): with `goal: chapter`, the chapter whose end wins the game.
-- `hidden_items` (default on): include the 17 hidden items.
+- `hidden_items` (default on): include the 19 hidden items.
 - `chapter_checks` (default on): the end of the prologue and of each chapter before the goal sends a check.
-- `key_items` (default on): shuffle the Snowfield Key, the Submarine and Bubbles' Thing; the three story scenes
-  that give them become locations.
+- `key_items` (default on): shuffle the Snowfield Key, the Submarine and Bubbles' Thing (the three story scenes
+  that give them become locations) and the Sewer Key (which adds the Sewer).
+- `carrot_rewards` (default on): the four rewards of the carrot man of West City are locations, holding only filler.
 - `east_city_ruins`: add the 6 chests of East City Ruins (see above).
 - `gas_mask_placement` (default `own_early`): where the Gas Mask can be. `own_early`: in one of your own first
   locations (Kame House and Training Island, before the mist); `any_early`: in the first locations of any world;

@@ -53,6 +53,16 @@ class KeyItems(DefaultOnToggle):
     display_name = "Key Items"
 
 
+class CarrotRewards(DefaultOnToggle):
+    """
+    The four rewards of the carrot man of West City (for 1, 100, 500 and 1000 carrots given) are locations. Carrots are
+    dropped by enemies once Monster Carrot's Carrot Glove is equipped. These locations never hold progression items
+    or useful items. The 1000-carrot reward (the Sewer Key in the original game) is only a location with key_items.
+    """
+
+    display_name = "Carrot Rewards"
+
+
 class EastCityRuins(Toggle):
     """
     Include the 6 chests of East City Ruins.
@@ -100,6 +110,7 @@ class DbzAotsOptions(PerGameCommonOptions):
     hidden_items: HiddenItems
     chapter_checks: ChapterChecks
     key_items: KeyItems
+    carrot_rewards: CarrotRewards
     east_city_ruins: EastCityRuins
     gas_mask_placement: GasMaskPlacement
     experience_multiplier: ExperienceMultiplier

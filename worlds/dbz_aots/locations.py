@@ -39,7 +39,7 @@ LOCATION_NAME_TO_ID: dict[str, int] = {
 # known way back). A chest left there must never block anyone, so their locations never hold progression items
 # (research/decisions.md, D36).
 MISSABLE_ZONES = frozenset({"King Yemma's Mansion", "Princess Snake's House", "King Kai's Planet", "Yemma Forest",
-                            "Nemuria Ruins"})
+                            "Nemuria Ruins", "Underworld"})
 
 LOCATION_NAME_GROUPS: dict[str, set[str]] = {}
 for _data in LOCATIONS:
@@ -58,19 +58,26 @@ class DbzAotsLocation(Location):
     game = GAME_NAME
 
 
-def included_locations(world: DbzAotsWorld) -> list[LocationData]:
+def _base_locations(world: DbzAotsWorld) -> list[LocationData]:
     options = world.options
     return [data for data in LOCATIONS
             if data.chapter <= options.goal_chapter
             and (not data.bonus or options.east_city_ruins)
             and (not data.hidden or options.hidden_items)
+            and (not data.carrots or options.carrot_rewards)
             # Without the option, the Sewer Key stays the reward of 1000 carrots: the sewers are left out.
             and (not data.key_item or options.key_items)]
 
 
 def needs_sewer_key(world: DbzAotsWorld) -> bool:
-    """The Sewer Key is in the pool when a location needs it (it has no location of its own)."""
-    return any(data.key_item == SEWER_KEY for data in included_locations(world))
+    """The Sewer Key is shuffled when a location needs it (the sewers are included)."""
+    return any(data.key_item == SEWER_KEY for data in _base_locations(world))
+
+
+def included_locations(world: DbzAotsWorld) -> list[LocationData]:
+    # The 1000-carrot reward is the Sewer Key: a location only when the key is shuffled.
+    sewer_key = needs_sewer_key(world)
+    return [data for data in _base_locations(world) if data.item != SEWER_KEY or sewer_key]
 
 
 def included_story_locations(world: DbzAotsWorld) -> dict[str, tuple[int, int]]:
@@ -99,7 +106,7 @@ def original_contents(world: DbzAotsWorld) -> list[str]:
     needed, takes the place of one filler item."""
     contents = ([data.item for data in included_locations(world)]
                 + [item for _, _, item in included_key_item_locations(world).values()])
-    if needs_sewer_key(world):
+    if needs_sewer_key(world) and SEWER_KEY not in contents:  # carrot rewards off: no location holds it
         fillers = [name for name in contents if ITEMS[name].classification == ItemClassification.filler]
         contents.remove(FILLER_ITEM if FILLER_ITEM in fillers else fillers[0])
         contents.append(SEWER_KEY)
@@ -110,7 +117,8 @@ def create_all_locations(world: DbzAotsWorld) -> None:
     for data in included_locations(world):
         region = world.get_region(chapter_region(data.chapter))
         location = DbzAotsLocation(world.player, data.name, LOCATION_NAME_TO_ID[data.name], region)
-        if data.zone in MISSABLE_ZONES:
+        # Carrot rewards: up to 1000 carrots to collect, so they never hold anything important either.
+        if data.zone in MISSABLE_ZONES or data.carrots:
             location.progress_type = LocationProgressType.EXCLUDED
         region.locations.append(location)
     for name, (chapter, _, _) in included_key_item_locations(world).items():

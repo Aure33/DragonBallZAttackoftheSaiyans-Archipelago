@@ -466,8 +466,9 @@ class DbzAotsClient(BizHawkClient):
             self.waiting_locations = []
         else:
             pickups = picked_up_items(self.previous_inventory, inventory) + self.recent_pickups
-            newly_opened = (opened_locations(flags, ORIGINAL_ITEM_LOCATION_IDS)
-                            - opened_locations(self.previous_flags, ORIGINAL_ITEM_LOCATION_IDS))
+            # Only the locations of this seed: the others (options off, or added by a later version) keep their item.
+            watched = ORIGINAL_ITEM_LOCATION_IDS & ctx.server_locations
+            newly_opened = opened_locations(flags, watched) - opened_locations(self.previous_flags, watched)
             expected = list(self.waiting_locations)
             for location_id in sorted(newly_opened):
                 flag = location_id - LOCATION_ID_BASE

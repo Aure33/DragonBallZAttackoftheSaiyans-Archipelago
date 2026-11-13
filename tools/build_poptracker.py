@@ -45,7 +45,9 @@ FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 TRACKED = {GAS_MASK: ("gasmask", 1, (70, 140, 70), "GM"), KI_BLAST_FRUIT: ("kiblast", 4, (220, 120, 30), "KB"),
            SNOWFIELD_KEY: ("snowkey", 1, (90, 160, 220), "SK"), SUBMARINE: ("submarine", 1, (230, 190, 40), "SU"),
            BUBBLES_THING: ("bubbles", 1, (200, 90, 200), "BT"), SEWER_KEY: ("sewerkey", 1, (120, 110, 90), "SW")}
-KEY_ITEM_RULES = {SEWER_KEY: "sewerkey"}  # locations behind a key item besides their chapter (rules.py)
+KEY_ITEM_RULES = {SEWER_KEY: "sewerkey"}
+# Real icons from the ROM (menu/capsule, decisions.md C60): only capsules have one per item; the others keep a badge.
+ICONS = {GAS_MASK: "capsule_26.png"}  # locations behind a key item besides their chapter (rules.py)
 KEY_ITEM_CODES = ("snowkey", "submarine", "bubbles")
 # Same requirements as rules.py (research/decisions.md, D28, D47 and D53), as PopTracker rules. With key_items off, the
 # pack marks the three key items as owned (the story gives them), so the same rules hold.
@@ -53,7 +55,7 @@ CHAPTER_RULES = {1: "gasmask", 8: "gasmask,kiblast:1,snowkey", 10: "gasmask,kibl
                  13: "gasmask,kiblast:2,snowkey,submarine,bubbles"}
 # Options read from slot_data (consumables used as switches, on by default when the pack is used by hand).
 OPTIONS = {"opt_hidden": "hidden_items", "opt_chapters": "chapter_checks", "opt_keys": "key_items",
-           "opt_sewers": "sewer_key",
+           "opt_sewers": "sewer_key", "opt_carrots": "carrot_rewards",
            "opt_ruins": "east_city_ruins"}
 MAP_KEY_PREFIX = "dbz_aots_map_"  # client.map_key()
 GROUPS = ((0, 4, "Prologue - Ch. 4"), (5, 8, "Ch. 5 - 8"), (9, 12, "Ch. 9 - 12"), (13, 15, "Ch. 13 - 15"))
@@ -66,7 +68,7 @@ WORLD_PARENT = {"gok": "pao08_00",  # Goku's House: East Mt. Paozu (build_world_
                 "kar": "skr01_00",  # Korin Tower: Sacred Land of Korin
                 "ges": "bud01_00",  # Sewer: manhole of the Martial Arts Temple (decisions.md, C57)
                 "nem": "kou01_00"}  # Nemuria Ruins: MapJump from kou10_00 (Break Wasteland)
-OTHER_WORLD = ("enm", "sna", "for", "kos")  # King Yemma, Snake Way, Yemma Forest, King Kai's Planet
+OTHER_WORLD = ("hel", "enm", "sna", "for", "kos")  # Underworld, King Yemma, Snake Way, Yemma Forest, King Kai's Planet
 ROW_WIDTH, LABEL, GAP = 1600, 34, 12
 BOX_W, BOX_H, COLUMNS = 300, 120, 4
 
@@ -168,7 +170,7 @@ def world_board(by_zone: dict[str, list], positions: dict[int, list]) -> tuple[I
             taken[(x, y)] += 1
             x += shift
         elif prefix in OTHER_WORLD:
-            x, y, shift = width + WORLD_PANEL // 2, 90 + other * 170, 0
+            x, y, shift = width + WORLD_PANEL // 2, 90 + other * 140, 0
             other += 1
         else:
             continue
@@ -225,7 +227,8 @@ def build() -> None:
                          "img": f"images/maps/{map_id(zone)}.png"})
         for data in entries:
             switches = ((["opt_hidden"] if data.hidden else []) + (["opt_ruins"] if data.bonus else [])
-                        + (["opt_sewers"] if data.key_item else []))
+                        + (["opt_sewers"] if data.key_item or data.item == SEWER_KEY else [])
+                        + (["opt_carrots"] if data.carrots else []))
             rules = [",".join([*chapter_rule(data.chapter), KEY_ITEM_RULES[data.key_item]])] if data.key_item \
                 else chapter_rule(data.chapter)
             location = {"name": data.name, "access_rules": rules,
@@ -268,7 +271,11 @@ def build() -> None:
         mapping[LOCATION_NAME_TO_ID[name]] = f"@{name}/Item"
 
     for name, (code, _, colour, label) in TRACKED.items():
-        item_icon(colour, label).save(OUT / f"images/items/{code}.png")
+        icon = ASSETS / "icons" / ICONS.get(name, "-")
+        if icon.is_file():
+            Image.open(icon).resize((64, 64), Image.NEAREST).save(OUT / f"images/items/{code}.png")
+        else:
+            item_icon(colour, label).save(OUT / f"images/items/{code}.png")
     switch = Image.new("RGBA", (8, 8), (0, 0, 0, 0))
     switch.save(OUT / "images/items/switch.png")
     items = [{"name": name, "type": "consumable" if count > 1 else "toggle", "codes": code,
@@ -371,6 +378,7 @@ function onClear(slot_data)
     if slot_data["goal_chapter"] ~= nil then set_count("goalch", slot_data["goal_chapter"]) end
     -- Seeds before world 0.15.0 have no sewers.
     if slot_data["sewer_key"] == nil then set_count("opt_sewers", 0) end
+    if slot_data["carrot_rewards"] == nil then set_count("opt_carrots", 0) end
     -- Key items left in place: the story gives them, so the rules that need them hold.
     if slot_data["key_items"] == 0 then
         for _, code in ipairs(KEY_ITEM_CODES) do

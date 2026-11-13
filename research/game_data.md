@@ -426,7 +426,7 @@ Pas d'identifiant interne : RND ne donne aucun couple nom/ID (ses fichiers ne d�
 | Récup. ténèbres | Darkness Recovery | Consommable | Non décrit | DSR Bestiaire n° 68 | 📖 | Drop |
 | Boisson 30 PV | HP Drink 30 | Consommable | Non décrit | DSR Bestiaire n° 12, 17, 53 | 📖 | Drop |
 | Boisson 30 ki | Ki Drink 30 | Consommable | Non décrit | DSR Bestiaire n° 53, 71 | 📖 | Drop |
-| Masque à gaz | Gas Mask | Capsule | Immunise contre la brume empoisonnée (sol à dégâts) | LP Update 02 ; DSR Ch. 6 ; OBS 2026-10-23 | ✅ | **Progression** : requise pour traverser Spinach Wastes (ch. 6) |
+| Masque à gaz | Gas Mask | Capsule | Immunise contre la brume empoisonnée (sol à dégâts) | LP Update 02 ; DSR Ch. 6 ; OBS 2026-10-23 | ✅ | **Progression** : requise dès le prologue (brume de l'île d'entraînement, C56) et pour Spinach Wastes (ch. 6) |
 | Carte d'obscurité | Darkness Card | Capsule | Tente d'aveugler les ennemis au début du combat (emplacement actif) | LP Update 02 ; OBS 2026-10-23 | ✅ |  |
 | Charme perception | Perception Charm | Objet de combat | Augmente l'esquive pour la prochaine attaque ; se vend 2500 z | DSR Prologue (nom) ; LP Update 02 (effet ; l'appelle « Charm ») ; OBS 2026-10-23 | ✅ | **Conflit de nom** DSR / LP |
 | Boule de la Voyante | crystal ball | Objet clé (histoire) | Consultable depuis le menu pour voir le prochain objectif | LP Update 02 ; DSR Prologue | 📖 |  |

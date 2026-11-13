@@ -51,7 +51,9 @@ anyone. Location groups are available for hints: one per area (for example "Kiwi
 The original contents of those chests and hidden spots: healing items, stat fruits, accessories and capsules,
 plus filler for the chapter ends. Six of them matter for progression:
 
-- **Gas Mask** (capsule): equip it to cross the gas floors of the story, from Spinach Wastes (chapter 6) onwards.
+- **Gas Mask** (capsule): needed from the prologue. On Training Island, Bulma lets nobody into the poison mist until
+  the Gas Mask is equipped, and the end of the prologue is behind it; the Spinach Wastes (chapter 6) cross a gas
+  floor too. By default it is in one of your own first locations (option `gas_mask_placement`).
 - **Snowfield Key** (key item, with the `key_items` option): opens the Holly Plain gate on the story path of chapter
   8. Lunch's scene no longer gives it: it comes from the multiworld like any other item.
 - **Submarine** (key item, with the `key_items` option): gets the party into the Pirate Cave in chapter 10. The
@@ -72,6 +74,9 @@ Received items are not used or equipped automatically: use the fruits and equip 
 - `key_items` (default on): shuffle the Snowfield Key, the Submarine and Bubbles' Thing; the three story scenes
   that give them become locations.
 - `east_city_ruins`: add the 6 chests of East City Ruins (see above).
+- `gas_mask_placement` (default `own_early`): where the Gas Mask can be. `own_early`: in one of your own first
+  locations (Kame House and Training Island, before the mist); `any_early`: in the first locations of any world;
+  `start`: in your starting inventory; `anywhere`: wherever the logic allows (in another world, it can come late).
 - `experience_multiplier` (1 to 10): multiply the experience and AP earned in battle. The client adds the extra
   after each battle; it never makes a character skip a level at once, the rest is added after the next battles.
 - `death_link`: when every fighter of your party falls in battle, everyone linked dies too. When someone else

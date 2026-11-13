@@ -6,7 +6,7 @@ from worlds.AutoWorld import WebWorld, World
 
 from . import client as client  # importing the module registers the BizHawk client
 from . import items, locations, regions, rules
-from .options import DbzAotsOptions, Goal
+from .options import DbzAotsOptions, GasMaskPlacement, Goal
 from .rom import DbzAotsProcedurePatch, DbzAotsSettings
 
 
@@ -54,6 +54,14 @@ class DbzAotsWorld(World):
         # Broly is fought at the end of the story (chapter 15), so that goal needs every chapter.
         if self.options.goal == Goal.option_broly:
             self.options.goal_chapter.value = regions.LAST_CHAPTER
+        # The Gas Mask is needed before the end of the prologue (rules.py).
+        placement = self.options.gas_mask_placement
+        if placement == GasMaskPlacement.option_own_early:
+            self.multiworld.local_early_items[self.player][items.GAS_MASK] = 1
+        elif placement == GasMaskPlacement.option_any_early:
+            self.multiworld.early_items[self.player][items.GAS_MASK] = 1
+        elif placement == GasMaskPlacement.option_start:
+            self.multiworld.push_precollected(self.create_item(items.GAS_MASK))
 
     def create_regions(self) -> None:
         regions.create_and_connect_regions(self)
@@ -63,7 +71,10 @@ class DbzAotsWorld(World):
         rules.set_all_rules(self)
 
     def create_items(self) -> None:
-        items.create_all_items(self, locations.original_contents(self))
+        contents = locations.original_contents(self)
+        if self.options.gas_mask_placement == GasMaskPlacement.option_start:
+            contents.remove(items.GAS_MASK)  # already in the starting inventory; filler takes its place
+        items.create_all_items(self, contents)
 
     def create_item(self, name: str) -> items.DbzAotsItem:
         return items.create_item(self, name)

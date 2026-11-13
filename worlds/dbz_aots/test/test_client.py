@@ -7,7 +7,7 @@ from .. import ram
 from ..client import (ORIGINAL_ITEM_CODES, Progress, battle_bonus, chest_rewrites, find_text_table, flag_is_set,
                       game_over, generic_item_name, hidden_item_rewrites, in_game, items_to_give, key_item_corrections,
                       items_to_take_back, map_key, opened_locations, party_defeated, party_hp_addresses,
-                      picked_up_items, read_progress, shown_item_code)
+                      picked_up_items, read_progress, received_message, shown_item_code)
 from ..items import ITEM_NAME_TO_ID
 from ..locations import LOCATION_NAME_TO_ID, ORIGINAL_ITEM_LOCATION_IDS
 
@@ -223,3 +223,9 @@ class TestRealItems(unittest.TestCase):
     def test_generic_name_follows_the_language(self) -> None:
         self.assertEqual(b"Objet Archipelago", generic_item_name(b"Petit haricot\0Redonne"))
         self.assertEqual(b"Archipelago Item", generic_item_name(b"Small Bean\0"))
+
+
+class TestReceivedMessage(unittest.TestCase):
+    def test_gas_mask_message_says_to_equip_it(self) -> None:
+        self.assertIn("equip", received_message(ITEM_NAME_TO_ID["Gas Mask"]))
+        self.assertEqual("Received Small Bean", received_message(ITEM_NAME_TO_ID["Small Bean"]))

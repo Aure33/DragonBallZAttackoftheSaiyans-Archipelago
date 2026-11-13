@@ -66,7 +66,8 @@ du world. Une fois connecté, il ouvre l'onglet de la zone où vous êtes (bouto
   gardez.
 - Les objets reçus arrivent quand vous êtes sur le terrain ; pendant un combat, ils attendent la fin du combat.
 - Les objets reçus sont seulement ajoutés à l'inventaire : utilisez vous-même les Ki-Blast Fruits et équipez le
-  Masque à gaz.
+  Masque à gaz (panneau des capsules, sur l'écran tactile). Équipez le Masque à gaz avant la brume empoisonnée de
+  l'île d'entraînement : Bulma vous arrête là tant qu'il n'est pas équipé.
 - Avec `key_items`, le client ne laisse la Clé du champ de neige, le Sous-marin et le Truc de Bubbles dans
   l'inventaire qu'une fois reçus : les scènes qui les donnent dans le jeu d'origine ne les donnent plus.
 - Avec DeathLink, ne chargez jamais une ancienne sauvegarde ou un état de sauvegarde pour annuler une défaite : le

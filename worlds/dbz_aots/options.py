@@ -62,6 +62,24 @@ class EastCityRuins(Toggle):
     display_name = "East City Ruins"
 
 
+class GasMaskPlacement(Choice):
+    """
+    Where the Gas Mask can be. It is needed from the prologue: on Training Island, Bulma lets nobody into the poison
+    mist until the Gas Mask is equipped (capsule panel), and the end of the prologue is behind it.
+    own_early: in one of your own first locations (Kame House and Training Island, before the mist).
+    any_early: in the first locations of any world of the multiworld.
+    start: in your starting inventory.
+    anywhere: wherever the logic allows; in another world, it can come late.
+    """
+
+    display_name = "Gas Mask Placement"
+    option_own_early = 0
+    option_any_early = 1
+    option_start = 2
+    option_anywhere = 3
+    default = 0
+
+
 class ExperienceMultiplier(Range):
     """
     Multiply the experience and AP earned in battle, to keep up with a multiworld.
@@ -82,5 +100,6 @@ class DbzAotsOptions(PerGameCommonOptions):
     chapter_checks: ChapterChecks
     key_items: KeyItems
     east_city_ruins: EastCityRuins
+    gas_mask_placement: GasMaskPlacement
     experience_multiplier: ExperienceMultiplier
     death_link: DeathLink

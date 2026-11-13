@@ -5,8 +5,8 @@ from typing import TYPE_CHECKING
 from rule_builder.rules import Has, Rule
 
 from .items import BUBBLES_THING, GAS_MASK, KI_BLAST_FRUIT, SNOWFIELD_KEY, SUBMARINE
-from .locations import VICTORY
-from .regions import chapter_entrance
+from .locations import PROLOGUE_END, VICTORY
+from .regions import chapter_entrance, chapter_region
 
 if TYPE_CHECKING:
     from . import DbzAotsWorld
@@ -14,8 +14,10 @@ if TYPE_CHECKING:
 # What the story needs before a chapter can be played (research/decisions.md, D28). A chapter keeps the
 # requirements of the previous ones, since the regions form a single line.
 CHAPTER_REQUIREMENTS: dict[int, Rule] = {
-    # Spinach Wastes: the story path crosses a gas floor (DSR guide, chapter 6).
-    6: Has(GAS_MASK),
+    # Training Island, end of the prologue: Bulma lets nobody into the poison mist before the crystal ball until the
+    # Gas Mask is equipped (script tut02_00, PoisonLock: EquipPartyAcc(287)); the crystal ball starts the last battle
+    # of the prologue (research/decisions.md, C56). The Spinach Wastes (chapter 6) cross a gas floor too.
+    1: Has(GAS_MASK),
     # East Mt. Paozu: the story path is blocked by a level 2 rock; the guide got level 2 from its first
     # Ki-Blast Fruit (chapter 7).
     8: Has(KI_BLAST_FRUIT),
@@ -48,4 +50,6 @@ def set_all_rules(world: DbzAotsWorld) -> None:
         if rule is None:
             continue
         world.set_rule(world.get_entrance(chapter_entrance(chapter)), rule)
+    if PROLOGUE_END in {location.name for location in world.get_region(chapter_region(0)).locations}:
+        world.set_rule(world.get_location(PROLOGUE_END), CHAPTER_REQUIREMENTS[1])
     world.set_completion_rule(Has(VICTORY))

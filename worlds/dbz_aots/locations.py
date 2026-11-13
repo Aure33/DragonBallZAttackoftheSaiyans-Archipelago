@@ -20,6 +20,7 @@ LOCATION_ID_BASE = 100_000
 STORY_LOCATIONS: dict[str, tuple[int, int]] = {
     f"{chapter_region(chapter)} Cleared": (chapter, CHAPTER_START_FLAGS[chapter]) for chapter in range(LAST_CHAPTER)
 }
+PROLOGUE_END = f"{chapter_region(0)} Cleared"
 
 # Story scenes that give a shuffled key item: (chapter, story flag of the scene, key item). The client takes the key
 # back when the scene gives it (research/decisions.md, D46).

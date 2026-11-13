@@ -31,7 +31,8 @@ from PIL import Image, ImageDraw, ImageFont  # noqa: E402
 from worlds.dbz_aots.items import (BUBBLES_THING, GAS_MASK, ITEM_NAME_TO_ID, KI_BLAST_FRUIT, SNOWFIELD_KEY,  # noqa: E402
                                     SUBMARINE)
 from worlds.dbz_aots.location_data import LOCATIONS  # noqa: E402
-from worlds.dbz_aots.locations import KEY_ITEM_LOCATIONS, LOCATION_NAME_TO_ID, STORY_LOCATIONS  # noqa: E402
+from worlds.dbz_aots.locations import (KEY_ITEM_LOCATIONS, LOCATION_NAME_TO_ID, PROLOGUE_END,  # noqa: E402
+                                       STORY_LOCATIONS)
 from worlds.dbz_aots.regions import LAST_CHAPTER, chapter_region  # noqa: E402
 
 OUT = REPO / "build/poptracker/dbz_aots"
@@ -45,9 +46,9 @@ TRACKED = {GAS_MASK: ("gasmask", 1, (70, 140, 70), "GM"), KI_BLAST_FRUIT: ("kibl
            SNOWFIELD_KEY: ("snowkey", 1, (90, 160, 220), "SK"), SUBMARINE: ("submarine", 1, (230, 190, 40), "SU"),
            BUBBLES_THING: ("bubbles", 1, (200, 90, 200), "BT")}
 KEY_ITEM_CODES = ("snowkey", "submarine", "bubbles")
-# Same requirements as rules.py (research/decisions.md, D28 and D47), as PopTracker rules. With key_items off, the
+# Same requirements as rules.py (research/decisions.md, D28, D47 and D53), as PopTracker rules. With key_items off, the
 # pack marks the three key items as owned (the story gives them), so the same rules hold.
-CHAPTER_RULES = {6: "gasmask", 8: "gasmask,kiblast:1,snowkey", 10: "gasmask,kiblast:1,snowkey,submarine",
+CHAPTER_RULES = {1: "gasmask", 8: "gasmask,kiblast:1,snowkey", 10: "gasmask,kiblast:1,snowkey,submarine",
                  13: "gasmask,kiblast:2,snowkey,submarine,bubbles"}
 # Options read from slot_data (consumables used as switches, on by default when the pack is used by hand).
 OPTIONS = {"opt_hidden": "hidden_items", "opt_chapters": "chapter_checks", "opt_keys": "key_items",
@@ -188,7 +189,9 @@ def build() -> None:
         x = (chapter % COLUMNS) * BOX_W + 40 + slots[chapter] * 50
         y = (chapter // COLUMNS) * BOX_H + 75
         slots[chapter] += 1
-        locations.append({"name": name, "access_rules": chapter_rule(chapter), "visibility_rules": shown,
+        # The end of the prologue is behind the poison mist: it needs what chapter 1 needs (rules.py).
+        rule = chapter_rule(1 if name == PROLOGUE_END else chapter)
+        locations.append({"name": name, "access_rules": rule, "visibility_rules": shown,
                           "sections": [{"name": "Item", "item_count": 1}],
                           "map_locations": [{"map": "story", "x": x, "y": y}]})
         mapping[LOCATION_NAME_TO_ID[name]] = f"@{name}/Item"

@@ -35,22 +35,32 @@ class TestDefaultWorld(DbzAotsTestBase):
 
     def test_story_steps_follow_the_chapter_requirements(self) -> None:
         self.assertEqual(15, len(STORY_LOCATIONS))
-        self.assertTrue(self.can_reach_location("Prologue Cleared"))
-        self.assertFalse(self.can_reach_location("Chapter 7 Cleared"))
+        self.assertFalse(self.can_reach_location("Prologue Cleared"))
         self.collect_by_name(GAS_MASK)
+        self.assertTrue(self.can_reach_location("Prologue Cleared"))
         self.assertTrue(self.can_reach_location("Chapter 7 Cleared"))
         self.assertFalse(self.can_reach_location("Chapter 8 Cleared"))
 
-    def test_chapters_before_spinach_wastes_need_nothing(self) -> None:
+    def test_the_prologue_chests_need_nothing(self) -> None:
+        # They are all before the poison mist of Training Island (seen in game: Bulma stops you at the mist).
         for data in LOCATIONS:
-            if data.chapter < 6:
+            if data.chapter == 0:
                 with self.subTest(data.name):
                     self.assertTrue(self.can_reach_location(data.name))
 
-    def test_chapter_6_needs_the_gas_mask(self) -> None:
-        self.assertFalse(self.can_reach_location("Spinach Wastes 1 - Large Bean Chest"))
+    def test_everything_after_the_prologue_needs_the_gas_mask(self) -> None:
+        for name in ("Spinach Wastes 1 - Large Bean Chest",
+                     next(data.name for data in LOCATIONS if data.chapter == 1)):
+            with self.subTest(name):
+                self.assertFalse(self.can_reach_location(name))
         self.collect_by_name(GAS_MASK)
-        self.assertTrue(self.can_reach_location("Spinach Wastes 1 - Large Bean Chest"))
+        for name in ("Spinach Wastes 1 - Large Bean Chest",
+                     next(data.name for data in LOCATIONS if data.chapter == 1)):
+            with self.subTest(name):
+                self.assertTrue(self.can_reach_location(name))
+
+    def test_gas_mask_is_placed_early_in_this_world_by_default(self) -> None:
+        self.assertEqual(1, self.multiworld.local_early_items[self.player][GAS_MASK])
 
     def test_chapter_8_needs_one_ki_blast_fruit(self) -> None:
         self.collect_by_name([GAS_MASK, SNOWFIELD_KEY])
@@ -102,7 +112,9 @@ class TestShortGoal(DbzAotsTestBase):
         expected = {data.name for data in LOCATIONS if data.chapter <= 1} | {"Prologue Cleared"}
         self.assertEqual(expected, names)
 
-    def test_goal_needs_nothing(self) -> None:
+    def test_goal_needs_only_the_gas_mask(self) -> None:
+        self.assertFalse(self.can_reach_location(GOAL_EVENT))
+        self.collect_by_name(GAS_MASK)
         self.assertTrue(self.can_reach_location(GOAL_EVENT))
 
     def test_client_watches_the_start_of_chapter_2(self) -> None:
@@ -134,6 +146,24 @@ class TestGoalAfterTheGasMask(DbzAotsTestBase):
         self.assertFalse(self.can_reach_location(GOAL_EVENT))
         self.collect_by_name(GAS_MASK)
         self.assertTrue(self.can_reach_location(GOAL_EVENT))
+
+
+class TestGasMaskInStartingInventory(DbzAotsTestBase):
+    options = {"gas_mask_placement": "start"}
+
+    def test_gas_mask_is_given_and_not_in_the_pool(self) -> None:
+        self.assertIn(GAS_MASK, [item.name for item in self.multiworld.precollected_items[self.player]])
+        self.assertNotIn(GAS_MASK, [item.name for item in self.multiworld.itempool if item.player == self.player])
+        self.assertEqual(len(self.multiworld.get_unfilled_locations(self.player)),
+                         len([item for item in self.multiworld.itempool if item.player == self.player]))
+
+
+class TestGasMaskEarlyInAnyWorld(DbzAotsTestBase):
+    options = {"gas_mask_placement": "any_early"}
+
+    def test_gas_mask_is_early(self) -> None:
+        self.assertEqual(1, self.multiworld.early_items[self.player][GAS_MASK])
+        self.assertNotIn(GAS_MASK, self.multiworld.local_early_items[self.player])
 
 
 class TestWithoutHiddenItemsAndChapterChecks(DbzAotsTestBase):

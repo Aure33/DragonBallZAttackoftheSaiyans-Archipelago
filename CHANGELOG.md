@@ -3,6 +3,18 @@
 All notable changes to the world. Versions follow `world_version` in
 [`worlds/dbz_aots/archipelago.json`](worlds/dbz_aots/archipelago.json).
 
+## 0.14.0 — the Gas Mask is needed from the prologue
+
+### Fixed
+- The logic asked for the Gas Mask only from chapter 6, but Bulma lets nobody into the poison mist of Training
+  Island until it is equipped, and the end of the prologue is behind it: a seed could put the Gas Mask where it could
+  not be reached. The end of the prologue and every chapter now need it.
+
+### Added
+- Option `gas_mask_placement` (default `own_early`): the Gas Mask is in one of your own first locations (Kame House
+  and Training Island). Also `any_early` (first locations of any world), `start` (starting inventory) and `anywhere`.
+- BizHawk reminds you to equip the Gas Mask when you receive it.
+
 ## 0.13.0 — chests show what they hold, tracker follows you
 
 ### Added

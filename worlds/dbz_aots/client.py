@@ -11,7 +11,7 @@ import worlds._bizhawk as bizhawk
 from worlds._bizhawk.client import BizHawkClient
 
 from . import ram
-from .items import GAME_NAME, ITEM_NAME_TO_ID, KEY_ITEMS, item_slot
+from .items import GAME_NAME, GAS_MASK, ITEM_NAME_TO_ID, KEY_ITEMS, item_slot
 from .location_data import HIDDEN_ITEM_SCRIPTS, ITEM_SLOTS, LOCATIONS
 from .locations import LOCATION_ID_BASE, ORIGINAL_ITEM_LOCATION_IDS
 from .rom import PATCH_FILE_ENDING
@@ -221,6 +221,15 @@ def game_over(party_was_defeated: bool | None, still_in_game: bool) -> bool:
     """A real defeat: the "Defeat" banner is followed by a restart from the logos (research/decisions.md, C37).
     Checking that every fighter was down just before keeps a soft reset by the player from counting as a death."""
     return party_was_defeated is True and not still_in_game
+
+
+def received_message(ap_id: int) -> str:
+    """Message shown in BizHawk for a received item. The Gas Mask only works once equipped: Bulma stops you at the
+    poison mist of Training Island until it is (research/decisions.md, C56)."""
+    name = ITEM_NAMES.get(ap_id, str(ap_id))
+    if name == GAS_MASK:
+        return f"Received {name}: equip it in the capsule panel"
+    return f"Received {name}"
 
 
 class DbzAotsClient(BizHawkClient):
@@ -530,7 +539,7 @@ class DbzAotsClient(BizHawkClient):
                 updated[offset] = quantity
             self.previous_inventory = bytes(updated)
         for ap_id in received[already_given:]:
-            await bizhawk.display_message(ctx.bizhawk_ctx, f"Received {ITEM_NAMES.get(ap_id, ap_id)}")
+            await bizhawk.display_message(ctx.bizhawk_ctx, received_message(ap_id))
 
     async def handle_death_link(
         self, ctx: BizHawkClientContext, map_code: bytes, battle: bytes, party: bytes

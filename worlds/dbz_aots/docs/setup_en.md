@@ -63,7 +63,9 @@ repository. Once connected, it opens the tab of the area you are in (button "Map
 
 - A chest or hidden item taken while the client is not connected gives its original item, which you keep.
 - Received items are added while you are on the field; during a battle they wait until it ends.
-- Received items are only added to your inventory: use the Ki-Blast Fruits and equip the Gas Mask yourself.
+- Received items are only added to your inventory: use the Ki-Blast Fruits and equip the Gas Mask yourself (capsule
+  panel on the touch screen). Equip the Gas Mask before the poison mist of Training Island: Bulma stops you there
+  until it is equipped.
 - With `key_items`, the client keeps the Snowfield Key, the Submarine and Bubbles' Thing in your inventory only once
   they are received: the story scenes that give them in the original game no longer do.
 - Never load an older save or savestate to undo a defeat while DeathLink is on: the client only sends a death when

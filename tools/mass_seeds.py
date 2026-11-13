@@ -37,6 +37,7 @@ def dbz_yaml(name: str, rng: random.Random) -> str:
             f"  death_link: {rng.choice(['true', 'false'])}\n"
             f"  east_city_ruins: {rng.choice(['true', 'false'])}\n"
             f"  experience_multiplier: {rng.randint(1, 10)}\n"
+            f"  gas_mask_placement: {rng.choice(['own_early', 'any_early', 'start', 'anywhere'])}\n"
             f"  accessibility: {rng.choice(['full', 'minimal'])}\n"
             f"  progression_balancing: {rng.randint(0, 99)}\n")
 

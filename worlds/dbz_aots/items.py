@@ -22,6 +22,9 @@ SUBMARINE = "Submarine"
 """Lets the party into the Pirate Cave on the story path of chapter 10 (research/decisions.md, C46)."""
 BUBBLES_THING = "Bubbles' Thing"
 """Repairs the five stumps of Yemma Forest on the story path of chapter 13 (research/decisions.md, C46)."""
+SEWER_KEY = "Sewer Key"
+"""Opens the manhole of the Martial Arts Temple, the only way into the optional sewers (research/decisions.md, C57).
+The game gives it for 1000 carrots, which is no location: shuffled, it takes the place of a filler item."""
 
 
 class ItemData(NamedTuple):
@@ -41,10 +44,10 @@ def item_slot(ap_id: int) -> tuple[ItemCategory, int]:
     return ItemCategory(ap_id // 1000 - 1), ap_id % 1000
 
 
-PROGRESSION = {KI_BLAST_FRUIT, GAS_MASK, SNOWFIELD_KEY, SUBMARINE, BUBBLES_THING}
+PROGRESSION = {KI_BLAST_FRUIT, GAS_MASK, SNOWFIELD_KEY, SUBMARINE, BUBBLES_THING, SEWER_KEY}
 
 # Story key items that are shuffled: the client keeps their quantity equal to the number received from the server.
-KEY_ITEMS: dict[str, int] = {SNOWFIELD_KEY: 6, SUBMARINE: 9, BUBBLES_THING: 22}
+KEY_ITEMS: dict[str, int] = {SNOWFIELD_KEY: 6, SUBMARINE: 9, BUBBLES_THING: 22, SEWER_KEY: 26}
 """Name -> number in the key item table (key_item_mes), which is also its inventory slot in the key item category."""
 # Consumables worth more than a heal: permanent stat boosts, the EXP booster and the reusable Dragon Stone.
 USEFUL_USE_ITEMS = {"HP Fruit", "Ki Fruit", "Power Fruit", "Defense Fruit", "Speed Fruit", "Luck Fruit",

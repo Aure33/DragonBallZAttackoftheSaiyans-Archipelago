@@ -4,7 +4,7 @@ An [Archipelago](https://archipelago.gg) world for **Dragon Ball Z: Attack of th
 played on [BizHawk](https://tasvideos.org/BizHawk) with Archipelago's BizHawk Client.
 
 The chests and hidden items of the whole story are shuffled with the other games of your multiworld, and so are the
-story key items that open the way (Snowfield Key, Submarine, Bubbles' Thing). The game itself is not modified: the
+story key items that open the way (Snowfield Key, Submarine, Bubbles' Thing, Sewer Key). The game itself is not modified: the
 client reads and writes the game's memory while you play.
 
 ## Quick links
@@ -20,18 +20,18 @@ client reads and writes the game's memory while you play.
 
 ## Features
 
-- **244 locations** by default: 209 chests, 17 hidden items, the end of each chapter, and the three story scenes
-  that give a key item.
-- **Story key items** shuffled (`key_items`): the Snowfield Key, the Submarine and Bubbles' Thing only appear in your
-  inventory once you receive them from the multiworld.
+- **247 locations** by default: 211 chests and the trap chest of the Sewer, 17 hidden items, the end of each
+  chapter, and the three story scenes that give a key item.
+- **Key items** shuffled (`key_items`): the Snowfield Key, the Submarine, Bubbles' Thing and the Sewer Key only
+  appear in your inventory once you receive them from the multiworld.
 - **Logic that follows the story**: Gas Mask, Ki-Blast Fruits and key items are required where the game needs them;
   a seed can never lock you out.
 - **Goals**: the end of any chapter (`goal_chapter`, 1 to 15), or defeating **Broly**, the secret boss (`goal: broly`).
 - **DeathLink**: a Game Over sends a death; a received death ends your next battle.
 - **Experience multiplier** (1 to 10) to keep up with a multiworld.
 - **Chests show what they really hold**: your item's name, or "Archipelago Item" for another player's.
-- **PopTracker pack** with the real maps of the game, which follows you from area to area (built from your own ROM,
-  see below).
+- **PopTracker pack** with the real maps of the game and a world map overview, which follows you from area to area
+  (built from your own ROM, see below).
 
 ## Requirements
 
@@ -53,8 +53,8 @@ The [setup guide](worlds/dbz_aots/docs/setup_en.md) has every step and the known
 ## PopTracker pack
 
 A [PopTracker](https://github.com/black-sliver/PopTracker) pack shows every area of the game with a pin on each
-chest, follows your items and checks through Archipelago, opens the tab of the area you are in, and hides what your
-options do not shuffle. Its maps are
+chest, a "World" tab with every location on the world map of the game, follows your items and checks through
+Archipelago, opens the tab of the area you are in, and hides what your options do not shuffle. Its maps are
 pictures of the game, so they are **not** distributed: you build the pack from your own ROM (Python 3.12 needed):
 
 ```bash

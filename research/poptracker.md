@@ -47,8 +47,12 @@ Vérifié :
 - suivi automatique : connexion à un serveur de test (`localhost:38281`, joueur `Aure`) ; objets reçus allumés
   (compteur du Ki-Blast Fruit), lieu coché passé en gris, lieux du ch. 15 cachés avec `goal_chapter: 12`.
 
+Onglet « World » (2026-11-13, C58) : la carte du monde ×2, chaque lieu y apparaît aussi (deuxième `map_locations`)
+dans une petite grille sur sa zone ; l'Autre monde dans un panneau à droite. Positions : `world.json` écrit par
+`extract_tracker_assets.py` depuis `script/cf/worldmap.sb`. Égouts (D54) : interrupteur `opt_sewers` lu dans
+`slot_data["sewer_key"]` (absent = seed d'avant 0.15.0 = pas d'égouts), Clé des égouts dans la grille.
+
 ## Ce qui reste
-1. Onglet « monde » (carte du monde décodée) : trouver ou relever en jeu la position de chaque zone.
-2. Vraies icônes d'objets (dossier `menu/icon` de la ROM, format à décoder).
-3. Distribution aux amis : chacun peut générer le pack avec sa ROM (Python + ndspy + Pillow), ou recevoir le pack
+1. Vraies icônes d'objets (dossier `menu/icon` de la ROM, format à décoder).
+2. Distribution aux amis : chacun peut générer le pack avec sa ROM (Python + ndspy + Pillow), ou recevoir le pack
    en privé ; ne pas publier les images du jeu.

@@ -2,10 +2,9 @@
 
 ## Status
 
-This world covers the whole story: 215 of the 219 chests of the game (6 of them with the `east_city_ruins`
-option), 17 of the 19 hidden items, the end of each chapter and the three story scenes that give a key item. The
-others are left untouched: the two Sewer chests (behind the optional Sewer Key, 1000 carrots) and four spots whose
-access could not be confirmed in game.
+This world covers the whole story: 217 of the 219 chests of the game (6 of them with the `east_city_ruins`
+option), the trap chest of the Sewer, 17 of the 19 hidden items, the end of each chapter and the three story scenes
+that give a key item. Four spots whose access could not be confirmed in game are left untouched.
 
 ## What does randomization do to this game?
 
@@ -28,9 +27,11 @@ there is no save after it.
 
 ## Which locations are randomized?
 
-244 locations:
+247 locations:
 
 - the chests of every area of the story, from Training Island to Gizard Wasteland (209);
+- the optional Sewer under the Martial Arts Temple, with the `key_items` option: two chests and a trap chest that
+  starts a battle (3);
 - the hidden items you get by examining a drawer, a stall, a door... (17);
 - the end of the prologue and of chapters 1 to 14 (15);
 - the three story scenes that give a key item, with the `key_items` option (3).
@@ -49,7 +50,7 @@ anyone. Location groups are available for hints: one per area (for example "Kiwi
 ## Which items can be found?
 
 The original contents of those chests and hidden spots: healing items, stat fruits, accessories and capsules,
-plus filler for the chapter ends. Six of them matter for progression:
+plus filler for the chapter ends. Seven of them matter for progression:
 
 - **Gas Mask** (capsule): needed from the prologue. On Training Island, Bulma lets nobody into the poison mist until
   the Gas Mask is equipped, and the end of the prologue is behind it; the Spinach Wastes (chapter 6) cross a gas
@@ -60,7 +61,10 @@ plus filler for the chapter ends. Six of them matter for progression:
   scene at Capsule Corp. no longer gives it.
 - **Bubbles' Thing** (key item, with the `key_items` option): repairs the five stumps of Yemma Forest in chapter 13.
   The scene on King Kai's Planet no longer gives it.
-- **Ki-Blast Fruit** (3 in the pool, 2 needed): use it from the Items menu to raise your Ki-blast meter. One fruit breaks the
+- **Sewer Key** (key item, with the `key_items` option): opens the manhole of the Martial Arts Temple, the only way
+  into the Sewer. The game gives it for 1000 carrots; shuffled, it takes the place of a filler item, and the logic
+  expects the Sewer during the tour before the final battle (chapter 15). The carrot man no longer gives it.
+- **Ki-Blast Fruit** (4 in the pool, 2 needed): use it from the Items menu to raise your Ki-blast meter. One fruit breaks the
   level 2 rocks that block the story in chapter 8, two fruits break the level 3 doors of chapter 13.
 
 Received items are not used or equipped automatically: use the fruits and equip the capsules yourself.

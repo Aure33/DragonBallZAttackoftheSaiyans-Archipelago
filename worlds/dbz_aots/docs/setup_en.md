@@ -57,7 +57,8 @@ there.
 ## Tracker
 
 A PopTracker pack with the maps of the game can be built from your own ROM: see the README of the world's
-repository. Once connected, it opens the tab of the area you are in (button "Map" to turn this off).
+repository. Once connected, it opens the tab of the area you are in (button "Map" to turn this off). The "World"
+tab shows every location on the world map of the game, grouped on its area.
 
 ## Known limitations
 
@@ -66,7 +67,8 @@ repository. Once connected, it opens the tab of the area you are in (button "Map
 - Received items are only added to your inventory: use the Ki-Blast Fruits and equip the Gas Mask yourself (capsule
   panel on the touch screen). Equip the Gas Mask before the poison mist of Training Island: Bulma stops you there
   until it is equipped.
-- With `key_items`, the client keeps the Snowfield Key, the Submarine and Bubbles' Thing in your inventory only once
-  they are received: the story scenes that give them in the original game no longer do.
+- With `key_items`, the client keeps the Snowfield Key, the Submarine, Bubbles' Thing and the Sewer Key in your
+  inventory only once they are received: the story scenes (and the carrot man) that give them in the original game
+  no longer do.
 - Never load an older save or savestate to undo a defeat while DeathLink is on: the client only sends a death when
   the game restarts after a Game Over.

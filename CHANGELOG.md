@@ -3,6 +3,19 @@
 All notable changes to the world. Versions follow `world_version` in
 [`worlds/dbz_aots/archipelago.json`](worlds/dbz_aots/archipelago.json).
 
+## 0.15.0 — the Sewer, a world map in the tracker
+
+### Added
+- The optional Sewer under the Martial Arts Temple (with `key_items`): its two chests and its trap chest (a battle,
+  then Kami's Cape) are locations. The **Sewer Key**, which the game gives for 1000 carrots, is shuffled in place of
+  a filler item; the logic expects the Sewer in chapter 15, with the key. 247 locations by default.
+- PopTracker pack: a "World" tab with every location on the world map of the game, grouped on its area (the Other
+  World in a panel beside it); the Sewer Key in the item grid, and 4 Ki-Blast Fruits.
+
+### Fixed
+- The client also takes back an item given after its location's flag (the trap chest does so).
+- `extract_tracker_assets.py` failed since 0.13.0.
+
 ## 0.14.0 — the Gas Mask is needed from the prologue
 
 ### Fixed

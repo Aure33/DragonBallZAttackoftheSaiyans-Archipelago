@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from rule_builder.rules import Has, Rule
 
 from .items import BUBBLES_THING, GAS_MASK, KI_BLAST_FRUIT, SNOWFIELD_KEY, SUBMARINE
-from .locations import PROLOGUE_END, VICTORY
+from .locations import PROLOGUE_END, VICTORY, included_locations
 from .regions import chapter_entrance, chapter_region
 
 if TYPE_CHECKING:
@@ -50,6 +50,10 @@ def set_all_rules(world: DbzAotsWorld) -> None:
         if rule is None:
             continue
         world.set_rule(world.get_entrance(chapter_entrance(chapter)), rule)
+    # Locations behind a key item besides their chapter (the sewers: the Sewer Key opens their manhole).
+    for data in included_locations(world):
+        if data.key_item:
+            world.set_rule(world.get_location(data.name), Has(data.key_item))
     if PROLOGUE_END in {location.name for location in world.get_region(chapter_region(0)).locations}:
         world.set_rule(world.get_location(PROLOGUE_END), CHAPTER_REQUIREMENTS[1])
     world.set_completion_rule(Has(VICTORY))

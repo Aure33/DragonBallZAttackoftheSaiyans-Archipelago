@@ -44,9 +44,10 @@ class ChapterChecks(DefaultOnToggle):
 
 class KeyItems(DefaultOnToggle):
     """
-    Shuffle the story key items that the game checks in the inventory: the Snowfield Key (chapter 8), the Submarine
-    (chapter 10) and Bubbles' Thing (chapter 13). The scenes that give them become locations, and the way they open
-    stays closed until the item is received.
+    Shuffle the key items that the game checks in the inventory: the Snowfield Key (chapter 8), the Submarine
+    (chapter 10) and Bubbles' Thing (chapter 13), whose scenes become locations, and the Sewer Key, which adds the
+    optional Sewer (2 chests and a trap chest, expected in chapter 15). The way they open stays closed until the item
+    is received.
     """
 
     display_name = "Key Items"

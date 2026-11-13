@@ -11,7 +11,7 @@ import worlds._bizhawk as bizhawk
 from worlds._bizhawk.client import BizHawkClient
 
 from . import ram
-from .items import GAME_NAME, GAS_MASK, ITEM_NAME_TO_ID, KEY_ITEMS, item_slot
+from .items import GAME_NAME, GAS_MASK, ITEM_NAME_TO_ID, KEY_ITEMS, SEWER_KEY, item_slot
 from .location_data import HIDDEN_ITEM_SCRIPTS, ITEM_SLOTS, LOCATIONS
 from .locations import LOCATION_ID_BASE, ORIGINAL_ITEM_LOCATION_IDS
 from .rom import PATCH_FILE_ENDING
@@ -124,19 +124,27 @@ def picked_up_items(before: bytes, after: bytes) -> list[int]:
     return changed
 
 
-def items_to_take_back(expected: list[set[int]], pickups: list[int]) -> list[int]:
-    """One inventory offset per opened location whose item is among the recent `pickups` (most recent first).
+def match_pickups(expected: list[set[int]], pickups: list[int]) -> tuple[list[int], list[set[int]]]:
+    """One inventory offset per opened location whose item is among the recent `pickups` (most recent first), and
+    the locations left without one.
 
     `expected` holds, for each opened location, the offsets its item may be at (original item, or the one the client
     put there). A hidden item is given before its flag is set, when its message closes: hence the recent pick-ups.
+    The trap chest of the sewers does the opposite (flag, then item): hence the locations left waiting.
     """
-    left, chosen = list(pickups), []
+    left, chosen, unmatched = list(pickups), [], []
     for offsets in expected:
         match = next((offset for offset in left if offset in offsets), None)
-        if match is not None:
+        if match is None:
+            unmatched.append(offsets)
+        else:
             left.remove(match)
             chosen.append(match)
-    return chosen
+    return chosen, unmatched
+
+
+def items_to_take_back(expected: list[set[int]], pickups: list[int]) -> list[int]:
+    return match_pickups(expected, pickups)[0]
 
 
 def items_to_give(inventory: bytes, received_ids: list[int], already_given: int) -> dict[int, int]:
@@ -153,13 +161,16 @@ def items_to_give(inventory: bytes, received_ids: list[int], already_given: int)
     return quantities
 
 
-def key_item_corrections(inventory: bytes, received_ids: list[int]) -> dict[int, int]:
+def key_item_corrections(inventory: bytes, received_ids: list[int], sewer_key: bool = False) -> dict[int, int]:
     """Inventory offset -> quantity, for the shuffled key items whose quantity differs from the number received.
 
-    A story scene gives the original key item: it must go away until the key arrives from the server (D46).
+    A story scene gives the original key item: it must go away until the key arrives from the server (D46). The
+    Sewer Key is only shuffled when the seed says so (slot data `sewer_key`).
     """
     corrections: dict[int, int] = {}
     for name, index in KEY_ITEMS.items():
+        if name == SEWER_KEY and not sewer_key:
+            continue
         wanted = min(received_ids.count(ITEM_NAME_TO_ID[name]), 1)
         offset = ram.INVENTORY_OFFSET[ram.ItemCategory.KEY_ITEM] + index
         if inventory[offset] != wanted:
@@ -243,6 +254,8 @@ class DbzAotsClient(BizHawkClient):
         self.previous_flags: bytes | None = None
         self.previous_inventory: bytes | None = None
         self.recent_pickups: list[int] = []
+        self.waiting_locations: list[set[int]] = []
+        """Opened locations whose item has not shown up yet (trap chest: its flag is set before its item)."""
         """Items picked up on this map and not matched to a location yet, most recent first."""
         self.shown_codes: dict[int, int] = {}
         """Game flag -> item code put in that location by show_real_items."""
@@ -450,17 +463,21 @@ class DbzAotsClient(BizHawkClient):
         """
         if self.previous_flags is None or self.previous_inventory is None or self.previous_map != map_code:
             self.recent_pickups = []
+            self.waiting_locations = []
         else:
             pickups = picked_up_items(self.previous_inventory, inventory) + self.recent_pickups
             newly_opened = (opened_locations(flags, ORIGINAL_ITEM_LOCATION_IDS)
                             - opened_locations(self.previous_flags, ORIGINAL_ITEM_LOCATION_IDS))
-            expected = []
+            expected = list(self.waiting_locations)
             for location_id in sorted(newly_opened):
                 flag = location_id - LOCATION_ID_BASE
                 expected.append({ORIGINAL_ITEM_CODES[flag] - 1, self.shown_codes.get(flag, 0) - 1})
-            chosen = items_to_take_back(expected, pickups)
-            if len(chosen) < len(expected):
-                logger.info("A chest was opened but the item it gave could not be identified; it was kept")
+            chosen, unmatched = match_pickups(expected, pickups)
+            # An item that comes after its flag (the trap chest gives it when its message closes) is waited for until
+            # the map changes; if it never comes, it is kept.
+            if len(unmatched) > len(self.waiting_locations):
+                logger.info("A chest was opened but its item has not shown up yet")
+            self.waiting_locations = unmatched[-RECENT_PICKUPS:]
             restore: dict[int, int] = {}
             for offset in chosen:
                 restore[offset] = restore.get(offset, inventory[offset]) - 1
@@ -587,7 +604,8 @@ class DbzAotsClient(BizHawkClient):
         if not (ctx.slot_data or {}).get("key_items"):
             return
         inventory = (await bizhawk.read(ctx.bizhawk_ctx, [(ram.INVENTORY, ram.INVENTORY_SIZE, ram.MAIN_RAM)]))[0]
-        corrections = key_item_corrections(inventory, [item.item for item in ctx.items_received])
+        corrections = key_item_corrections(inventory, [item.item for item in ctx.items_received],
+                                           bool(ctx.slot_data.get("sewer_key")))
         if corrections:
             await bizhawk.guarded_write(
                 ctx.bizhawk_ctx,

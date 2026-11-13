@@ -13,6 +13,7 @@ Cahier des charges complet : [research/Prompt_archipelago_dbz.md](research/Promp
 - Quand il doit faire quelque chose (jouer, état de sauvegarde, lire une valeur) : instructions numérotées, puis on attend son retour.
 
 ## État actuel
+- **World 0.15.0 (2026-11-13)** : égouts dans le world avec `key_items` (coffres 1449, 1450 et faux coffre 2663, ch. 15 + Clé des égouts mélangée à la place d'un objet de remplissage : C57, D54) ; client qui attend un objet donné après son drapeau ; onglet « World » du pack PopTracker (carte du monde, C58). Releases v0.13.0 et v0.14.0 taguées. Dépôt **public**. Restent de côté : 1455, 1550, 3206, 2590 ; carottes et captures pas en lieux ; icônes d'objets du pack.
 - **World 0.14.0 (2026-11-13)** : le Masque à gaz est requis dès la fin du prologue (brume de l'île d'entraînement, Bulma bloque tant qu'il n'est pas équipé : C56, D53) ; option `gas_mask_placement` (défaut `own_early`). Le client rappelle de l'équiper à sa réception.
 - **World 0.13.0 (2026-10-25, pas encore publié par tag)** : coffres et objets à examiner montrent leur vrai objet (le nôtre, ou « Objet Archipelago » = objet 103 nommé en mémoire), réécrits en mémoire par le client (C55, D52) ; PopTracker ouvre l'onglet de la zone en cours. Vérifié en jeu et dans PopTracker. Pour BizHawk + télécommande + connecteur ensemble : `EmuHawk.exe --lua=…\dbz_research\test_session.luases <ROM>` (session des deux scripts).
 - **Dépôt rangé et 1re release (2026-10-25)** : `README.md` (anglais), `CHANGELOG.md`, guides `setup_en.md` / `setup_fr.md`,
@@ -38,7 +39,7 @@ Cahier des charges complet : [research/Prompt_archipelago_dbz.md](research/Promp
   - Raccourcis mémoire (C39, `tools/warp.py`) : téléportation, saut de scène, drapeaux d'histoire ; Raditz sans fausse mort (C40) ; porte du champ de neige pas encore ouverte (C41).
   - Lieux mis de côté (C50, D49) : 17 vérifiés en jeu et ajoutés (ch. 15), 6 restent de côté (dont égouts). Drapeau 1050 vu en jeu (C51). World 0.11.0, 244 lieux par défaut.
   - PopTracker refait (C53, D50) : vraies cartes décodées depuis la ROM, un onglet par zone, un point par lieu, suivi automatique vérifié. Construire : `extract_tracker_assets.py <ROM>` puis `tools/build_poptracker.py --deploy` (notes : `research/poptracker.md`).
-  - Reste : onglet carte du monde, icônes d'objets, dons à plusieurs drapeaux (carottes, captures…), phase 8.
+  - Reste : icônes d'objets, dons à plusieurs drapeaux (carottes, captures…), phase 8.
 - **Phase 5 — Test réel : terminée (2026-10-23).** Seed DBZ + APQuest (2e joueur simulé par `/send_location` du serveur), jouée par Claude via la télécommande : checks, objets envoyés et reçus, objectif, `collect`, aucun doublon (`research/decisions.md`, C14).
 - **Phase 4 — Client minimal : terminée (2026-10-23).**
   - `client.py` : coffres → checks, retrait de l'objet d'origine, objets reçus hors combat, compteur dans la sauvegarde, objectif (arrivée en Ville est). 22 tests du world. Essai réel réussi (`research/decisions.md`, C11). World 0.2.0 installé côté Windows.

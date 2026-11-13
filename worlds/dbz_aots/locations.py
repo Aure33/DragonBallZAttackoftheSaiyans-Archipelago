@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from BaseClasses import Location, LocationProgressType
+from BaseClasses import ItemClassification, Location, LocationProgressType
 
-from .items import GAME_NAME, DbzAotsItem
+from .items import FILLER_ITEM, GAME_NAME, ITEMS, SEWER_KEY, DbzAotsItem
 from .location_data import LOCATIONS, LocationData
 from .ram import BROLY_DEFEATED_FLAG, CHAPTER_START_FLAGS, GOAL_FLAG
 from .regions import LAST_CHAPTER, chapter_region
@@ -63,7 +63,14 @@ def included_locations(world: DbzAotsWorld) -> list[LocationData]:
     return [data for data in LOCATIONS
             if data.chapter <= options.goal_chapter
             and (not data.bonus or options.east_city_ruins)
-            and (not data.hidden or options.hidden_items)]
+            and (not data.hidden or options.hidden_items)
+            # Without the option, the Sewer Key stays the reward of 1000 carrots: the sewers are left out.
+            and (not data.key_item or options.key_items)]
+
+
+def needs_sewer_key(world: DbzAotsWorld) -> bool:
+    """The Sewer Key is in the pool when a location needs it (it has no location of its own)."""
+    return any(data.key_item == SEWER_KEY for data in included_locations(world))
 
 
 def included_story_locations(world: DbzAotsWorld) -> dict[str, tuple[int, int]]:
@@ -88,9 +95,15 @@ def goal_flag(goal_chapter: int, broly: bool = False) -> int:
 
 
 def original_contents(world: DbzAotsWorld) -> list[str]:
-    """Items found at the included locations in the original game: they make up the item pool."""
-    return ([data.item for data in included_locations(world)]
-            + [item for _, _, item in included_key_item_locations(world).values()])
+    """Items found at the included locations in the original game: they make up the item pool. The Sewer Key, when
+    needed, takes the place of one filler item."""
+    contents = ([data.item for data in included_locations(world)]
+                + [item for _, _, item in included_key_item_locations(world).values()])
+    if needs_sewer_key(world):
+        fillers = [name for name in contents if ITEMS[name].classification == ItemClassification.filler]
+        contents.remove(FILLER_ITEM if FILLER_ITEM in fillers else fillers[0])
+        contents.append(SEWER_KEY)
+    return contents
 
 
 def create_all_locations(world: DbzAotsWorld) -> None:

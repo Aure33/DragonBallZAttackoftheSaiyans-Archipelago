@@ -6,7 +6,7 @@ from NetUtils import NetworkItem
 from .. import ram
 from ..client import (ORIGINAL_ITEM_CODES, Progress, battle_bonus, chest_rewrites, find_text_table, flag_is_set,
                       game_over, generic_item_name, hidden_item_rewrites, in_game, items_to_give, key_item_corrections,
-                      items_to_take_back, map_key, opened_locations, party_defeated, party_hp_addresses,
+                      items_to_take_back, map_key, match_pickups, opened_locations, party_defeated, party_hp_addresses,
                       picked_up_items, read_progress, received_message, shown_item_code)
 from ..items import ITEM_NAME_TO_ID
 from ..locations import LOCATION_NAME_TO_ID, ORIGINAL_ITEM_LOCATION_IDS
@@ -58,6 +58,11 @@ class TestClientLogic(unittest.TestCase):
         self.assertEqual([], items_to_take_back([{29}], [0]))  # not the expected item: kept
         self.assertEqual([2, 29], items_to_take_back([{2, 102}, {29}], [29, 2, 2]))
         self.assertEqual([2, 2], items_to_take_back([{2}, {2}], [2, 2]))  # two chests with the same item
+
+    def test_location_without_its_item_yet_is_left_waiting(self) -> None:
+        # Trap chest: its flag comes first, its item when the message closes.
+        self.assertEqual(([], [{220}]), match_pickups([{220}], []))
+        self.assertEqual(([220], []), match_pickups([{220}], [220]))
 
     def test_only_new_items_are_given(self) -> None:
         inventory = bytearray(ram.INVENTORY_SIZE)
@@ -172,6 +177,13 @@ class TestKeyItems(unittest.TestCase):
         inventory[submarine] = 1
         received = [ITEM_NAME_TO_ID["Bubbles' Thing"]]
         self.assertEqual({submarine: 0, bubbles_thing: 1}, key_item_corrections(bytes(inventory), received))
+
+    def test_sewer_key_only_when_the_seed_shuffles_it(self) -> None:
+        sewer_key = ram.INVENTORY_OFFSET[ram.ItemCategory.KEY_ITEM] + 26
+        inventory = bytearray(ram.INVENTORY_SIZE)
+        inventory[sewer_key] = 1  # reward of 1000 carrots
+        self.assertEqual({}, key_item_corrections(bytes(inventory), [], sewer_key=False))
+        self.assertEqual({sewer_key: 0}, key_item_corrections(bytes(inventory), [], sewer_key=True))
 
 
 class TestRealItems(unittest.TestCase):

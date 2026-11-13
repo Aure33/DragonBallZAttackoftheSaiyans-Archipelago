@@ -126,6 +126,7 @@ Détails et essais : `decisions.md`, C55.
 | Élément | Adresse (Main RAM) | Adresse DS | Taille | Statut | Comment trouvé | Date |
 |---|---|---|---|---|---|---|
 | Réserve des objets de la carte (cases de `0xEC` octets) ; coffre : code de l'objet à +0x30, état à +0x34 (0 fermé, 2 ouvert), drapeau à +0x3C | `0x0D23DC` | `0x020D23DC` | 4 octets par champ | ✅ | Photo mémoire de `tut02_00` : drapeaux 1404/1405 trouvés à côté de leurs codes 2/1 ; code changé → objet affiché et donné | 2026-10-25 |
+| Position d'un objet de la réserve : x, y en virgule fixe 12 bits (4 octets chacun) à case − 0x1C ; octet à case − 0x1C + 0x0B = étage (un coffre ne s'ouvre que depuis son étage). Joueur = 1re case, position à `0x0D23C0` | `0x0D23C0` | `0x020D23C0` | 4 octets par champ | ✅ | Photos mémoire à deux positions connues (téléportation), égouts (C57) | 2026-11-13 |
 | Script de la carte en cours (copie de `script/<langue>/cf0/<zone>/<carte>.sb`, en-tête mis à part) | `0x282000` | `0x02282000` | taille du fichier | ✅ | « SB » trouvé en mémoire, comparé au fichier FR ; octet de l'objet de 3201 changé → nouvel objet donné | 2026-10-25 |
 | Tables de textes du jeu (`btl/bdat/<langue>/bdat.bin` entier, dont `use_item_mes`) | `0x200000` | `0x02200000` | ~110 Ko | ✅ | En-tête identique au fichier FR ; nom écrit pour l'objet 103 → « Objet Archipelago » affiché | 2026-10-25 |
 

@@ -59,6 +59,7 @@ y apparaît comme « Objet Archipelago ».
 
 Un pack PopTracker avec les cartes du jeu peut être construit à partir de votre propre ROM : voir le README du dépôt
 du world. Une fois connecté, il ouvre l'onglet de la zone où vous êtes (bouton « Map » pour couper ce suivi).
+L'onglet « World » montre tous les lieux sur la carte du monde du jeu, groupés sur leur zone.
 
 ## Limites connues
 
@@ -68,7 +69,8 @@ du world. Une fois connecté, il ouvre l'onglet de la zone où vous êtes (bouto
 - Les objets reçus sont seulement ajoutés à l'inventaire : utilisez vous-même les Ki-Blast Fruits et équipez le
   Masque à gaz (panneau des capsules, sur l'écran tactile). Équipez le Masque à gaz avant la brume empoisonnée de
   l'île d'entraînement : Bulma vous arrête là tant qu'il n'est pas équipé.
-- Avec `key_items`, le client ne laisse la Clé du champ de neige, le Sous-marin et le Truc de Bubbles dans
-  l'inventaire qu'une fois reçus : les scènes qui les donnent dans le jeu d'origine ne les donnent plus.
+- Avec `key_items`, le client ne laisse la Clé du champ de neige, le Sous-marin, le Truc de Bubbles et la Clé des
+  égouts dans l'inventaire qu'une fois reçus : les scènes (et l'homme aux carottes) qui les donnent dans le jeu
+  d'origine ne les donnent plus.
 - Avec DeathLink, ne chargez jamais une ancienne sauvegarde ou un état de sauvegarde pour annuler une défaite : le
   client n'envoie une mort que quand le jeu redémarre après un Game Over.

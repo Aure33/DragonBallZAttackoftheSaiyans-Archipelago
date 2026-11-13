@@ -95,6 +95,9 @@ class DbzAotsWorld(World):
             "goal_flag": locations.goal_flag(self.options.goal_chapter.value,
                                              self.options.goal == Goal.option_broly),
             "key_items": self.options.key_items.value,
+            # The client keeps the Sewer Key at the quantity received only when it is shuffled (seeds before 0.15.0
+            # do not send this: the key stays the reward of 1000 carrots).
+            "sewer_key": int(locations.needs_sewer_key(self)),
             # Read by the PopTracker pack only, to show what this slot shuffles.
             "goal_chapter": self.options.goal_chapter.value,
             "hidden_items": self.options.hidden_items.value,

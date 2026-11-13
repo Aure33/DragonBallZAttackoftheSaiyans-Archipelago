@@ -28,8 +28,8 @@ sys.path.insert(0, str(ARCHIPELAGO))
 
 from PIL import Image, ImageDraw, ImageFont  # noqa: E402
 
-from worlds.dbz_aots.items import (BUBBLES_THING, GAS_MASK, ITEM_NAME_TO_ID, KI_BLAST_FRUIT, SNOWFIELD_KEY,  # noqa: E402
-                                    SUBMARINE)
+from worlds.dbz_aots.items import (BUBBLES_THING, GAS_MASK, ITEM_NAME_TO_ID, KI_BLAST_FRUIT, SEWER_KEY,  # noqa: E402
+                                    SNOWFIELD_KEY, SUBMARINE)
 from worlds.dbz_aots.location_data import LOCATIONS  # noqa: E402
 from worlds.dbz_aots.locations import (KEY_ITEM_LOCATIONS, LOCATION_NAME_TO_ID, PROLOGUE_END,  # noqa: E402
                                        STORY_LOCATIONS)
@@ -42,9 +42,10 @@ VERSION = json.loads((REPO / "worlds/dbz_aots/archipelago.json").read_text())["w
 FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 
 # Tracked items: PopTracker code, maximum count, colour of the generated icon, short label.
-TRACKED = {GAS_MASK: ("gasmask", 1, (70, 140, 70), "GM"), KI_BLAST_FRUIT: ("kiblast", 3, (220, 120, 30), "KB"),
+TRACKED = {GAS_MASK: ("gasmask", 1, (70, 140, 70), "GM"), KI_BLAST_FRUIT: ("kiblast", 4, (220, 120, 30), "KB"),
            SNOWFIELD_KEY: ("snowkey", 1, (90, 160, 220), "SK"), SUBMARINE: ("submarine", 1, (230, 190, 40), "SU"),
-           BUBBLES_THING: ("bubbles", 1, (200, 90, 200), "BT")}
+           BUBBLES_THING: ("bubbles", 1, (200, 90, 200), "BT"), SEWER_KEY: ("sewerkey", 1, (120, 110, 90), "SW")}
+KEY_ITEM_RULES = {SEWER_KEY: "sewerkey"}  # locations behind a key item besides their chapter (rules.py)
 KEY_ITEM_CODES = ("snowkey", "submarine", "bubbles")
 # Same requirements as rules.py (research/decisions.md, D28, D47 and D53), as PopTracker rules. With key_items off, the
 # pack marks the three key items as owned (the story gives them), so the same rules hold.
@@ -52,10 +53,20 @@ CHAPTER_RULES = {1: "gasmask", 8: "gasmask,kiblast:1,snowkey", 10: "gasmask,kibl
                  13: "gasmask,kiblast:2,snowkey,submarine,bubbles"}
 # Options read from slot_data (consumables used as switches, on by default when the pack is used by hand).
 OPTIONS = {"opt_hidden": "hidden_items", "opt_chapters": "chapter_checks", "opt_keys": "key_items",
+           "opt_sewers": "sewer_key",
            "opt_ruins": "east_city_ruins"}
 MAP_KEY_PREFIX = "dbz_aots_map_"  # client.map_key()
 GROUPS = ((0, 4, "Prologue - Ch. 4"), (5, 8, "Ch. 5 - 8"), (9, 12, "Ch. 9 - 12"), (13, 15, "Ch. 13 - 15"))
 
+# World tab: the world map of the game (zones where research/scripts/extract_tracker_assets.py found them), with the
+# pins of each area in a small grid on its zone. Areas with no zone of their own sit on the zone they are entered from;
+# the Other World is drawn in a panel next to the map.
+WORLD_SCALE, WORLD_PIN, WORLD_PANEL = 2, 14, 300
+WORLD_PARENT = {"gok": "pao08_00",  # Goku's House: East Mt. Paozu (build_world_data.py, ZONES)
+                "kar": "skr01_00",  # Korin Tower: Sacred Land of Korin
+                "ges": "bud01_00",  # Sewer: manhole of the Martial Arts Temple (decisions.md, C57)
+                "nem": "kou01_00"}  # Nemuria Ruins: MapJump from kou10_00 (Break Wasteland)
+OTHER_WORLD = ("enm", "sna", "for", "kos")  # King Yemma, Snake Way, Yemma Forest, King Kai's Planet
 ROW_WIDTH, LABEL, GAP = 1600, 34, 12
 BOX_W, BOX_H, COLUMNS = 300, 120, 4
 
@@ -130,6 +141,53 @@ def story_board() -> Image.Image:
     return image
 
 
+def world_board(by_zone: dict[str, list], positions: dict[int, list]) -> tuple[Image.Image, dict[str, tuple[int, int]]]:
+    """The world map with every area's name on its zone, and the spot (centre of its pin grid) of each area."""
+    world = json.loads((ASSETS / "world.json").read_text())
+    base = Image.open(ASSETS / "maps/worldmap.png").convert("RGB")
+    width, height = base.width * WORLD_SCALE, base.height * WORLD_SCALE
+    canvas = Image.new("RGB", (width + WORLD_PANEL, height), (24, 24, 30))
+    canvas.paste(base.resize((width, height), Image.NEAREST), (0, 0))
+    draw = ImageDraw.Draw(canvas)
+    draw.text((width + WORLD_PANEL // 2, 24), "Other World", font=font(24), fill=(245, 215, 120), anchor="mm")
+    spots: dict[str, tuple[int, int]] = {}
+    taken: Counter[tuple[int, int]] = Counter()
+    other = 0
+    for zone, entries in sorted(by_zone.items(), key=lambda item: min(d.chapter for d in item[1])):
+        screens = sorted({positions[d.flag][0] for d in entries if d.flag in positions})
+        if not screens:
+            continue
+        prefix = screens[0][:3]
+        code = next((s for s in screens if s in world), None) or next((c for c in sorted(world) if c[:3] == prefix),
+                                                                    None) or WORLD_PARENT.get(prefix)
+        side = len(entries) ** 0.5
+        size = int(-(-side // 1)) * WORLD_PIN
+        if code in world:
+            x, y = (v * WORLD_SCALE for v in world[code])
+            shift = taken[(x, y)] * (size + 12)  # areas on the same zone, side by side
+            taken[(x, y)] += 1
+            x += shift
+        elif prefix in OTHER_WORLD:
+            x, y, shift = width + WORLD_PANEL // 2, 90 + other * 170, 0
+            other += 1
+        else:
+            continue
+        spots[zone] = (x, y)
+        # The second area of a zone has its name under its pins, so that the two names do not overlap.
+        label_y = y + size // 2 + 10 if shift else y - size // 2 - 12
+        draw.text((x, label_y), zone, font=font(14), fill=(255, 255, 255), anchor="mm",
+                  stroke_width=3, stroke_fill=(0, 0, 0))
+    return canvas, spots
+
+
+def world_pins(count: int, centre: tuple[int, int]) -> list[tuple[int, int]]:
+    columns = max(1, int(-(-(count ** 0.5) // 1)))
+    rows = -(-count // columns)
+    x0 = centre[0] - (columns - 1) * WORLD_PIN // 2
+    y0 = centre[1] - (rows - 1) * WORLD_PIN // 2
+    return [(x0 + (i % columns) * WORLD_PIN, y0 + (i // columns) * WORLD_PIN) for i in range(count)]
+
+
 def map_id(zone: str) -> str:
     return "zone_" + "".join(c if c.isalnum() else "_" for c in zone.lower())
 
@@ -166,8 +224,11 @@ def build() -> None:
             maps.append({"name": map_id(zone), "location_size": 22, "location_border_thickness": 3,
                          "img": f"images/maps/{map_id(zone)}.png"})
         for data in entries:
-            switches = (["opt_hidden"] if data.hidden else []) + (["opt_ruins"] if data.bonus else [])
-            location = {"name": data.name, "access_rules": chapter_rule(data.chapter),
+            switches = ((["opt_hidden"] if data.hidden else []) + (["opt_ruins"] if data.bonus else [])
+                        + (["opt_sewers"] if data.key_item else []))
+            rules = [",".join([*chapter_rule(data.chapter), KEY_ITEM_RULES[data.key_item]])] if data.key_item \
+                else chapter_rule(data.chapter)
+            location = {"name": data.name, "access_rules": rules,
                         "visibility_rules": visibility(data.chapter, *switches),
                         "sections": [{"name": "Item", "item_count": 1}]}
             place = positions.get(data.flag)
@@ -178,6 +239,16 @@ def build() -> None:
                 unplaced.append(data.name)
             locations.append(location)
             mapping[LOCATION_NAME_TO_ID[data.name]] = f"@{data.name}/Item"
+
+    # World tab: the same locations, on their zone of the world map.
+    world, spots = world_board(by_zone, positions)
+    world.save(OUT / "images/maps/world.png")
+    maps.append({"name": "world", "location_size": WORLD_PIN - 2, "location_border_thickness": 1,
+                 "img": "images/maps/world.png"})
+    by_name = {location["name"]: location for location in locations}
+    for zone, spot in spots.items():
+        for data, (x, y) in zip(by_zone[zone], world_pins(len(by_zone[zone]), spot)):
+            by_name[data.name].setdefault("map_locations", []).append({"map": "world", "x": x, "y": y})
 
     # Story tab: chapter ends and the scenes that give a key item, in their chapter box.
     story_board().save(OUT / "images/maps/story.png")
@@ -212,7 +283,8 @@ def build() -> None:
     items.append({"name": "Map (open the tab of the area you are in)", "type": "toggle", "codes": "followmap",
                   "img": "images/items/followmap.png", "initial_active_state": True})
 
-    tabs = [{"title": "Story", "content": {"type": "map", "maps": ["story"]}}]
+    tabs = [{"title": "World", "content": {"type": "map", "maps": ["world"]}},
+            {"title": "Story", "content": {"type": "map", "maps": ["story"]}}]
     zone_tabs: dict[str, tuple[str, str]] = {}
     for first, last, title in GROUPS:
         zones = sorted((z for z in by_zone if first <= zone_chapter[z] <= last
@@ -297,6 +369,8 @@ function onClear(slot_data)
         if slot_data[key] ~= nil then set_count(code, slot_data[key] ~= 0 and 1 or 0) end
     end
     if slot_data["goal_chapter"] ~= nil then set_count("goalch", slot_data["goal_chapter"]) end
+    -- Seeds before world 0.15.0 have no sewers.
+    if slot_data["sewer_key"] == nil then set_count("opt_sewers", 0) end
     -- Key items left in place: the story gives them, so the rules that need them hold.
     if slot_data["key_items"] == 0 then
         for _, code in ipairs(KEY_ITEM_CODES) do

@@ -4,7 +4,8 @@ from BaseClasses import LocationProgressType
 
 from .bases import DbzAotsTestBase
 from .. import ram
-from ..items import BUBBLES_THING, GAS_MASK, ITEM_NAME_TO_ID, ITEMS, KI_BLAST_FRUIT, SNOWFIELD_KEY, SUBMARINE
+from ..items import (BUBBLES_THING, FILLER_ITEM, GAS_MASK, ITEM_NAME_TO_ID, ITEMS, KI_BLAST_FRUIT, SEWER_KEY,
+                     SNOWFIELD_KEY, SUBMARINE)
 from ..location_data import LOCATIONS
 from ..locations import (GOAL_EVENT, KEY_ITEM_LOCATIONS, LOCATION_ID_BASE, LOCATION_NAME_TO_ID, MISSABLE_ZONES,
                          STORY_LOCATIONS)
@@ -28,6 +29,8 @@ class TestDefaultWorld(DbzAotsTestBase):
         expected = Counter(data.item for data in LOCATIONS if not data.bonus)
         expected[self.world.get_filler_item_name()] += len(STORY_LOCATIONS)  # story steps hold filler
         expected.update(item for _, _, item in KEY_ITEM_LOCATIONS.values())
+        expected[FILLER_ITEM] -= 1  # the Sewer Key takes the place of a filler item
+        expected[SEWER_KEY] += 1
         self.assertEqual(expected, pool)
 
     def test_client_watches_the_end_of_the_game(self) -> None:
@@ -90,9 +93,10 @@ class TestDefaultWorld(DbzAotsTestBase):
                 if expected and location.item:
                     self.assertFalse(location.item.advancement)
 
-    def test_the_three_ki_blast_fruits_are_in_the_pool(self) -> None:
-        # Two from the story chests (chapters 7 and 12), one from Pilaf's Castle 5 (research/decisions.md, C50).
-        self.assertEqual(3, len(self.get_items_by_name(KI_BLAST_FRUIT)))
+    def test_the_four_ki_blast_fruits_are_in_the_pool(self) -> None:
+        # Two from the story chests (chapters 7 and 12), one from Pilaf's Castle 5 (research/decisions.md, C50), one
+        # from the sewers (C57).
+        self.assertEqual(4, len(self.get_items_by_name(KI_BLAST_FRUIT)))
 
 
 class TestEastCityRuins(DbzAotsTestBase):
@@ -209,15 +213,48 @@ class TestSubmarineAndBubblesThing(DbzAotsTestBase):
         self.assertEqual(4022, ITEM_NAME_TO_ID[BUBBLES_THING])
 
 
+class TestSewers(DbzAotsTestBase):
+    SEWERS = ("Sewer 1 - Ki-Blast Fruit Chest", "Sewer 2 - Shenron's Nail Chest", "Sewer 2 - Kami's Cape Trap Chest")
+
+    def test_sewer_locations_need_the_sewer_key(self) -> None:
+        self.collect_all_but(SEWER_KEY)
+        for name in self.SEWERS:
+            self.assertFalse(self.can_reach_location(name), name)
+        self.collect_by_name(SEWER_KEY)
+        for name in self.SEWERS:
+            self.assertTrue(self.can_reach_location(name), name)
+
+    def test_sewer_key_is_shuffled_once_and_told_to_the_client(self) -> None:
+        self.assertEqual(1, len(self.get_items_by_name(SEWER_KEY)))
+        self.assertEqual(4026, ITEM_NAME_TO_ID[SEWER_KEY])
+        self.assertEqual(1, self.world.fill_slot_data()["sewer_key"])
+
+    def test_sewer_locations_are_their_flags(self) -> None:
+        self.assertEqual([LOCATION_ID_BASE + flag for flag in (1449, 1450, 2663)],
+                         [LOCATION_NAME_TO_ID[name] for name in self.SEWERS])
+
+
+class TestSewersWithShortGoal(DbzAotsTestBase):
+    options = {"goal_chapter": 14}
+
+    def test_no_sewers_nor_sewer_key(self) -> None:
+        names = addresses_of(self.multiworld.get_locations(self.player))
+        self.assertFalse([name for name in names if name.startswith("Sewer")])
+        self.assertEqual([], self.get_items_by_name(SEWER_KEY))
+        self.assertEqual(0, self.world.fill_slot_data()["sewer_key"])
+
+
 class TestKeyItemsOff(DbzAotsTestBase):
     options = {"key_items": False}
 
     def test_no_key_item_location_nor_item(self) -> None:
         names = addresses_of(self.multiworld.get_locations(self.player))
         self.assertNotIn("Holly Plain - Snowfield Key from Lunch", names)
+        self.assertFalse([name for name in names if name.startswith("Sewer")])
         self.assertEqual([], self.get_items_by_name(SNOWFIELD_KEY))
         self.assertEqual([], self.get_items_by_name(SUBMARINE))
         self.assertEqual([], self.get_items_by_name(BUBBLES_THING))
+        self.assertEqual([], self.get_items_by_name(SEWER_KEY))
 
 
 class TestIds(DbzAotsTestBase):

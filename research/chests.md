@@ -4,7 +4,7 @@ Généré par [scripts/build_world_data.py](scripts/build_world_data.py) à part
 [scripts/extract_chests.py](scripts/extract_chests.py) (appels `CreateBox` et `GetItem` des scripts) et des
 lignes du guide DSR de [game_data.md](game_data.md). Ne pas modifier à la main.
 
-**219 coffres et 19 objets à examiner** dans la ROM : 232 retenus pour le world (dont 6 en option « bonus »), 6 mis de côté.
+**219 coffres et 19 objets à examiner** dans la ROM : 235 retenus pour le world (dont 6 en option « bonus »), 4 mis de côté.
 
 ## Lieux retenus
 
@@ -55,6 +55,8 @@ lignes du guide DSR de [game_data.md](game_data.md). Ne pas modifier à la main.
 | 1446 | `spi07_00` | Spinach Wastes 7 - Speed Fruit Chest | Fruit vitesse | 15 |  | OBS 2026-10-24 (ouvert en jeu au ch. 15, C50) |
 | 1447 | `spi07_00` | Spinach Wastes 7 - Hammock Chest | Hamac | 15 |  | OBS 2026-10-24 (ouvert en jeu au ch. 15, C50) |
 | 1448 | `spi07_00` | Spinach Wastes 7 - Confrontation Brace Chest | Bracelet leurre | 15 |  | OBS 2026-10-24 (ouvert en jeu au ch. 15, C50) |
+| 1449 | `ges01_00` | Sewer 1 - Ki-Blast Fruit Chest | Fruit Kikoha | 15 |  | OBS 2026-11-13 (ouvert en jeu au ch. 15 avec la Clé des égouts, C57) |
+| 1450 | `ges02_00` | Sewer 2 - Shenron's Nail Chest | Griffe Sheron | 15 |  | OBS 2026-11-13 (ouvert en jeu au ch. 15 avec la Clé des égouts, C57) |
 | 1451 | `jin02_00` | Jingle Village 2 - Jingle Village Bomb Chest | Bombe de V. Jingle | 8 |  | DSR n° 58 (Ch. 8, Jingle Village) |
 | 1452 | `mut01_00` | Mutaito Training Grounds 1 - Ki-Blast Fruit Chest | Fruit Kikoha | 12 |  | DSR n° 194 (Ch. 12, Mutaito's Grounds) |
 | 1453 | `mut03_00` | Mutaito Training Grounds 3 - Power Necklace Chest | Collier puissance | 12 |  | DSR n° 196 (Ch. 12, Mutaito's Grounds) |
@@ -225,6 +227,7 @@ lignes du guide DSR de [game_data.md](game_data.md). Ne pas modifier à la main.
 | 1621 | `for04_00` | Yemma Forest 4 - Sleep Bracelet Chest | Bracelet dodo | 9 |  | DSR n° 117 (Ch. 9, Yemma Forest) |
 | 1622 | `for04_00` | Yemma Forest 4 - Super Sacred Water Chest | Eau super sacrée | 13 |  | DSR n° 201 (Ch. 13, Yemma Forest) |
 | 1623 | `for04_00` | Yemma Forest 4 - Guard Sense Chest | Sens parade | 13 |  | DSR n° 202 (Ch. 13, Yemma Forest) |
+| 2663 | `ges02_00` | Sewer 2 - Kami's Cape Trap Chest | Cape Dieu | 15 |  | SCRIPT ges02_00 Trap01 + LP Update 50 (C57) |
 | 3200 | `kam03_00` | Kame House 3 - Hidden Luck Fruit | Fruit chance | 0 |  | DSR n° 1 (Prologue, Kame House) |
 | 3201 | `est01_00` | East City 1 - Hidden Skill Fruit | Fruit technique | 1 |  | DSR n° 7 (Ch. 1, East City) |
 | 3202 | `est03_00` | East City 3 - Hidden Speed Fruit | Fruit vitesse | 1 |  | DSR n° 8 (Ch. 1, East City) |
@@ -247,8 +250,6 @@ lignes du guide DSR de [game_data.md](game_data.md). Ne pas modifier à la main.
 
 | Drapeau | Type | Carte | Zone | Objet EN | Objet FR |
 |---|---|---|---|---|---|
-| 1449 | coffre | `ges01_00` | Sewer | Ki-Blast Fruit | Fruit Kikoha |
-| 1450 | coffre | `ges02_00` | Sewer | Shenron's Nail | Griffe Sheron |
 | 1455 | coffre | `mut05_00` | Mutaito Training Grounds | Master's Secret | Secret maître |
 | 1550 | coffre | `sna03_00` | Princess Snake's House | Large Bean | Grand haricot |
 | 2590 | à examiner | `hel02_00` | Underworld | Double Capsule Z | Capsule double Z |

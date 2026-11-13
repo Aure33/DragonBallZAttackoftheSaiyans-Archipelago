@@ -476,3 +476,12 @@ Les S-Combos (combos à plusieurs) s'apprennent via des **« S-Combo memo »** t
 | WP | Wikipédia (EN), *Dragon Ball Z: Attack of the Saiyans* : https://en.wikipedia.org/wiki/Dragon_Ball_Z:_Attack_of_the_Saiyans | Moyenne | Généralités (AP, capsules, Ki). Sortie EU : 2009-11-06 |
 | KZS | Forum Kanzenshuu, fil d'aide « DragonBall Z: Attack of the Saiyans » : https://www.kanzenshuu.com/forum/viewtopic.php?p=316271 | Faible | Forum ; témoignages de joueurs (pas de sauvegarde après les crédits ; ennemi n° 185 « Broli ») |
 | ROM | ROM EU `BRPP` rév. 0 du joueur : tables de texte `btl/bdat/<LANG>/bdat.bin` et script `script/<LANG>/cf/worldmap.sb`, extraits par `scripts/extract_rom_names.py` | Haute | Texte officiel du jeu. Liste complète dans [rom_names.md](rom_names.md) |
+
+## Égouts (vérifié en jeu, 2026-11-13, decisions.md C57)
+| Lieu | Contenu | Accès | Source |
+|---|---|---|---|
+| Plaque du temple des Arts martiaux (`bud01_00`) | — (drapeau 2625 une fois ouverte) | Clé des égouts (1000 carottes, `wst03_00`) | OBS ✅ |
+| Égouts 1, coffre 1449 | Fruit Kikoha (Ki-Blast Fruit) | étage 1, échelles cassées au tir de Ki niveau 1 | OBS ✅ |
+| Égouts 2, coffre 1450 | Griffe Sheron (Shenron's Nail) | étage 1 | OBS ✅ |
+| Égouts 2, faux coffre (drapeau 2663) | Cape Dieu (Kami's Cape), après un combat | objet 1 de `ges02_00`, (116, 207) | OBS ✅ |
+

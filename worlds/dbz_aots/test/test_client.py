@@ -4,9 +4,9 @@ import unittest
 from NetUtils import NetworkItem
 
 from .. import ram
-from ..client import (ORIGINAL_ITEM_CODES, Progress, battle_bonus, chest_rewrites, find_text_table, flag_is_set,
-                      game_over, generic_item_name, hidden_item_rewrites, in_game, items_to_give, key_item_corrections,
-                      items_to_take_back, map_key, match_pickups, opened_locations, party_defeated, party_hp_addresses,
+from ..client import (DEFEAT_WINDOW, ORIGINAL_ITEM_CODES, Progress, battle_bonus, chest_rewrites, find_text_table,
+                      flag_is_set, game_over, generic_item_name, hidden_item_rewrites, in_game, items_to_give,
+                      key_item_corrections, items_to_take_back, map_key, match_pickups, opened_locations, party_defeated, party_hp_addresses,
                       picked_up_items, read_progress, received_message, shown_item_code)
 from ..items import ITEM_NAME_TO_ID
 from ..locations import LOCATION_NAME_TO_ID, ORIGINAL_ITEM_LOCATION_IDS
@@ -139,15 +139,22 @@ class TestDeathLink(unittest.TestCase):
         self.assertFalse(party_defeated([0, 1, 0]))
 
     def test_game_over_is_a_restart_after_a_defeat(self) -> None:
-        self.assertTrue(game_over(party_was_defeated=True, still_in_game=False))
+        self.assertTrue(game_over(defeated_at=100.0, now=103.0, still_in_game=False))
+
+    def test_game_over_when_the_last_reading_came_after_the_ko(self) -> None:
+        # The party was last seen down a few seconds before the restart, not at the very last reading.
+        self.assertTrue(game_over(defeated_at=100.0, now=100.0 + DEFEAT_WINDOW, still_in_game=False))
 
     def test_story_battle_lost_on_purpose_is_no_death(self) -> None:
         # The story goes on: the game never restarts.
-        self.assertFalse(game_over(party_was_defeated=True, still_in_game=True))
+        self.assertFalse(game_over(defeated_at=100.0, now=101.0, still_in_game=True))
 
     def test_soft_reset_is_no_death(self) -> None:
-        self.assertFalse(game_over(party_was_defeated=False, still_in_game=False))
-        self.assertFalse(game_over(party_was_defeated=None, still_in_game=False))
+        self.assertFalse(game_over(defeated_at=None, now=100.0, still_in_game=False))
+
+    def test_old_defeat_is_no_death(self) -> None:
+        # A defeat long before (story battle lost on purpose) does not make a later soft reset a death.
+        self.assertFalse(game_over(defeated_at=100.0, now=101.0 + DEFEAT_WINDOW, still_in_game=False))
 
     def test_no_defeat_without_a_party(self) -> None:
         self.assertFalse(party_defeated([]))

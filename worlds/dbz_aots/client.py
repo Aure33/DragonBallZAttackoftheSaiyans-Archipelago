@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 import re
 import struct
+import time
 from collections.abc import Collection
 from typing import TYPE_CHECKING, NamedTuple
 
@@ -34,6 +35,9 @@ GENERIC_ITEM_NAME = b"Archipelago Item"
 RECENT_PICKUPS = 8
 """Pick-ups kept while waiting for a location flag (a hidden item's flag is set when its message closes)."""
 GENERIC_NAME_SPACE = 32
+DEFEAT_WINDOW = 20.0
+"""Seconds between the last reading of a defeated party and the restart for it to count as a Game Over. The game
+restarts ~3 s after the K.O. (research/decisions.md, C37); the margin covers readings lost while the banner shows."""
 """Bytes after the generic item's empty name that must be free (zero) before the client writes it there."""
 
 
@@ -228,10 +232,11 @@ def party_defeated(hp: list[int]) -> bool:
     return len(hp) > 0 and all(value == 0 for value in hp)
 
 
-def game_over(party_was_defeated: bool | None, still_in_game: bool) -> bool:
+def game_over(defeated_at: float | None, now: float, still_in_game: bool) -> bool:
     """A real defeat: the "Defeat" banner is followed by a restart from the logos (research/decisions.md, C37).
-    Checking that every fighter was down just before keeps a soft reset by the player from counting as a death."""
-    return party_was_defeated is True and not still_in_game
+    Checking that every fighter was seen down shortly before keeps a soft reset by the player from counting as a
+    death. The time of that reading is kept rather than the last reading only, which may come after the K.O."""
+    return not still_in_game and defeated_at is not None and 0 <= now - defeated_at <= DEFEAT_WINDOW
 
 
 def received_message(ap_id: int) -> str:
@@ -262,10 +267,11 @@ class DbzAotsClient(BizHawkClient):
         self.was_in_battle = False
         self.progress_before_battle: list[Progress] | None = None
         self.experience_reserve = [0] * ram.CHARACTER_COUNT
-        self.party_was_defeated: bool | None = None
+        self.defeated_at: float | None = None
+        """time.monotonic() of the last reading in game where every fighter was down."""
         self.previous_death_link = 0.0
         self.death_pending = False
-        self.ignore_next_defeat = False
+        """A death was received and its Game Over has not happened yet."""
         self.sent_map: bytes | None = None
         self.scouted = False
         self.generic_name: tuple[int, bytes] | None = None
@@ -311,7 +317,7 @@ class DbzAotsClient(BizHawkClient):
                 await self.send_death_on_game_over(ctx)
                 self.previous_map = self.previous_flags = self.previous_inventory = None
                 self.was_in_battle, self.progress_before_battle = False, None
-                self.party_was_defeated = None
+                self.defeated_at = None
                 return
 
             await self.send_map(ctx, map_code)
@@ -562,7 +568,9 @@ class DbzAotsClient(BizHawkClient):
     async def handle_death_link(
         self, ctx: BizHawkClientContext, map_code: bytes, battle: bytes, party: bytes
     ) -> None:
-        """Watch the fighters for send_death_on_game_over; a received death sets their HP to 0 at the next battle."""
+        """Watch the fighters for send_death_on_game_over. A received death sets their HP to 0 in every battle until
+        the Game Over happens: the game only checks for a defeat during a battle, at the end of an action
+        (research/decisions.md, C32), so HP written at the wrong moment (victory banner) may not end the game."""
         if not (ctx.slot_data or {}).get("death_link"):
             return
         if "DeathLink" not in ctx.tags:
@@ -570,35 +578,38 @@ class DbzAotsClient(BizHawkClient):
             self.previous_death_link = ctx.last_death_link
         if self.previous_death_link != ctx.last_death_link:
             self.previous_death_link = ctx.last_death_link
-            self.death_pending = True
+            if not self.death_pending:
+                self.death_pending = True
+                logger.info("DeathLink: your party will fall in the next battle.")
+                await bizhawk.display_message(ctx.bizhawk_ctx, "DeathLink: your party falls in the next battle")
 
         addresses = party_hp_addresses(party)
         hp = [int.from_bytes(value, "little") for value in await bizhawk.read(
             ctx.bizhawk_ctx, [(address, 4, ram.MAIN_RAM) for address in addresses]
         )] if addresses else []
-        defeated = party_defeated(hp)
-        self.party_was_defeated = defeated
-
-        # The game only checks for a defeat during a battle, at the end of an action (research/decisions.md, C32);
-        # with every fighter down it shows "Defeat" and restarts.
-        if self.death_pending and battle == IN_BATTLE and not defeated and addresses:
-            if await bizhawk.guarded_write(
+        if party_defeated(hp):
+            self.defeated_at = time.monotonic()
+        elif self.death_pending and battle == IN_BATTLE:
+            await bizhawk.guarded_write(
                 ctx.bizhawk_ctx,
                 [(address, (0).to_bytes(4, "little"), ram.MAIN_RAM) for address in addresses],
                 [(ram.CURRENT_MAP, map_code, ram.MAIN_RAM), (ram.BATTLE_STATE, battle, ram.MAIN_RAM),
                  (ram.PARTY, party, ram.MAIN_RAM)],
-            ):
-                self.death_pending = False
-                self.ignore_next_defeat = True
+            )
 
     async def send_death_on_game_over(self, ctx: BizHawkClientContext) -> None:
-        """Called when the game leaves the field: send a death if this is the restart that follows a defeat."""
-        if game_over(self.party_was_defeated, still_in_game=False) and (ctx.slot_data or {}).get("death_link"):
-            if self.ignore_next_defeat:
-                self.ignore_next_defeat = False  # the defeat came from a received death
-            else:
-                await ctx.send_death(f"{ctx.player_names[ctx.slot]}'s party was defeated.")
-                self.previous_death_link = ctx.last_death_link
+        """Called when the game leaves the field: send a death if this is the restart that follows a defeat, unless
+        the defeat came from a received death."""
+        if not game_over(self.defeated_at, time.monotonic(), still_in_game=False):
+            return
+        if not (ctx.slot_data or {}).get("death_link"):
+            return
+        if self.death_pending:
+            self.death_pending = False
+            logger.info("DeathLink: Game Over from the received death, nothing sent.")
+        else:
+            await ctx.send_death(f"{ctx.player_names[ctx.slot]}'s party was defeated.")
+            self.previous_death_link = ctx.last_death_link
 
     async def sync_key_items(self, ctx: BizHawkClientContext, map_code: bytes, battle: bytes) -> None:
         """Keep each shuffled key item at the quantity received from the server (option key_items)."""

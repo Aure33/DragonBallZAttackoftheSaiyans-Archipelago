@@ -3,6 +3,18 @@
 All notable changes to the world. Versions follow `world_version` in
 [`worlds/dbz_aots/archipelago.json`](worlds/dbz_aots/archipelago.json).
 
+## 0.16.1 — DeathLink fixes from the first multiworld
+
+Client only: a game generated with 0.16.0 keeps working, just update the apworld on your side.
+
+### Fixed
+- A received death could be lost: its HP were written once, and if the game did not end the battle (victory banner),
+  nothing happened, and your next real death was not sent either. The death now stays pending until the Game Over:
+  your party is set back to 0 HP in every battle until it happens.
+- Your own Game Over is sent when the party was seen down shortly before the restart, not only at the very last
+  reading.
+- A message in BizHawk tells you when a death is received.
+
 ## 0.16.0 — every chest of the game, carrot rewards
 
 ### Added

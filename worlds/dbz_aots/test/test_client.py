@@ -7,7 +7,8 @@ from .. import ram
 from ..client import (DEFEAT_WINDOW, ORIGINAL_ITEM_CODES, Progress, battle_bonus, chest_rewrites, find_text_table,
                       flag_is_set, game_over, generic_item_name, hidden_item_rewrites, in_game, items_to_give,
                       key_item_corrections, items_to_take_back, map_key, match_pickups, opened_locations, party_defeated, party_hp_addresses,
-                      picked_up_items, read_progress, received_message, shown_item_code)
+                      picked_up_items, read_progress, received_death_writes, received_message,
+                      shown_item_code)
 from ..items import ITEM_NAME_TO_ID
 from ..locations import LOCATION_NAME_TO_ID, ORIGINAL_ITEM_LOCATION_IDS
 
@@ -155,6 +156,16 @@ class TestDeathLink(unittest.TestCase):
     def test_old_defeat_is_no_death(self) -> None:
         # A defeat long before (story battle lost on purpose) does not make a later soft reset a death.
         self.assertFalse(game_over(defeated_at=100.0, now=101.0 + DEFEAT_WINDOW, still_in_game=False))
+
+    def test_received_death_at_a_command_writes_the_defeat_phase(self) -> None:
+        writes = received_death_writes([0x0CD9E4, 0x0CDC30], bytes([ram.BATTLE_PHASE_COMMAND]))
+        self.assertIn((0x0CD9E4, bytes(4), ram.MAIN_RAM), writes)
+        self.assertIn((0x0CDC30, bytes(4), ram.MAIN_RAM), writes)
+        self.assertIn((ram.BATTLE_PHASE, bytes([ram.BATTLE_PHASE_DEFEAT]), ram.MAIN_RAM), writes)
+
+    def test_received_death_during_an_action_only_sets_hp(self) -> None:
+        writes = received_death_writes([0x0CD9E4], bytes([5]))
+        self.assertEqual([(0x0CD9E4, bytes(4), ram.MAIN_RAM)], writes)
 
     def test_no_defeat_without_a_party(self) -> None:
         self.assertFalse(party_defeated([]))

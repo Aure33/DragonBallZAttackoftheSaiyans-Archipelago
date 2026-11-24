@@ -18,6 +18,12 @@ MAP_CODE_LENGTH = 8
 
 BATTLE_STATE = 0x09B236
 """2 bytes: 0xFFFF during a battle (and before a save is loaded), 0x0000 on the field and in the menu."""
+BATTLE_PHASE = 0x0CC74C
+"""1 byte, field +0x4E4 of the battle structure at 0x0CC268 (game code at 0x02028EA8): 2 while the game waits for a
+command, 5 during an action, 0x0B once the party is defeated. Writing 0x0B at a command shows "Defeat" at once and the
+game restarts (research/decisions.md, C64)."""
+BATTLE_PHASE_COMMAND = 2
+BATTLE_PHASE_DEFEAT = 0x0B
 
 ZENI = 0x0CC370
 """Money, 4 bytes little-endian."""

@@ -232,6 +232,15 @@ def party_defeated(hp: list[int]) -> bool:
     return len(hp) > 0 and all(value == 0 for value in hp)
 
 
+def received_death_writes(hp_addresses: list[int], phase: bytes) -> list[tuple[int, bytes, str]]:
+    """Writes that make the party lose the current battle: every fighter at 0 HP and, while the game waits for a
+    command, the defeat phase. During an action the phase is left alone: the game ends the battle after it."""
+    writes = [(address, (0).to_bytes(4, "little"), ram.MAIN_RAM) for address in hp_addresses]
+    if phase[0] == ram.BATTLE_PHASE_COMMAND:
+        writes.append((ram.BATTLE_PHASE, bytes([ram.BATTLE_PHASE_DEFEAT]), ram.MAIN_RAM))
+    return writes
+
+
 def game_over(defeated_at: float | None, now: float, still_in_game: bool) -> bool:
     """A real defeat: the "Defeat" banner is followed by a restart from the logos (research/decisions.md, C37).
     Checking that every fighter was seen down shortly before keeps a soft reset by the player from counting as a
@@ -569,8 +578,8 @@ class DbzAotsClient(BizHawkClient):
         self, ctx: BizHawkClientContext, map_code: bytes, battle: bytes, party: bytes
     ) -> None:
         """Watch the fighters for send_death_on_game_over. A received death sets their HP to 0 in every battle until
-        the Game Over happens: the game only checks for a defeat during a battle, at the end of an action
-        (research/decisions.md, C32), so HP written at the wrong moment (victory banner) may not end the game."""
+        the Game Over happens. The game only checks for a defeat at the end of an action (research/decisions.md, C32):
+        while it waits for a command, the defeat phase is written as well, so "Defeat" shows at once (C64)."""
         if not (ctx.slot_data or {}).get("death_link"):
             return
         if "DeathLink" not in ctx.tags:
@@ -584,17 +593,18 @@ class DbzAotsClient(BizHawkClient):
                 await bizhawk.display_message(ctx.bizhawk_ctx, "DeathLink: your party falls in the next battle")
 
         addresses = party_hp_addresses(party)
-        hp = [int.from_bytes(value, "little") for value in await bizhawk.read(
-            ctx.bizhawk_ctx, [(address, 4, ram.MAIN_RAM) for address in addresses]
-        )] if addresses else []
-        if party_defeated(hp):
+        if not addresses:
+            return
+        reads = [(address, 4, ram.MAIN_RAM) for address in addresses] + [(ram.BATTLE_PHASE, 1, ram.MAIN_RAM)]
+        *values, phase = await bizhawk.read(ctx.bizhawk_ctx, reads)
+        if party_defeated([int.from_bytes(value, "little") for value in values]):
             self.defeated_at = time.monotonic()
-        elif self.death_pending and battle == IN_BATTLE:
+        if self.death_pending and battle == IN_BATTLE:
             await bizhawk.guarded_write(
                 ctx.bizhawk_ctx,
-                [(address, (0).to_bytes(4, "little"), ram.MAIN_RAM) for address in addresses],
+                received_death_writes(addresses, phase),
                 [(ram.CURRENT_MAP, map_code, ram.MAIN_RAM), (ram.BATTLE_STATE, battle, ram.MAIN_RAM),
-                 (ram.PARTY, party, ram.MAIN_RAM)],
+                 (ram.PARTY, party, ram.MAIN_RAM), (ram.BATTLE_PHASE, phase, ram.MAIN_RAM)],
             )
 
     async def send_death_on_game_over(self, ctx: BizHawkClientContext) -> None:

@@ -3,6 +3,14 @@
 All notable changes to the world. Versions follow `world_version` in
 [`worlds/dbz_aots/archipelago.json`](worlds/dbz_aots/archipelago.json).
 
+## 0.16.2 — instant Game Over on a received death
+
+Client only: a game generated with 0.16.0 keeps working, just update the apworld on your side.
+
+### Changed
+- A death received during a battle now ends it at once ("Defeat", then the game restarts) when the game waits for
+  your command. Before, your fighters fell to 0 HP but you could still choose one more action.
+
 ## 0.16.1 — DeathLink fixes from the first multiworld
 
 Client only: a game generated with 0.16.0 keeps working, just update the apworld on your side.

@@ -241,6 +241,16 @@ def received_death_writes(hp_addresses: list[int], phase: bytes) -> list[tuple[i
     return writes
 
 
+def defeat_tracking(armed: bool, defeated: bool) -> tuple[bool, bool]:
+    """(armed, record the defeat) after a reading of the party in game. Once a Game Over has been handled, the client is
+    disarmed until it sees a fighter standing: the title screen that follows the restart shows other characters,
+    whose 0 HP must not count as a second Game Over (seen in the multiworld of 2026-11-25, research/decisions.md,
+    C65)."""
+    if not defeated:
+        return True, False
+    return armed, armed
+
+
 def game_over(defeated_at: float | None, now: float, still_in_game: bool) -> bool:
     """A real defeat: the "Defeat" banner is followed by a restart from the logos (research/decisions.md, C37).
     Checking that every fighter was seen down shortly before keeps a soft reset by the player from counting as a
@@ -277,6 +287,8 @@ class DbzAotsClient(BizHawkClient):
         self.progress_before_battle: list[Progress] | None = None
         self.experience_reserve = [0] * ram.CHARACTER_COUNT
         self.defeated_at: float | None = None
+        self.death_armed = False
+        """A fighter has been seen standing since the last Game Over (see defeat_tracking)."""
         """time.monotonic() of the last reading in game where every fighter was down."""
         self.previous_death_link = 0.0
         self.death_pending = False
@@ -597,9 +609,12 @@ class DbzAotsClient(BizHawkClient):
             return
         reads = [(address, 4, ram.MAIN_RAM) for address in addresses] + [(ram.BATTLE_PHASE, 1, ram.MAIN_RAM)]
         *values, phase = await bizhawk.read(ctx.bizhawk_ctx, reads)
-        if party_defeated([int.from_bytes(value, "little") for value in values]):
+        self.death_armed, record = defeat_tracking(
+            self.death_armed, party_defeated([int.from_bytes(value, "little") for value in values])
+        )
+        if record:
             self.defeated_at = time.monotonic()
-        if self.death_pending and battle == IN_BATTLE:
+        if self.death_pending and self.death_armed and battle == IN_BATTLE:
             await bizhawk.guarded_write(
                 ctx.bizhawk_ctx,
                 received_death_writes(addresses, phase),
@@ -614,6 +629,7 @@ class DbzAotsClient(BizHawkClient):
             return
         if not (ctx.slot_data or {}).get("death_link"):
             return
+        self.death_armed = False
         if self.death_pending:
             self.death_pending = False
             logger.info("DeathLink: Game Over from the received death, nothing sent.")

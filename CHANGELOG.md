@@ -3,6 +3,15 @@
 All notable changes to the world. Versions follow `world_version` in
 [`worlds/dbz_aots/archipelago.json`](worlds/dbz_aots/archipelago.json).
 
+## 0.16.3 — no second death after a Game Over
+
+Client only: a game generated with 0.16.0 keeps working, just update the apworld on your side.
+
+### Fixed
+- After a Game Over (from a received death or not), the title screen could be taken for a second Game Over, and a
+  death was sent to everyone ~10 s later. A new defeat now only counts once one of your fighters has been seen
+  standing in game again.
+
 ## 0.16.2 — instant Game Over on a received death
 
 Client only: a game generated with 0.16.0 keeps working, just update the apworld on your side.

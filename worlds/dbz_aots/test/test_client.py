@@ -5,10 +5,10 @@ from NetUtils import NetworkItem
 
 from .. import ram
 from ..client import (DEFEAT_WINDOW, ORIGINAL_ITEM_CODES, Progress, battle_bonus, chest_rewrites, find_text_table,
-                      flag_is_set, game_over, generic_item_name, hidden_item_rewrites, in_game, items_to_give,
-                      key_item_corrections, items_to_take_back, map_key, match_pickups, opened_locations, party_defeated, party_hp_addresses,
-                      picked_up_items, read_progress, received_death_writes, received_message,
-                      shown_item_code)
+                      defeat_tracking, flag_is_set, game_over, generic_item_name, hidden_item_rewrites, in_game,
+                      items_to_give, key_item_corrections, items_to_take_back, map_key, match_pickups, opened_locations,
+                      party_defeated, party_hp_addresses, picked_up_items, read_progress, received_death_writes,
+                      received_message, shown_item_code)
 from ..items import ITEM_NAME_TO_ID
 from ..locations import LOCATION_NAME_TO_ID, ORIGINAL_ITEM_LOCATION_IDS
 
@@ -166,6 +166,14 @@ class TestDeathLink(unittest.TestCase):
     def test_received_death_during_an_action_only_sets_hp(self) -> None:
         writes = received_death_writes([0x0CD9E4], bytes([5]))
         self.assertEqual([(0x0CD9E4, bytes(4), ram.MAIN_RAM)], writes)
+
+    def test_defeat_counts_once_a_fighter_was_seen_standing(self) -> None:
+        self.assertEqual((True, False), defeat_tracking(armed=False, defeated=False))
+        self.assertEqual((True, True), defeat_tracking(armed=True, defeated=True))
+
+    def test_title_screen_after_a_game_over_is_no_second_death(self) -> None:
+        # Disarmed by the Game Over: the characters of the title screen at 0 HP are not recorded.
+        self.assertEqual((False, False), defeat_tracking(armed=False, defeated=True))
 
     def test_no_defeat_without_a_party(self) -> None:
         self.assertFalse(party_defeated([]))

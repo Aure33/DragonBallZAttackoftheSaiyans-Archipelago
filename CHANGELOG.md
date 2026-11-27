@@ -12,6 +12,9 @@ Client only: a game generated with 0.16.0 keeps working, just update the apworld
   death was sent to everyone ~10 s later. A new defeat now only counts once one of your fighters has been seen
   standing in game again.
 
+### Docs
+- Setup guides: the Lua Console window that opens with the game must stay open (it can be minimized).
+
 ## 0.16.2 — instant Game Over on a received death
 
 Client only: a game generated with 0.16.0 keeps working, just update the apworld on your side.

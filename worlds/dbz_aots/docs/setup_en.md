@@ -31,6 +31,9 @@ It does not change the game: it only lets the BizHawk Client start everything fo
 Without the patch file: open the ROM in BizHawk (melonDS core), load `data/lua/connector_bizhawk_generic.lua` from your
 Archipelago installation in `Tools > Lua Console`, then open the BizHawk Client from the Launcher and connect.
 
+A "Lua Console" window opens with the game: this is normal, it runs the connector script. Minimize it if it is in
+the way, but do not close it, or the BizHawk Client disconnects.
+
 Only one BizHawk Client can talk to BizHawk at a time: close any other BizHawk Client window first.
 
 ## Your save file

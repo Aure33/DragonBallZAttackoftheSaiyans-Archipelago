@@ -32,6 +32,9 @@ Sans le fichier patch : ouvrez la ROM dans BizHawk (cœur melonDS), chargez `dat
 de votre installation d'Archipelago dans `Outils > Console Lua`, puis ouvrez le BizHawk Client depuis le Launcher et
 connectez-vous.
 
+Une fenêtre « Console Lua » s'ouvre avec le jeu : c'est normal, elle fait tourner le script de connexion. Réduisez-la
+si elle vous gêne, mais ne la fermez pas, sinon le BizHawk Client se déconnecte.
+
 Un seul BizHawk Client peut parler à BizHawk à la fois : fermez d'abord toute autre fenêtre de BizHawk Client.
 
 ## Votre sauvegarde
